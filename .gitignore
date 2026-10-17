@@ -12,6 +12,11 @@ agent/bin/
 .env.*
 !.env.example
 
+# mise personal overrides
+mise.local.toml
+mise.local.lock
+.mise/locks/mise.local/
+
 # Claude Code personal files
 .claude/settings.local.json
 CLAUDE.local.md

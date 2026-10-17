@@ -1,0 +1,27 @@
+# Pinned developer toolchain. One source of versions for laptops, CI and Renovate.
+# Install with: mise trust && mise install --locked
+# Every version is exact and was at least 3 days old when pinned.
+
+[tools]
+node = "24.22.0"
+go = "1.27.2"
+"aqua:pnpm/pnpm" = "12.13.0"
+"aqua:rhysd/actionlint" = "1.7.12"
+"aqua:zizmorcore/zizmor" = "1.30.1"
+"aqua:pre-commit/pre-commit" = "4.7.0"
+# Built from source instead of the release binaries: the v8.30.1 tag was moved
+# after release to a commit that only changes .goreleaser.yml, and the binaries
+# carry no signature or provenance. The go backend builds the code recorded by
+# proxy.golang.org and verified by sum.golang.org. The build tag and ldflags
+# match the official release build. GOTOOLCHAIN=local stops go from downloading
+# another compiler on its own: it builds with the go pinned above or fails.
+# The GOPROXY/GOSUMDB family is pinned here so that no global environment
+# (GOSUMDB=off, GOPROXY=direct, GONOSUMDB, ...) can silently skip the proxy or
+# the checksum database: mise.lock records no checksum for go: tools.
+"go:github.com/zricethezav/gitleaks/v8" = { version = "8.30.1", tags = ["gore2regex"], install_env = { CGO_ENABLED = "0", GOTOOLCHAIN = "local", GOFLAGS = "-ldflags=-X=github.com/zricethezav/gitleaks/v8/version.Version=8.30.1", GOPROXY = "https://proxy.golang.org", GOSUMDB = "sum.golang.org", GONOPROXY = "", GONOSUMDB = "", GOPRIVATE = "", GOINSECURE = "" } }
+
+[settings]
+# Keep mise.lock (versions, URLs and checksums) up to date on every install.
+lockfile = true
+# Platforms recorded in mise.lock, so `mise install --locked` works on Linux and macOS.
+lockfile_platforms = ["linux-x64", "linux-arm64", "macos-x64", "macos-arm64"]
