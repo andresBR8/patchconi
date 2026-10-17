@@ -13,6 +13,7 @@ Sin una herramienta así, cada máquina tiene su propia versión de Node, Go o p
   - `aqua:` (pnpm, actionlint, zizmor, pre-commit): binarios de las releases de GitHub, con checksums y, si la release la publica, verificación de procedencia (cosign, SLSA, attestations).
   - `go:` (gitleaks): compila con `go install` desde el código que guarda proxy.golang.org, verificado contra sum.golang.org. `install_env` fija `GOPROXY`, `GOSUMDB` y vacía `GONOPROXY`, `GONOSUMDB`, `GOPRIVATE` y `GOINSECURE`. Como `mise.lock` no guarda checksum para estas herramientas, la garantía tiene que vivir en el repo y no depender del entorno de cada máquina: un `GOSUMDB=off` global la anularía en silencio.
 - **pre-commit** es un zipapp de Python (`.pyz`): usa el `python3` del sistema, que no está fijado. En su primera ejecución se descomprime en `~/.cache/pre-commit-zipapp`. Desde el sandbox de Claude Code solo funciona después de que lo hayas ejecutado una vez en tu terminal.
+- **`[env]`:** variables que mise exporta en tu shell (con mise activado) y en cada comando que pasa por un shim. Hoy solo `PIP_UPLOADED_PRIOR_TO = "P3D"`, para que pip aplique la regla de los 3 días (ver `pre-commit-gitleaks-zizmor.md`). Al ser parte de `mise.toml`, cambiarla también exige `mise trust`.
 - **Shims:** pequeños ejecutables en `~/.local/share/mise/shims` que redirigen `node`, `pnpm`… a la versión que pide el `mise.toml` de la carpeta actual.
 
 ## Modo paranoid
