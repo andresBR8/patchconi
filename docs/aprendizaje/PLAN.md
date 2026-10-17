@@ -1,10 +1,10 @@
 # Plan de PatchConi
 
-> Versión operativa del plan. La discusión completa y los porqués están en el documento «Plan maestro — Panel de parches» del chat de revisión. Cuando el plan cambie, se actualiza este fichero en el mismo paso.
+> Versión operativa del plan. Los porqués de cada decisión, con sus alternativas, están en los ADRs de `docs/adr/`. Cuando el plan cambie, se actualiza este fichero en el mismo paso.
 
 ## Qué es
 
-PatchConi es un panel autoalojado de cumplimiento de parches para flotas Linux pequeñas. Un agente de solo lectura en cada host informa de sus actualizaciones pendientes, y la web muestra qué va atrasado, desde cuándo y quién incumple la política. Es un producto genérico y público: cualquiera lo instala con Docker Compose o Kubernetes. El homelab de Andrés es su primer cliente, no su dependencia.
+PatchConi es un panel autoalojado de cumplimiento de parches para flotas Linux pequeñas. Un agente de solo lectura en cada host informa de sus actualizaciones pendientes, y la web muestra qué va atrasado, desde cuándo y quién incumple la política. Es un producto genérico y público: cualquiera lo instala con Docker Compose o Kubernetes. La plataforma del mantenedor es su primer consumidor, no su dependencia.
 
 ### Principios
 
@@ -35,7 +35,7 @@ Si el calendario aprieta, las filas «Importante» pasan a la v0.2.0.
 
 ## Decisiones aceptadas
 
-Cada una se convierte en un ADR en `docs/adr/` durante la fase 0.
+Cada una tiene su ADR en `docs/adr/` (0001–0015). Las decisiones tomadas durante la fase 0 están en los ADRs 0016–0018.
 
 | # | Decisión | Elección |
 | --- | --- | --- |
@@ -59,7 +59,7 @@ El nombre del producto es **PatchConi**; el nombre técnico (repo, imágenes, bi
 
 ## Frontera con la plataforma
 
-La app publica artefactos versionados: imágenes, paquetes del agente, base de Kustomize, Compose de ejemplo y rol de Ansible genérico. La plataforma (el homelab) pone el overlay del entorno, el namespace, Argo CD, los Secrets, el túnel, la NetworkPolicy, el inventario y los tokens. Si para desplegar hay que tocar este repo, el contrato ha fallado.
+La app publica artefactos versionados: imágenes, paquetes del agente, base de Kustomize, Compose de ejemplo y rol de Ansible genérico. La plataforma pone el overlay del entorno, el namespace, Argo CD, los Secrets, el túnel, la NetworkPolicy, el inventario y los tokens. Si para desplegar hay que tocar este repo, el contrato ha fallado.
 
 - Contrato: `docs/platform-contract.md`.
 - Ficha de alta para la plataforma: `docs/deployment.md` (se crea en la fase 2).
@@ -90,13 +90,13 @@ Una fase está terminada cuando cumple los ocho puntos; si falta uno, no empieza
 | 6 | Interfaz web | 2 | Demo completa automatizada en CI |
 | 7 | Política, avisos y métricas | 1–2 | Avisos y métricas probados |
 | 8 | Release v0.1.0 | 1–2 | Release firmada e instalación desde la doc |
-| 9 | Alta en el homelab | — | La app corre por GitOps sin tocar este repo |
+| 9 | Alta en una plataforma | — | La app corre por GitOps sin tocar este repo |
 
 ### Fase 0 · Cimientos
 
 **Objetivo:** repo y herramientas listos, sin una línea de producto.
 
-- Repo público, deploy key configurada solo en este repo (`core.sshCommand`) y carpeta `~/apps/patchconi`.
+- Repo público, deploy key configurada solo en este repo (`core.sshCommand`) y una carpeta propia para el repo.
 - Sandbox de Claude Code activo y comprobado, sin acceso a Docker.
 - `CLAUDE.md`, `.claude/settings.json`, reglas, subagentes y skills (vienen del bootstrap).
 - `mise` con Node LTS, pnpm, Go y linters; workspace de pnpm endurecido (scripts de dependencias bloqueados salvo lista blanca, `minimumReleaseAge` de 3 días).
@@ -104,7 +104,7 @@ Una fase está terminada cuando cumple los ocho puntos; si falta uno, no empieza
 - Workflow de higiene (pre-commit + actionlint) con actions fijadas por SHA; Renovate; reglas de rama en `main`; milestones 0–9.
 - Un ADR por cada decisión aceptada.
 
-**Criterios de salida:** un clon limpio funciona con `mise install && pnpm install`; la CI pasa en verde; Claude Code arranca, resume el estado en 3 líneas y se ha comprobado que no puede leer `~/homelab` ni `~/.ssh` ni conectar con el socket de Docker.
+**Criterios de salida:** un clon limpio funciona con `mise install && pnpm install`; la CI pasa en verde; Claude Code arranca, resume el estado en 3 líneas y se ha comprobado que no puede leer otros repositorios ni `~/.ssh` ni conectar con el socket de Docker.
 
 ### Fase 1 · Producto y diseño
 
@@ -127,7 +127,7 @@ Una fase está terminada cuando cumple los ocho puntos; si falta uno, no empieza
 - CI completa: lint, pruebas, build, Trivy, SBOM y push a GHCR por digest desde `main`.
 - Base de Kustomize con overlay de ejemplo, Job de migraciones y `docs/deployment.md` v0.
 - Decidir cómo tratar la plantilla `.env.example`: las reglas `deny` de `.env.*` también la bloquean y no admiten excepciones con `!`.
-- ADR sobre Docker en desarrollo: Claude Code no tiene acceso a Docker porque equivale a root en vm-dev; tú ejecutas `docker` y `kind`, y la CI hace el resto.
+- Docker en desarrollo: revisar la parte de Docker del ADR 0016 (Claude Code no tiene acceso a Docker porque equivale a root en la VM de desarrollo; tú ejecutas `docker` y `kind`, y la CI hace el resto). Si la decisión cambia, ADR nuevo.
 
 **Criterios de salida:** `docker compose up` muestra la versión y «DB ok»; imágenes en GHCR con digest; manifiestos validados y arrancados en kind dentro de la CI; Trivy sin críticas; CI de menos de 10 minutos.
 
@@ -185,14 +185,14 @@ Una fase está terminada cuando cumple los ocho puntos; si falta uno, no empieza
 
 **Criterios de salida:** v0.1.0 publicada; `cosign verify` documentado y funcionando; servidor y agente instalados en una VM limpia siguiendo solo la documentación en menos de 15 minutos; un clon limpio levanta el entorno de desarrollo siguiendo la guía.
 
-### Fase 9 · Alta en el homelab
+### Fase 9 · Alta en una plataforma
 
-Cuando el homelab tenga sus fases 11–12 (Argo CD, GHCR, túnel).
+Cuando la plataforma consumidora tenga Argo CD, acceso a GHCR y túnel.
 
 - Ficha de alta final en `docs/deployment.md`.
-- En la sesión del homelab: namespace, `Application` de Argo CD con overlay que referencia la base en `v0.1.0`, Secrets, ruta del túnel y playbook con el rol del agente.
+- En el repo de la plataforma: namespace, `Application` de Argo CD con overlay que referencia la base en `v0.1.0`, Secrets, ruta del túnel y playbook con el rol del agente.
 
-**Criterios de salida:** la app corre en el clúster por GitOps; las VMs del lab informan; este repo no necesitó ningún cambio.
+**Criterios de salida:** la app corre en el clúster por GitOps; los hosts de la plataforma informan; este repo no necesitó ningún cambio.
 
 ### Después de la v0.1.0
 
@@ -219,4 +219,4 @@ Con 8–10 h por fin de semana, la v0.1.0 está a 14–18 fines de semana: entre
 | Go es nuevo | Fase propia, agente pequeño, conceptos documentados, agente falso para no bloquear la API |
 | La IA genera más rápido de lo que se entiende | Nada se fusiona si Andrés no puede explicarlo |
 | El producto es un objetivo de ataque | Solo lectura, tokens con hash, límites y modelo de amenazas vivo |
-| El homelab aún no tiene Argo CD ni túnel | La app se valida sola con Compose y kind en la CI; la fase 9 espera |
+| La plataforma aún no tiene Argo CD ni túnel | La app se valida sola con Compose y kind en la CI; la fase 9 espera |
