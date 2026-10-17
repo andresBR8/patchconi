@@ -1,0 +1,50 @@
+# Repository hygiene: the same pre-commit hooks as on a laptop (file checks,
+# gitleaks on the whole history, actionlint, zizmor) plus zizmor's online audits.
+name: hygiene
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  hygiene:
+    name: hygiene
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          # gitleaks-history scans every commit, so the clone needs them all.
+          fetch-depth: 0
+
+      # Installs the tools pinned in mise.toml and mise.lock (`--locked` is added
+      # automatically) and exports the [env] section to later steps.
+      - uses: jdx/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8 # v5.1.2
+        with:
+          version: 2026.10.7
+          # SHA-256 of the extracted mise binary for linux-x64.
+          sha256: 6eb1b890e90818417ca34c90dbbd47881917d5cd199f31b63b062ea9c6b18d85
+
+      # Fails if mise-action stops exporting [env]: without it pip would ignore
+      # the 3-day cutoff when pre-commit builds its hook environment.
+      - name: Check that mise exports [env]
+        run: test "${PIP_UPLOADED_PRIOR_TO}" = "P3D"
+
+      - name: pre-commit
+        run: pre-commit run --all-files --show-diff-on-failure
+
+      # Audits that need the GitHub API, such as impostor commits behind pinned
+      # SHAs and actions with known vulnerabilities. The token is read-only.
+      - name: zizmor (online audits)
+        run: zizmor --no-progress --format=github .
+        env:
+          GH_TOKEN: ${{ github.token }}
