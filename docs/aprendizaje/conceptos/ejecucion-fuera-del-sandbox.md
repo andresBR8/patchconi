@@ -8,7 +8,7 @@ El sandbox limita lo que Claude Code **ejecuta**, no lo que **escribe** para que
 
 **1. El sandbox de Bash (bubblewrap + seccomp).** Cada comando Bash de Claude corre dentro:
 
-- **Ficheros:** solo puede escribir en el repo y en su `$TMPDIR`. El resto del disco es de solo lectura, y algunas rutas (`~/.ssh`, `~/homelab`) ni se ven.
+- **Ficheros:** solo puede escribir en el repo y en su `$TMPDIR`. El resto del disco es de solo lectura, y algunas rutas (`~/.ssh`, otros repositorios) ni se ven.
 - **Red:** pasa por un proxy con una lista de dominios permitidos.
 - **seccomp:** bloquea la creación de sockets Unix. Por eso no puede hablar con `/var/run/docker.sock`: tener acceso a Docker equivale a ser root en la VM de desarrollo.
 - **Ficheros fantasma:** el sandbox monta `/dev/null` encima de rutas sensibles (`.bashrc`, `.gitconfig`, `.mcp.json`, `.claude/hooks`…) para que Claude no pueda crearlas y colar código que se ejecute más tarde. Esos montajes salen en su `git status` como ficheros sin seguimiento, y por eso `git add -A` está prohibido.
@@ -23,7 +23,7 @@ El sandbox limita lo que Claude Code **ejecuta**, no lo que **escribe** para que
 
 Además se niega la **lectura** de carpetas de credenciales: `~/.ssh`, `~/.kube`, `~/.docker`, `~/.aws`, `~/.azure`, `~/.config/gcloud`, `~/.terraform.d`, `~/.minikube`, `~/.ansible`, entre otras. Comprobado el 17-oct-2026: las que existen se ven vacías desde el sandbox.
 
-Todas estas reglas viven en el repo y no en la configuración de usuario: las `deny` se suman entre ámbitos, y una regla de usuario como `Read(~/homelab/**)` rompería las sesiones de Claude Code en otros repos que sí necesitan esa ruta.
+Todas estas reglas viven en el repo y no en la configuración de usuario: las `deny` se suman entre ámbitos, y una regla de usuario que niegue la ruta de otro repositorio rompería las sesiones de Claude Code que trabajan en ese repositorio.
 
 ¿Por qué una lista y no `Edit(~/.*/**)`? Porque las reglas `deny` no admiten excepciones: esa regla bloquearía también `~/.claude/plans` (donde el modo plan escribe su plan) y la memoria de Claude. Una lista de rutas prohibidas nunca está completa; por eso existe la capa 3.
 

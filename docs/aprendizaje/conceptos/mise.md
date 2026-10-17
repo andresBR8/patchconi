@@ -16,11 +16,13 @@ Sin una herramienta así, cada máquina tiene su propia versión de Node, Go o p
 - **`[env]`:** variables que mise exporta en tu shell (con mise activado) y en cada comando que pasa por un shim. Hoy solo `PIP_UPLOADED_PRIOR_TO = "P3D"`, para que pip aplique la regla de los 3 días (ver `pre-commit-gitleaks-zizmor.md`). Al ser parte de `mise.toml`, cambiarla también exige `mise trust`.
 - **Shims:** pequeños ejecutables en `~/.local/share/mise/shims` que redirigen `node`, `pnpm`… a la versión que pide el `mise.toml` de la carpeta actual.
 
-## Modo paranoid
+## Confianza: por ruta o por contenido
 
-Está activado en la configuración global de mise de la VM de desarrollo (`paranoid = true`), no en el repo: es un ajuste que un repo no puede cambiar.
+**Por defecto, mise confía por ruta.** Un `mise.toml` que solo lista herramientas se carga sin preguntar; uno con `[env]`, tareas u otras opciones que ejecutan cosas pide `mise trust` la primera vez. A partir de ahí la confianza queda ligada a la **ruta** del fichero: si un `git pull` cambia `mise.toml` (otra herramienta, otro `[env]`), el cambio se aplica sin volver a preguntar. Por eso `CONTRIBUTING.md` pide releer `mise.toml` tras cada pull que lo cambie.
 
-- Ningún `mise.toml` de proyecto se carga hasta que ejecutas `mise trust`. La confianza va ligada al **hash** del fichero: cualquier cambio lo vuelve a marcar como no confiable.
+**En modo paranoid, mise confía por contenido**, y así está la VM de desarrollo: activado en la configuración global de mise (`paranoid = true`), no en el repo, porque es un ajuste que un repo no puede cambiar ([documentación del modo paranoid](https://mise.jdx.dev/paranoid.html)).
+
+- Ningún `mise.toml` de proyecto se carga hasta que ejecutas `mise trust`, aunque solo liste herramientas. La confianza va ligada al **hash** del fichero: cualquier cambio lo vuelve a marcar como no confiable y exige revisarlo y confiar de nuevo.
 - **`mise.lock` no es configuración:** un cambio en el lock no pide `mise trust`. Por eso se revisa por la regla 11 de `CLAUDE.md`.
 - En cada instalación vuelve a verificar la procedencia (SLSA, cosign, GitHub attestations) en lugar de fiarse de lo que quedó apuntado en el lock: paranoid activa `locked_verify_provenance` (documentación de mise, «Paranoid mode → Provenance re-verification»). No vuelve a comprobar una herramienta ya instalada.
 
@@ -44,4 +46,5 @@ Al fijar gitleaks, el proxy de Go decía que `v8.30.1` era el commit `8d1f98c` (
 
 - ¿Por qué versiones exactas y un lockfile, si ya fijas la versión en `mise.toml`? La versión dice *qué* instalar; el checksum del lock garantiza que lo descargado es el mismo artefacto en todas las máquinas.
 - ¿Por qué no basta con comparar el checksum con el `checksums.txt` de la release? Porque los dos vienen de la misma fuente: si esa fuente está comprometida, los dos mienten a la vez. Hace falta una fuente independiente, como sum.golang.org.
+- ¿Qué pasa tras un `git pull` que cambia `mise.toml`? Por defecto, el cambio se aplica sin preguntar (confianza por ruta); en modo paranoid, mise no carga el fichero hasta que vuelves a confiar (confianza por contenido).
 - ¿Qué protege el modo paranoid y qué no? Protege contra un `mise.toml` cambiado sin que lo veas; no protege el lock ni sandboxea lo que apruebas.
