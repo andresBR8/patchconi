@@ -43,6 +43,7 @@ Una app de GitHub que abre PRs cuando sale una versión nueva de algo fijado: la
   - **Revisar antes de abril de 2027:** según el calendario oficial (`nodejs/Release`), la 27 sale el 22-abr-2027 con soporte hasta 2030. Node cambia de modelo de versiones y la regla de «solo pares» puede dejar de servir.
 - **gitleaks:** el PR solo se abre cuando lo apruebas en el panel de dependencias. Renovate cambiaría `version` pero no el `Version=` de los `ldflags`, y además hay que repetir la comprobación de la etiqueta frente a proxy.golang.org.
 - **mise en el workflow:** Renovate conoce `jdx/mise-action` (lo vi en su código: lee `version` como la dependencia `jdx/mise` y `sha256` como su digest) y propone subir los dos juntos. También va con aprobación en el panel, para que la CI no se adelante a la mise de la VM de desarrollo: se aprueba cuando se suba allí.
+  - La `version` lleva la «v» (`v2026.10.7`) porque Renovate busca la release por esa etiqueta exacta, y en `jdx/mise` todas empiezan por «v»: con `2026.10.7`, `releases/tags/2026.10.7` daba 404. mise-action quita la «v» por su cuenta (`cleanVersion`).
 
 **Alertas de seguridad:** Renovate abre PRs de seguridad sin esperar al calendario, sin los 3 días y sin pedir la aprobación del panel, ni siquiera para gitleaks. Necesitan las alertas de Dependabot activadas en el repo. Ojo: pnpm sí sigue aplicando sus 3 días (`minimumReleaseAge` estricto), así que un parche de npm de menos de 3 días hará fallar la CI hasta que cumpla. Ver «Saltarse los 3 días».
 
