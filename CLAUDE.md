@@ -30,9 +30,9 @@ PatchConi is a self-hosted, read-only patch compliance dashboard for small Linux
 
 ## Rules
 
-1. Never read, print or copy secrets: `.env*` files (except `.env.example`), tokens, private keys. Never print environment variables.
+1. Never read, print or copy secrets: `.env` files, tokens, private keys. Never print environment variables. The deny rules cover `.env` and `.env.*`, `.env.example` included: permission rules have no `!` exceptions. Handling the template is decided in phase 2.
 2. Stay inside this repository. Never touch other repositories, infrastructure or clusters: `kubectl`, `helm`, `terraform`, `ansible` and `packer` are denied here.
-3. No secrets in versioned files; only `.env.example`. Before each commit: `pre-commit run --all-files` and review `git diff --staged`.
+3. No secrets in versioned files; only `.env.example`. Before each commit: `pre-commit run --all-files` and review `git diff --staged`. Stage files by explicit path: never `git add -A`, `git add .` or `git commit -a`. On Linux the sandbox creates empty placeholder files (`.bashrc`, `.gitconfig`, `.claude/hooks`, ...) while a command runs, and a bulk add would commit them.
 4. Never push. The maintainer runs `git push` from their own terminal after review.
 5. Claude Code does not run Docker or kind: `docker` is denied and the sandbox blocks the Docker socket, because Docker access is root access on the dev machine. When a step needs them, propose the exact command and show any compose file change; the maintainer runs it from their own terminal.
 6. Pin everything: dependencies through the lockfile, tools through `mise`, base images by version (and digest in releases), GitHub Actions by full commit SHA with the version in a comment.

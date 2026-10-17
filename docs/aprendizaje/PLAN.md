@@ -125,6 +125,7 @@ Una fase está terminada cuando cumple los ocho puntos; si falta uno, no empieza
 - Compose con PostgreSQL, API, web y Caddy.
 - CI completa: lint, pruebas, build, Trivy, SBOM y push a GHCR por digest desde `main`.
 - Base de Kustomize con overlay de ejemplo, Job de migraciones y `docs/deployment.md` v0.
+- Decidir cómo tratar la plantilla `.env.example`: las reglas `deny` de `.env.*` también la bloquean y no admiten excepciones con `!`.
 - ADR sobre Docker en desarrollo: Claude Code no tiene acceso a Docker porque equivale a root en vm-dev; tú ejecutas `docker` y `kind`, y la CI hace el resto.
 
 **Criterios de salida:** `docker compose up` muestra la versión y «DB ok»; imágenes en GHCR con digest; manifiestos validados y arrancados en kind dentro de la CI; Trivy sin críticas; CI de menos de 10 minutos.
