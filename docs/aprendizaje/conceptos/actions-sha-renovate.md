@@ -22,7 +22,7 @@
 | `pre-commit run --all-files` | Los mismos hooks que en tu portátil, con `end-of-file-fixer` completo (en la CI no hay `SKIP`) |
 | zizmor online | Auditorías con la API de GitHub: «impostor commits» (un SHA que no pertenece al repo de la action, sino a un fork) y actions con vulnerabilidades conocidas. Usa el token de solo lectura |
 
-El `sha256` del binario de mise viene de dos fuentes independientes que coinciden: el `SHASUMS256.txt` de la release (que lista el binario suelto con su hash) y el binario que la sesión del homelab instaló en la VM de desarrollo.
+El `sha256` del binario de mise viene de dos fuentes independientes que coinciden: el `SHASUMS256.txt` de la release (que lista el binario suelto con su hash) y el binario que ya estaba instalado en la VM de desarrollo, que se instaló por otro camino, fuera de este repo.
 
 La caché de mise-action está activada: guarda las herramientas instaladas, entre ellas el gitleaks compilado. Una caché restaurada no se vuelve a verificar contra `mise.lock` (`--locked` no reinstala lo que ya existe). El riesgo es bajo: la caché de `main` solo la escribe `main` y la de un PR se queda en su rama. Compensa frente a compilar gitleaks en cada ejecución.
 
