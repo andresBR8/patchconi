@@ -40,6 +40,14 @@ PatchConi is a self-hosted, read-only patch compliance dashboard for small Linux
 8. Check current versions (Node LTS, Go, PostgreSQL, libraries, actions) before pinning them. Never pin from memory.
 9. The agent is read-only: it never installs packages or runs commands received from the server. Changing that needs an ADR and explicit approval.
 10. The repository is public: write code, commits and docs as if a stranger reads them tomorrow.
+11. Files that run outside the sandbox are reviewed first. The sandbox only confines Claude Code's own commands; the maintainer, the CI and the users' hosts later run other files with full rights. The criterion: any file, tracked or not, that runs code or configures how code runs outside the sandbox. Every change to such a file is listed at the top of every review and every diff summary, under «Revisar antes de ejecutar»: only the changed files, one line each (what it runs and when), or «Nada». The maintainer reviews them before running anything. The list includes at least:
+    - Package managers: `package.json` (scripts, `packageManager`), `.pnpmfile.cjs`, `pnpm-workspace.yaml`, `pnpm-lock.yaml`, `.npmrc`, `go.mod`, `go.sum`
+    - Toolchain: `mise.toml`, `mise.*.toml`, `.mise.toml`, `.config/mise*`, `mise.lock`, `.tool-versions`
+    - Hooks and task runners: `.pre-commit-config.yaml`, `.husky/`, `lefthook.yml`, `Makefile`, `justfile`, `Taskfile.yml`, `scripts/`, `.envrc`, `.git/hooks/`, `.git/config`
+    - Tool configs written in code: `*.config.{js,cjs,mjs,ts}` (ESLint, Vite, Vitest, Drizzle, ...)
+    - CI and editors: `.github/**`, `.vscode/**`, `.devcontainer/`, `.idea/`
+    - Containers and deployment: `Dockerfile*`, `compose*.y*ml`, `deploy/**`, agent packaging (systemd units, package scripts)
+    - Claude Code: every `CLAUDE.md`, everything under `.claude/`, `.mcp.json`
 
 ## Conventions
 
