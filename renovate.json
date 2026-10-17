@@ -35,7 +35,7 @@
     },
     {
       "description": "mise version and sha256 in the workflow: keep CI in step with the mise installed on the development machine.",
-      "matchDepNames": ["jdx/mise"],
+      "matchPackageNames": ["jdx/mise"],
       "dependencyDashboardApproval": true,
       "prBodyNotes": ["Upgrade mise on the development machine at the same time."]
     }
