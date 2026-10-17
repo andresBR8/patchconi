@@ -23,6 +23,7 @@ PatchConi is a self-hosted, read-only patch compliance dashboard for small Linux
 - One step at a time. Before changing anything, explain in 2–6 lines what you will do and why, then wait for an OK.
 - Explain the reasoning behind every technical decision, not just the command. The maintainer is learning and must be able to explain every piece.
 - Work on a branch `phase-NN/<topic>` with small commits. The maintainer reviews, pushes and opens the PR; CI must be green before merging.
+- Create branches with `git switch --no-track -c <branch> origin/main`: the sandbox does not allow writing `.git/config`, so without `--no-track` git fails to record the upstream, the switch exits with an error and you stay on `main`. Run `git branch --show-current` before every commit.
 - Run the `verify` skill before every commit. Run the `reviewer` subagent on the diff before asking for review.
 - A phase only closes through `/close-phase` (Definition of Done in `PLAN.md`).
 - If two options are reasonable, ask. If one is clearly better, say which and why.
