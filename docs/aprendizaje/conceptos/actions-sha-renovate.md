@@ -67,7 +67,7 @@ minimumReleaseAgeExclude:
 - **En un PR propio, revisado como cualquier cambio de la regla 11:** `pnpm-workspace.yaml` decide qué código se instala.
 - **Se quita en la fecha anotada**, con otro PR.
 
-Pendiente: no he podido reproducirlo con pnpm, porque dentro del sandbox no puede escribir su bloqueo del store; se confirma en el primer caso real.
+Pendiente: no he podido reproducirlo con pnpm, porque dentro del sandbox no puede escribir su bloqueo del store; se confirma en el primer caso real ([issue #11](https://github.com/andresBR8/patchconi/issues/11)).
 
 **pip es distinto:** fijar la versión del parche **no basta**, porque `PIP_UPLOADED_PRIOR_TO` filtra también las versiones exactas.
 - Probado con el pip 26.2.1 de pre-commit: con `P3D`, una versión subida hace 2 días da «No matching distribution»; con `P1D`, se instala.

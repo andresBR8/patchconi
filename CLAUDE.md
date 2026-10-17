@@ -63,8 +63,8 @@ PatchConi is a self-hosted, read-only patch compliance dashboard for small Linux
 
 Filled in as they come to exist. Phase 0 target:
 
-- `mise install` — install the pinned toolchain
-- `pnpm install` — install dependencies (`--frozen-lockfile` in CI)
+- `mise install` — install the pinned toolchain (maintainer, outside the sandbox)
+- `pnpm install` — install dependencies (`--frozen-lockfile` in CI) (maintainer, outside the sandbox)
 - `pnpm lint` · `pnpm typecheck` · `pnpm test`
 - `pre-commit run --all-files`
 
