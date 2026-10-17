@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Build and test output
+dist/
+build/
+coverage/
+agent/bin/
+
+# Environment files: only .env.example is versioned
+.env
+.env.*
+!.env.example
+
+# Claude Code personal files
+.claude/settings.local.json
+CLAUDE.local.md
+
+# OS and editors
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Logs
+*.log
