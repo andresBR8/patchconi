@@ -27,7 +27,7 @@ Most compromised packages and releases are published by someone who stole a main
 **4. pre-commit hooks from PyPI with pinned dependencies.** The pre-commit-hooks checks run as `repo: local` hooks with `additional_dependencies: ["pre-commit-hooks==6.0.0", "ruamel.yaml==0.19.1"]`, identical in every hook so that one environment is built, and `language: python` so Renovate can update them. Their definitions are copied from the upstream manifest at v6.0.0.
 
 - pre-commit drops `GIT_CONFIG_PARAMETERS`, so it cannot clone the hook repository through the assistant's sandbox proxy.
-- A prebuilt wheel avoids downloading setuptools to build the package from source.
+- A prebuilt wheel avoids building pre-commit-hooks from source. (pip still downloads setuptools once, to build pre-commit's placeholder package; `PIP_UPLOADED_PRIOR_TO` delays it.)
 - gitleaks, actionlint (with shellcheck) and zizmor run as `system` hooks with the binaries pinned by mise.
 
 **5. Updates that need a human decision.** In Renovate:
@@ -50,7 +50,7 @@ Most compromised packages and releases are published by someone who stole a main
 - **Install the latest release immediately** — exposes every machine and CI run to compromised releases during the window when they are most likely to be live.
 - **Pin actions by tag** — tags can be moved; a SHA cannot.
 - **Allow dependency install scripts by default** — the most common way malicious npm packages run code.
-- **pre-commit-hooks from its git repository pinned by SHA** — the strongest pin, but it cannot be cloned through the sandbox proxy, and it needs setuptools to build.
+- **pre-commit-hooks from its git repository pinned by SHA** — the strongest pin, but it cannot be cloned through the sandbox proxy, and pip has to build the package from source.
 
 ## Consequences
 

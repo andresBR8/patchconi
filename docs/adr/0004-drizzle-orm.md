@@ -13,11 +13,11 @@ The API is the only component that talks to PostgreSQL. Its core queries are abo
 [Drizzle](https://orm.drizzle.team/) for schema, queries and migrations.
 
 - SQL stays explicit: age and aggregate queries are written close to the SQL they produce, so they can be read and tuned.
-- Migrations are generated as plain SQL files that are reviewed like any other change.
+- Migrations are plain SQL files that are reviewed like any other change.
 
 ## Alternatives considered
 
-- **Prisma** — its query API hides the SQL, which makes age and aggregate queries harder to express and tune, and its migrations are less direct to review.
+- **Prisma** — its query API hides the SQL, which makes age and aggregate queries harder to express and tune. (Prisma Migrate also generates SQL migrations, so migrations are not the difference.)
 
 ## Consequences
 

@@ -24,7 +24,7 @@
 - **Default trust (by path)** — after a `git pull`, a changed `mise.toml` applies without asking.
 - **Fuzzy versions (`node = "24"`) resolved by the lockfile only** — the version that gets installed changes without a visible change to `mise.toml`.
 - **gitleaks release binaries**, checked against the release's `checksums.txt` — rejected because of the moved tag (see above).
-- **`minimum_release_age` in mise** — mise does not apply it to exact versions or versions recorded in `mise.lock`, so it adds nothing here.
+- **`minimum_release_age` in mise** — mise does not apply it to exact versions or versions recorded in `mise.lock` ([mise documentation, «What the cutoff applies to»](https://mise.jdx.dev/security.html#what-the-cutoff-applies-to)), so it adds nothing here.
 - **Letting the assistant run `mise install`** — rejected in ADR 0016.
 
 ## Consequences
