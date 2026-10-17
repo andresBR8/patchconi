@@ -1,0 +1,107 @@
+# Pre-commit hooks. Install once with `pre-commit install`; run everything with
+# `pre-commit run --all-files`. Tool versions come from mise.toml.
+minimum_pre_commit_version: "4.7.0"
+
+repos:
+  # Generic file hygiene from pre-commit-hooks 6.0.0, installed as a wheel from
+  # PyPI instead of cloning the git repository: pre-commit drops
+  # GIT_CONFIG_PARAMETERS, so it cannot clone through the Claude Code sandbox
+  # proxy, and a prebuilt wheel avoids downloading setuptools to build it.
+  # Each definition (entry, types, stages) is copied from .pre-commit-hooks.yaml
+  # at commit 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c (tag v6.0.0).
+  # Every hook lists the same additional_dependencies so pre-commit builds a
+  # single environment; `language: python` lets Renovate update both pins.
+  - repo: local
+    hooks:
+      - id: trailing-whitespace
+        name: trim trailing whitespace
+        entry: trailing-whitespace-fixer
+        language: python
+        types: [text]
+        stages: [pre-commit, pre-push, manual]
+        additional_dependencies: ["pre-commit-hooks==6.0.0", "ruamel.yaml==0.19.1"]
+      - id: end-of-file-fixer
+        name: fix end of files
+        entry: end-of-file-fixer
+        language: python
+        types: [text]
+        stages: [pre-commit, pre-push, manual]
+        additional_dependencies: ["pre-commit-hooks==6.0.0", "ruamel.yaml==0.19.1"]
+      - id: check-yaml
+        name: check yaml
+        entry: check-yaml
+        language: python
+        types: [yaml]
+        # pnpm 12 writes pnpm-lock.yaml as two YAML documents.
+        args: [--allow-multiple-documents]
+        additional_dependencies: ["pre-commit-hooks==6.0.0", "ruamel.yaml==0.19.1"]
+      - id: check-json
+        name: check json
+        entry: check-json
+        language: python
+        types: [json]
+        additional_dependencies: ["pre-commit-hooks==6.0.0", "ruamel.yaml==0.19.1"]
+      - id: check-toml
+        name: check toml
+        entry: check-toml
+        language: python
+        types: [toml]
+        additional_dependencies: ["pre-commit-hooks==6.0.0", "ruamel.yaml==0.19.1"]
+      - id: check-merge-conflict
+        name: check for merge conflicts
+        entry: check-merge-conflict
+        language: python
+        types: [text]
+        # Without it the hook returns success outside a merge without reading
+        # any file, so `pre-commit run --all-files` would check nothing.
+        args: [--assume-in-merge]
+        additional_dependencies: ["pre-commit-hooks==6.0.0", "ruamel.yaml==0.19.1"]
+      - id: check-added-large-files
+        name: check for added large files
+        entry: check-added-large-files
+        language: python
+        stages: [pre-commit, pre-push, manual]
+        # Without it only files newly added to the index are checked: nothing on
+        # `--all-files`, and a tracked file that grows is never caught.
+        args: [--enforce-all]
+        additional_dependencies: ["pre-commit-hooks==6.0.0", "ruamel.yaml==0.19.1"]
+      - id: detect-private-key
+        name: detect private key
+        entry: detect-private-key
+        language: python
+        types: [text]
+        additional_dependencies: ["pre-commit-hooks==6.0.0", "ruamel.yaml==0.19.1"]
+
+  # Security tools installed by mise (single source of versions).
+  - repo: local
+    hooks:
+      # What is about to be committed. The official gitleaks hook does only this,
+      # so on `pre-commit run --all-files` (nothing staged) it checks nothing.
+      - id: gitleaks-staged
+        name: gitleaks (staged changes)
+        entry: gitleaks git --pre-commit --staged --redact --no-banner
+        language: system
+        pass_filenames: false
+      # The whole git history, so `--all-files` (verify skill, CI) checks something real.
+      - id: gitleaks-history
+        name: gitleaks (git history)
+        entry: gitleaks git --redact --no-banner
+        language: system
+        pass_filenames: false
+        always_run: true
+      # actionlint lints `run:` scripts with the shellcheck pinned in mise.toml.
+      # pyflakes is disabled: there is no Python in the workflows, and an
+      # unpinned copy found on PATH would make results differ between machines.
+      - id: actionlint
+        name: actionlint
+        entry: actionlint -pyflakes=
+        language: system
+        types: [yaml]
+        files: ^\.github/workflows/
+      # Offline locally (no token); CI runs it online as well.
+      - id: zizmor
+        name: zizmor (offline)
+        entry: zizmor --offline --no-progress .
+        language: system
+        pass_filenames: false
+        files: ^(\.github/|\.pre-commit-config\.yaml$)
