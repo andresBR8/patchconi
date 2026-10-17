@@ -7,6 +7,9 @@ node = "24.22.0"
 go = "1.27.2"
 "aqua:pnpm/pnpm" = "12.13.0"
 "aqua:rhysd/actionlint" = "1.7.12"
+# Used by actionlint to lint `run:` scripts. Pinned so local and CI results match
+# (GitHub-hosted runners ship their own unpinned shellcheck).
+"aqua:koalaman/shellcheck" = "0.11.0"
 "aqua:zizmorcore/zizmor" = "1.30.1"
 "aqua:pre-commit/pre-commit" = "4.7.0"
 # Built from source instead of the release binaries: the v8.30.1 tag was moved
@@ -19,6 +22,12 @@ go = "1.27.2"
 # (GOSUMDB=off, GOPROXY=direct, GONOSUMDB, ...) can silently skip the proxy or
 # the checksum database: mise.lock records no checksum for go: tools.
 "go:github.com/zricethezav/gitleaks/v8" = { version = "8.30.1", tags = ["gore2regex"], install_env = { CGO_ENABLED = "0", GOTOOLCHAIN = "local", GOFLAGS = "-ldflags=-X=github.com/zricethezav/gitleaks/v8/version.Version=8.30.1", GOPROXY = "https://proxy.golang.org", GOSUMDB = "sum.golang.org", GONOPROXY = "", GONOSUMDB = "", GOPRIVATE = "", GOINSECURE = "" } }
+
+[env]
+# pip only installs packages uploaded at least 3 days ago. It also applies to
+# pip's isolated builds, such as the setuptools that pre-commit downloads to
+# build its placeholder package for Python hooks.
+PIP_UPLOADED_PRIOR_TO = "P3D"
 
 [settings]
 # Keep mise.lock (versions, URLs and checksums) up to date on every install.
