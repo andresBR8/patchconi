@@ -53,7 +53,7 @@ Si Claude, o una dependencia comprometida que influya en lo que escribe, mete al
 
 1. **Regla 11 de `CLAUDE.md`:** el criterio es «todo fichero, versionado o no, que ejecuta código o configura cómo se ejecuta fuera del sandbox». La tabla anterior son ejemplos, no la lista completa. Cada cambio en uno de ellos se lista en «Revisar antes de ejecutar», con una línea por fichero.
 2. **Subagente `reviewer`:** su punto 0, obligatorio, aplica ese criterio y abre el informe con esa lista.
-3. **mise en modo paranoid:** está configurado en el `config.toml` global de mise de la VM de desarrollo, fuera del repo. Un `mise.toml` cambiado deja de ser de confianza hasta que lo revisas y ejecutas `mise trust`. Pendiente de comprobar en el paso 2 de la fase 0: si un cambio en `mise.lock` también exige `mise trust`.
+3. **mise en modo paranoid:** está configurado en el `config.toml` global de mise de la VM de desarrollo, fuera del repo. Un `mise.toml` cambiado deja de ser de confianza hasta que lo revisas y ejecutas `mise trust`. Un cambio en `mise.lock` **no** exige `mise trust`, porque paranoid solo vigila los ficheros de configuración (comprobado en la documentación de mise el 17-oct-2026). Por eso `mise.lock` está en la regla 11.
 4. **Tú ejecutas las instalaciones** (`mise install`, `pnpm install`, `docker`), no Claude.
 
 La regla 11 marca **prioridades** de revisión; no sustituye revisar el resto del diff. Tus `pnpm test` y la CI también ejecutan el código de producto que escribe Claude.
