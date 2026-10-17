@@ -23,7 +23,7 @@ Three layers, configured in the versioned `.claude/settings.json` and in `CLAUDE
 
 - Denied commands: `docker`, `kind`, `kubectl`, `helm`, `terraform`, `ansible`, `packer`, `npm`, `npx`, `yarn`, `git push`, bulk `git add` and printing the environment.
 - Edit and Write do not go through the sandbox, so `Edit` rules deny them on shell dotfiles, user configuration and caches, user-level Claude Code configuration, parent-directory mise and direnv files, and the repository's `.git/hooks` and `.git/config`. `Read` rules repeat the credential paths above.
-- Installations are run by the maintainer, after review, from their own terminal. `mise install` and `pnpm install` are still in `allow`, but inside the sandbox they fail because it cannot write to the tool caches.
+- Installations are run by the maintainer, after review, from their own terminal. `mise install`, `pnpm install` and `pnpm install --frozen-lockfile` are not in `allow` (removed when phase 0 closed), so the assistant would need explicit approval for each run, and inside the sandbox they fail anyway because it cannot write to the tool caches.
 
 **3. Human review of files that run outside the sandbox** (rule 11 in `CLAUDE.md`). Any file, tracked or not, that a tool executes or that changes what a tool executes is listed under «Revisar antes de ejecutar» in every review. The `reviewer` subagent's first, mandatory check produces that list.
 
@@ -41,7 +41,7 @@ Two operational rules follow from the sandbox:
 
 - **Permission rules only, without the sandbox** — `deny` rules restrain the assistant but are not a boundary: `Bash(curl *)` does not stop `/usr/bin/curl …` or `sh -c 'curl …'`. The real boundary is the operating-system sandbox.
 - **Letting Docker out of the sandbox with a narrow pattern** (`docker compose *`) — rejected because the assistant writes `compose.yaml`, and a compose file can mount `~/.ssh` or the whole disk into a container.
-- **Denying every read outside the repository** instead of a list of paths — stronger, but it may break Node.js and pnpm, which read files outside the repository. Pending: try it before phase 0 closes.
+- **Denying every read outside the repository** instead of a list of paths — stronger, but it may break Node.js and pnpm, which read files outside the repository. Not tried yet: tracked in [issue #10](https://github.com/andresBR8/patchconi/issues/10).
 - **Letting the assistant run installations itself**, with write access to the tool caches — convenient, but it could poison binaries that later run outside the sandbox.
 - **A blanket `Edit(~/.*/**)` deny** — simpler than a list, but `deny` rules have no exceptions, so it would also block files the assistant legitimately writes under its own configuration directory (plans and memory).
 - **`~/homelab` rules in `settings.local.json` or in the user-level settings** — rejected for the reasons above.
@@ -54,6 +54,6 @@ Two operational rules follow from the sandbox:
 - Negative and trade-offs: the sandbox workarounds are **not** versioned. pre-commit's cache directory (`PRE_COMMIT_HOME`), `SKIP=end-of-file-fixer` (the hook opens every file for writing and `.claude/` is read-only in the sandbox) and Go's build cache (`GOCACHE`) live in `.claude/settings.local.json` because their paths depend on the user's UID. A fresh clone has to recreate them; the pre-commit learning note describes them.
 - Negative and trade-offs: `settings.json` names a local folder (`~/homelab`), which is environment-specific in a strict sense.
 - Follow-ups:
-  - Decide when phase 0 closes whether to remove `mise install` and `pnpm install` from `allow`.
-  - Try denying every read outside the repository when phase 0 closes.
+  - Resolved when phase 0 closed: `mise install`, `pnpm install` and `pnpm install --frozen-lockfile` were removed from `allow`.
+  - Try denying every read outside the repository: [issue #10](https://github.com/andresBR8/patchconi/issues/10) (phase 1).
   - Review the Docker part in phase 2, when Docker enters development; a new ADR if it changes.
