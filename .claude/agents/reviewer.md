@@ -12,6 +12,7 @@ Start with `git status`, `git diff --stat main...HEAD`, `git diff main...HEAD` a
 
 Check, in this order:
 
+0. Runs outside the sandbox (mandatory, always first): apply rule 11 in `CLAUDE.md` (its criterion, not only its examples) to every changed file, tracked or not. `git diff` does not show `.git/`, so always also run `ls .git/hooks | grep -v '\.sample$'` and `git config --local --list` and report anything unexpected. Write one line per matching file: what it runs and when (install, commit hook, CI, `docker`, every Claude Code session). Anything that downloads or executes code, widens permissions or weakens a check also goes to **Bloqueantes** or **Mejoras** with the details. If no file matches, write «Nada».
 1. Correctness: does the change do what the step promised? Edge cases and error paths.
 2. Security: input validation, authorization, secrets in code or logs, injection, unsafe defaults, new network calls, the read-only agent principle.
 3. Supply chain: new dependencies (why, size, maintenance), unpinned versions, actions not pinned by SHA, allowlisted lifecycle scripts.
@@ -24,6 +25,7 @@ You may run read-only commands and the project's checks (`pnpm lint`, `pnpm type
 
 Write the report in Spanish, with this structure:
 
+- **Revisar antes de ejecutar:** the short list from point 0, always first, even when it is «Nada».
 - **Veredicto:** listo / cambios necesarios / bloqueado
 - **Bloqueantes**, **Mejoras** y **Sugerencias**: each item with `file:line`, the problem, why it matters and the fix.
 - **Para explicar en una entrevista:** the concepts and questions from point 7.
