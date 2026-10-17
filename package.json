@@ -1,0 +1,10 @@
+{
+  "name": "patchconi",
+  "private": true,
+  "description": "Self-hosted, read-only patch compliance dashboard for small Linux fleets",
+  "license": "Apache-2.0",
+  "packageManager": "pnpm@12.13.0",
+  "engines": {
+    "node": "^24.22.0"
+  }
+}

@@ -1,0 +1,27 @@
+packages:
+  - apps/*
+  - packages/*
+
+# Supply-chain hardening. See docs/aprendizaje/conceptos/pnpm-cadena-suministro.md.
+
+# Only install versions published at least 3 days (in minutes) ago. Setting it
+# explicitly also makes it strict: resolution fails instead of falling back.
+minimumReleaseAge: 4320
+
+# Fail the install if any dependency has a build script that is not reviewed.
+strictDepBuilds: true
+
+# Dependencies allowed to run install scripts. Empty on purpose: every entry
+# needs a comment with the reason it is required.
+allowBuilds: {}
+
+# Fail if a package's trust evidence (trusted publisher, provenance) is weaker
+# than in earlier releases: a common sign of a hijacked package.
+trustPolicy: no-downgrade
+
+# Only direct dependencies may come from git repositories or tarball URLs.
+blockExoticSubdeps: true
+
+# No "new pnpm available" notice: its advice (a curl | sh installer) bypasses
+# mise and mise.lock. pnpm is upgraded through Renovate PRs only.
+updateNotifier: false
