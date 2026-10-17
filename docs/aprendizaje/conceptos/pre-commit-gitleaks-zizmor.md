@@ -59,7 +59,7 @@ gitleaks, actionlint y zizmor van como `repo: local` con `language: system`: pre
 Lo normal es `repo: https://github.com/pre-commit/pre-commit-hooks` con `rev:` fijado por SHA. No sirve aquí por dos motivos:
 
 1. **El sandbox de Claude Code.** El sandbox pasa a git la configuración de su proxy en la variable `GIT_CONFIG_PARAMETERS`, y pre-commit lanza git con un entorno filtrado que la descarta (`no_git_env`). El `git fetch` del repo de hooks no pasa por el proxy y falla. Comprobado a mano: el mismo `fetch` funciona con la variable y falla sin ella.
-2. **setuptools.** Desde git, pip tiene que **construir** el paquete, y para eso descarga setuptools.
+2. **Compilar desde el código fuente.** Desde git, pip tiene que **construir** pre-commit-hooks a partir del código; con la wheel de PyPI instala un paquete ya construido. setuptools se descarga igual, una vez, para el paquete placeholder de pre-commit (ver «Riesgos que quedan»).
 
 Así que los 8 hooks van como `repo: local` + `language: python`, con `additional_dependencies: ["pre-commit-hooks==6.0.0", "ruamel.yaml==0.19.1"]`:
 

@@ -6,7 +6,8 @@ repos:
   # Generic file hygiene from pre-commit-hooks 6.0.0, installed as a wheel from
   # PyPI instead of cloning the git repository: pre-commit drops
   # GIT_CONFIG_PARAMETERS, so it cannot clone through the Claude Code sandbox
-  # proxy, and a prebuilt wheel avoids downloading setuptools to build it.
+  # proxy, and a prebuilt wheel avoids building pre-commit-hooks from source
+  # (pip still downloads setuptools once, for pre-commit's placeholder package).
   # Each definition (entry, types, stages) is copied from .pre-commit-hooks.yaml
   # at commit 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c (tag v6.0.0).
   # Every hook lists the same additional_dependencies so pre-commit builds a
