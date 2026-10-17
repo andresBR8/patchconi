@@ -1,0 +1,43 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:best-practices", ":enablePreCommit"],
+  "minimumReleaseAge": "3 days",
+  "internalChecksFilter": "strict",
+  "dependencyDashboard": true,
+  "schedule": ["* 0-8 * * 6"],
+  "lockFileMaintenance": {
+    "schedule": ["* 0-8 * * 6"]
+  },
+  "packageRules": [
+    {
+      "description": "pnpm is pinned twice (mise.toml and packageManager in package.json); update both together.",
+      "groupName": "pnpm",
+      "matchPackageNames": ["pnpm", "pnpm/pnpm"]
+    },
+    {
+      "description": "Only even Node.js majors, which become LTS. Revisit before April 2027: Node 27 starts a new release schedule.",
+      "matchDepNames": ["node"],
+      "allowedVersions": "/^\\d*[02468]\\./"
+    },
+    {
+      "description": "A new Node.js major is not LTS on release day.",
+      "matchDepNames": ["node"],
+      "matchUpdateTypes": ["major"],
+      "prBodyNotes": ["Do not merge before this version is LTS (Node 26: 2026-10-28)."]
+    },
+    {
+      "description": "gitleaks is built from source; its version also appears in the ldflags and the tag must be checked against proxy.golang.org.",
+      "matchDepNames": ["go:github.com/zricethezav/gitleaks/v8"],
+      "dependencyDashboardApproval": true,
+      "prBodyNotes": [
+        "Update the ldflags version in install_env too, and check that the GitHub tag matches proxy.golang.org before merging."
+      ]
+    },
+    {
+      "description": "mise version and sha256 in the workflow: keep CI in step with the mise installed on the development machine.",
+      "matchDepNames": ["jdx/mise"],
+      "dependencyDashboardApproval": true,
+      "prBodyNotes": ["Upgrade mise on the development machine at the same time."]
+    }
+  ]
+}
