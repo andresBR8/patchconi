@@ -67,7 +67,15 @@ minimumReleaseAgeExclude:
 - **En un PR propio, revisado como cualquier cambio de la regla 11:** `pnpm-workspace.yaml` decide qué código se instala.
 - **Se quita en la fecha anotada**, con otro PR.
 
-Lo mismo vale para pip (`PIP_UPLOADED_PRIOR_TO` en `mise.toml`) y para las herramientas de mise, pero en esos casos fijamos versiones a mano: basta con fijar la versión del parche y explicar la excepción en el PR.
+Pendiente: no he podido reproducirlo con pnpm, porque dentro del sandbox no puede escribir su bloqueo del store; se confirma en el primer caso real.
+
+**pip es distinto:** fijar la versión del parche **no basta**, porque `PIP_UPLOADED_PRIOR_TO` filtra también las versiones exactas.
+- Probado con el pip 26.2.1 de pre-commit: con `P3D`, una versión subida hace 2 días da «No matching distribution»; con `P1D`, se instala.
+- pip 26.2.1 **no permite excluir un solo paquete**. La excepción es cambiar temporalmente `PIP_UPLOADED_PRIOR_TO` en `mise.toml` a una marca absoluta justo después de la subida del parche. Probado: funciona al minuto.
+- Esa excepción abre la ventana para todo lo que pip resuelva en esa ejecución, incluido setuptools, así que se mantiene lo mínimo. La otra opción es esperar a que el parche cumpla 3 días.
+- Un pip antiguo (24.0) ignora la variable sin avisar. Solo funciona con el pip que trae el virtualenv de pre-commit.
+
+Detalle completo en el [ADR 0018](../../adr/0018-supply-chain-policy.md).
 
 ## Permisos de la app de Renovate y por qué es seguro
 
