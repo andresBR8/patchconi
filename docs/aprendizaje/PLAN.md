@@ -119,6 +119,7 @@ Una fase está terminada cuando cumple los ocho puntos; si falta uno, no empieza
 
 ### Fase 2 · Esqueleto andante
 
+- **Antes de empezar:** subir Node de 24 a 26 LTS (LTS desde el 28-oct-2026) en `mise.toml` y `engines.node`. La fase 0 fijó Node 24.22.0 porque la 26 aún no era LTS.
 - API mínima: `/healthz`, `/readyz`, `/api/v1/version`, configuración validada, logs JSON y apagado limpio.
 - Web mínima que muestra la versión de la API y el estado de la base de datos.
 - Dockerfiles multietapa sin root y compatibles con sistema de ficheros de solo lectura.
