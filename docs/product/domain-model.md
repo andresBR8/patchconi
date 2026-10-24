@@ -23,6 +23,7 @@ erDiagram
     HOST ||--o{ HOST_LABEL : has
     HOST ||--o{ AGENT_TOKEN : "authenticates with"
     HOST ||--o{ AGENT_INSTANCE : "runs"
+    HOST |o--o| AGENT_INSTANCE : "current instance"
     HOST ||--o{ REPORT : sends
     AGENT_INSTANCE ||--o{ REPORT : "numbered by"
     AGENT_TOKEN ||--o{ REPORT : "signed in with"
@@ -45,10 +46,12 @@ erDiagram
         timestamptz retired_at "null while active"
         uuid retired_by FK
         timestamptz first_trusted_report_at "null until the first trusted report"
-        uuid last_applied_report_id FK
+        uuid last_applied_report_id FK "not used for ordering"
         timestamptz reboot_required_since
         text machine_fingerprint "known fingerprint"
-        timestamptz machine_fingerprint_set_at "null until known"
+        timestamptz machine_fingerprint_set_at "null: no identity"
+        uuid current_instance_id FK "null: no identity"
+        bigint last_applied_sequence "null: no identity"
         timestamptz agent_alert_at "null when no alert"
         text agent_alert_reason "null when no alert"
     }
@@ -241,12 +244,21 @@ Exceptions follow [ADR 0019](../adr/0019-patch-policy-as-code.md): they are conf
 
 1. **Reports are applied in order, one host at a time.** Reports can arrive out of order (a host that was off, a retry) or at the same time (the agent's timer and a run after a package transaction). Ingestion for one host is serialized with a per-host lock in PostgreSQL (a row lock on the host or an advisory lock, as the scheduler uses in [ADR 0009](../adr/0009-scheduler-inside-the-api.md); chosen in phase 4). The order comes from the agent's instance and sequence, never from the host clock, and the [protocol](protocol.md#ordering-and-identity) gives the rules in full. Under the lock:
    - **Duplicates first.** A `report_id` already stored for the host is compared by `body_sha256`: the same hash is answered `200`, a different one `409`, and nothing is stored.
-   - **Known fingerprint.** When `host.machine_fingerprint_set_at` is null, the report's fingerprint becomes the known one. A report with a different fingerprint is not applied (`fingerprint_mismatch`).
-   - **Instances.** A report from an instance new to the host is applied and creates an `agent_instance` row; that instance is now current. A report from the current instance is applied when its `sequence` is higher than the last applied one (`sequence_regression` otherwise). A report from a known instance that is not current is not applied (`superseded_instance`).
+   - **Instance record.** If the report's `agent_instance_id` has no `agent_instance` row for the host, the row is created now, whether or not the report is applied, so `report.agent_instance_row_id` always has a target. An instance is *new to the host* when it had no row before this report.
+   - **Identity.** The host's identity is `machine_fingerprint` with `machine_fingerprint_set_at`, `current_instance_id` and `last_applied_sequence`. They are null after enrollment and after a token rotation, and are set and reset together.
+   - **No identity.** When the host has no identity, the report is applied whatever its instance (new or seen before) and its fingerprint, and it sets the identity: its fingerprint, its instance as current, its `sequence` as the last applied. If [#14](https://github.com/andresBR8/patchconi/issues/14) adds a grace period with two valid tokens, only a report with the newest token can set the identity.
+   - **With an identity,** the first rule that matches decides:
+     1. A fingerprint different from the known one: not applied (`fingerprint_mismatch`).
+     2. An instance new to the host: applied; `current_instance_id` and `last_applied_sequence` take its values.
+     3. The current instance with a `sequence` higher than `last_applied_sequence`: applied, and `last_applied_sequence` is updated.
+     4. The current instance with a lower or equal `sequence`: not applied (`sequence_regression`).
+     5. A known instance that is not current: not applied (`superseded_instance`). This only happens when there is a current instance.
 
-   A report that is not applied is stored with `applied = false` and changes neither episodes nor state. `fingerprint_mismatch` and `superseded_instance` open an **agent alert** at once; `sequence_regression` opens one when the host's previous report was also a `sequence_regression`. An open alert sets `host.agent_alert_at` (if it is not set) and `agent_alert_reason`, and the host detail and the fleet overview show it. An administrator clears it. Rotating the host's token also clears it and resets `machine_fingerprint_set_at`, so the first report with the new token sets the known fingerprint again. Whether an alert also sends a webhook is decided in phase 4.
+   A report that is not applied is stored with `applied = false` and changes neither episodes nor state. `fingerprint_mismatch` and `superseded_instance` open an **agent alert** at once; `sequence_regression` opens one when the host's previous report was also a `sequence_regression`. An open alert sets `host.agent_alert_at` (if it is not set) and `agent_alert_reason`, and the host detail and the fleet overview show it. Whether an alert also sends a webhook is decided in phase 4.
+
+   **Clearing and recovering.** An administrator can clear an alert, but that does not change which reports are applied. To recover a host, the administrator rotates its token: the rotation clears the alert and resets the whole identity, so the first report with the new token is applied as if it were the host's first. That is what brings back the real agent after someone with the old token made their instance current, or sent a huge `sequence`.
 2. **One source of truth for the state.** The policy evaluation is a pure function of the domain: facts, policy, exceptions, lifecycle table and *now*, passed as a parameter, return a state and its reasons. It has no database access and no clock inside. Ingestion, reads and the scheduler all call it, so they always agree. Only ingestion and the scheduler record its output as transitions; a read returns the result without writing it.
-3. **History only grows.** Resolved episodes and state transitions are immutable: if the package has an update pending again, a new episode is opened, and a correction is a new transition, never an edit of an old one. Only the retention job deletes them, in batches. Current facts do change in place: an open episode's clocks and candidates (`last_seen_at`), the host's `last_applied_report_id` and `reboot_required_since`, a token's `last_used_at` and revocation, a webhook delivery's attempts.
+3. **History only grows.** Resolved episodes and state transitions are immutable: if the package has an update pending again, a new episode is opened, and a correction is a new transition, never an edit of an old one. Only the retention job deletes them, in batches. Current facts do change in place: an open episode's clocks and candidates (`last_seen_at`), the host's `last_applied_report_id`, identity and `reboot_required_since`, a token's `last_used_at` and revocation, a webhook delivery's attempts.
 4. **Tokens are stored as keyed hashes.** Agent tokens are random with high entropy, so they are stored with HMAC-SHA-256 and a server key, not with bcrypt or Argon2, which are slow on purpose to protect low-entropy passwords. A token has a public part, used to find the row, and a secret part, whose HMAC is compared in constant time. `hmac_key_id` allows the server key to be rotated. The key is a new server secret: if it is lost, every agent token stops working. How it is supplied and rotated is decided in phase 4 (follow-up in [ADR 0006](../adr/0006-per-host-agent-tokens.md)).
 5. **The server never compares versions.** `dpkg` and `rpm` have their own ordering rules (epochs, `~`, release tags). Versions are opaque text, compared only for equality. Whether an update is pending is decided by the package manager on the host.
 
@@ -256,12 +268,13 @@ Exceptions follow [ADR 0019](../adr/0019-patch-policy-as-code.md): they are conf
 - **Timestamps** are `timestamptz` in UTC. Names say whose clock it is: `agent_*` for anything measured on the host, everything else is the server clock.
 - **NOT NULL by default.** A nullable column has a stated meaning, listed under [nullable columns](#nullable-columns). Invariants are `CHECK` constraints, for example `resolved_at >= first_seen_at`, `pending_since <= first_seen_at` and `pending_since <= security_since`. Closed sets of values are `text` with a `CHECK`, not PostgreSQL enums, which are harder to change in a migration.
 - **Foreign keys** use `ON DELETE RESTRICT`. Hosts are retired and users deactivated, never deleted; the retention job deletes children before parents.
+- **A host's current instance is one of its own.** The foreign key is composite, `host (id, current_instance_id)` → `agent_instance (host_id, id)`, backed by a unique constraint on `agent_instance (host_id, id)`. With the default `MATCH SIMPLE`, a null `current_instance_id` (no identity) is not checked.
 - **jsonb** only for copies and data that is displayed (`held_packages`, `reasons`, `applied_exceptions`), never for anything that is filtered on or joined.
 - **Indexes** follow the main queries, and each one is confirmed with `EXPLAIN` in phase 3:
   - fleet overview: last transition per host (`host_id, effective_at DESC`);
   - open episodes of a host: partial unique index on `(host_id, package_name, package_arch) WHERE resolved_at IS NULL`, which also enforces one open episode per package;
   - reports of a host: `(host_id, received_at DESC)` and unique `(host_id, report_id)`;
-  - agent instances: unique `(host_id, instance_id)`;
+  - agent instances: unique `(host_id, instance_id)`, and unique `(host_id, id)` for the composite foreign key;
   - history: transitions `(host_id, effective_at)`;
   - active host names: partial unique index on `name` `WHERE retired_at IS NULL`.
 - **Validation in three layers:** the protocol schema at the API boundary (step 5), the invariants in the domain code, and the constraints in the database.
@@ -276,8 +289,9 @@ Every other column is `NOT NULL`.
 | `host.first_trusted_report_at` | No trusted report has arrived yet. |
 | `host.last_applied_report_id` | No report has been applied yet. It must be nullable anyway: `report.host_id` points at the host, so the host row exists before its first report. |
 | `host.reboot_required_since` | The last applied report did not require a reboot. |
-| `host.machine_fingerprint`, `report.machine_fingerprint` | The machine has no readable machine ID. Two nulls count as equal. |
-| `host.machine_fingerprint_set_at` | No fingerprint is known yet: no report since enrollment or since the last token rotation. |
+| `host.machine_fingerprint_set_at`, `host.current_instance_id`, `host.last_applied_sequence` | The host has no identity: no report applied since enrollment or since the last token rotation. `CHECK`: all three null or all three not null, since they are set and reset together. |
+| `host.machine_fingerprint` | The host has no identity, or the known machine has no readable machine ID (`CHECK`: null when `machine_fingerprint_set_at` is null). Two nulls count as equal. |
+| `report.machine_fingerprint` | The machine has no readable machine ID. |
 | `host.agent_alert_at`, `host.agent_alert_reason` | No agent alert is open. |
 | `agent_token.revoked_at`, `agent_token.revoked_by` | The token is not revoked. |
 | `agent_token.last_used_at` | The token has never been used. |

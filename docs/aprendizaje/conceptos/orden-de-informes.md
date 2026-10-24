@@ -14,7 +14,10 @@ Los informes pueden llegar desordenados: un reintento lento llega después del i
 
 - La primera vez, el agente crea en su directorio de estado un `agent_instance_id` (UUID aleatorio). Reinstalar, o perder ese directorio, crea otro.
 - En cada ejecución toma un `flock`, para que el timer y una ejecución tras instalar paquetes no se solapen. Después suma uno a `sequence`, lo **escribe en disco** y solo entonces envía. Si el envío falla, queda un hueco en la secuencia, y no pasa nada: solo importa que el número crezca.
-- El servidor decide, con un bloqueo por host, según la instancia:
+- El servidor guarda la **identidad** del host: la huella conocida, la instancia actual y la última secuencia aplicada, en columnas propias del host. Las tres son nulas tras el alta o tras rotar el token, y se fijan y se reinician juntas (un `CHECK` lo garantiza). Además, la instancia actual tiene que ser del mismo host: lo exige una clave foránea compuesta, `(id, current_instance_id)` → `agent_instance (host_id, id)`.
+- El primer informe de una instancia crea su fila en `agent_instance`, se aplique o no. «Nueva para el host» significa «sin fila hasta ahora».
+- **Sin identidad**, el primer informe se aplica, venga de una instancia nueva o de una ya vista, y fija las tres cosas.
+- **Con identidad**, el servidor decide, con un bloqueo por host, según la instancia:
   - **Instancia nueva** con la huella conocida: es una reinstalación en la misma máquina. Se aplica y pasa a ser la actual.
   - **Instancia actual** con secuencia mayor: se aplica.
   - **Instancia actual** con secuencia menor o igual (`sequence_regression`): se guarda sin aplicar. Uno suelto es un reintento tardío; dos seguidos huelen a snapshot restaurado o a directorio de estado copiado, y salta una alerta.
@@ -37,7 +40,13 @@ Los reintentos (en `429`, `5xx` o sin respuesta) usan **backoff exponencial con 
 
 Para qué sirve: la primera huella que llega queda como la **huella conocida** del host. Un informe con otra huella, sea de la instancia que sea, viene de otra máquina con el mismo token (copiado, o de un clon con machine-id nuevo): no se aplica y salta una alerta.
 
-Una reinstalación que crea un machine-id nuevo da una falsa alarma. El administrador la resuelve rotando el token: así borra la huella conocida, la siguiente queda como nueva, y de paso deja fuera a quien tuviera el token viejo.
+Una reinstalación que crea un machine-id nuevo da una falsa alarma.
+
+**Borrar una alerta no cambia nada de lo que se aplica.** Para recuperar un host se **rota el token**: se reinicia toda la identidad y el primer informe con el token nuevo se aplica como el primero del host. Sin ese reinicio completo, el agente real no volvería nunca en dos casos:
+- Alguien con el token creó una instancia que pasó a ser la actual: el agente real seguiría cayendo en `superseded_instance`.
+- Alguien envió una secuencia altísima (hasta 2^53 − 1): el agente real seguiría cayendo en `sequence_regression`.
+
+De paso, la rotación deja fuera a quien tuviera el token viejo. Si la issue #14 añade un periodo de gracia con dos tokens válidos, solo un informe con el token nuevo puede fijar la identidad; si no, el que tiene el token viejo podría adelantarse.
 
 Su límite: un clon de la VM que conserva el machine-id y el directorio de estado no se detecta.
 

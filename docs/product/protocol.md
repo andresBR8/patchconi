@@ -67,21 +67,30 @@ Reports can arrive out of order (a slow retry, a host that was off) or at the sa
 - On first run the agent creates `agent_instance_id`, a random UUID, in its state directory. A reinstall or a lost state directory creates a new one.
 - Each run takes a lock (`flock`) on the state directory, so two runs never overlap, adds one to `sequence`, writes it to disk and only then sends the report. A report that is not delivered leaves a gap, which is harmless.
 
-The server keeps, per host, the **known fingerprint**: the `machine_fingerprint` of the first report it receives (two nulls count as equal). Under a per-host lock, after the [duplicate check](#responses-and-what-the-agent-does), a report is decided in this order:
+The server keeps, per host, its **identity**: the known fingerprint, the current instance and the last applied `sequence`. All three are unset after enrollment and after a token rotation, and are set together by the first report applied after that.
+
+Under a per-host lock, after the [duplicate check](#responses-and-what-the-agent-does), the server first records the report's instance if the host has never seen it, whether or not the report is then applied. An instance is *new to the host* when it had no record before this report. Then the report is decided by the first rule that matches:
 
 | # | The report | Result | Alert |
 | --- | --- | --- | --- |
+| 0 | Arrives while the host has no identity (after enrollment or a token rotation), from any instance, new or seen | Applied. Its fingerprint becomes the known one (two nulls count as equal), its instance the current one, its `sequence` the last applied | No |
 | 1 | Has a fingerprint different from the known one, from any instance | Not applied: `fingerprint_mismatch` | Yes: the token is used from another machine, or from a clone with a new machine ID |
 | 2 | Comes from an instance new to the host, with the known fingerprint | Applied; the instance becomes current. A reinstall on the same machine | No |
 | 3 | Comes from the current instance with a higher `sequence` | Applied | No |
 | 4 | Comes from the current instance with a lower or equal `sequence` | Not applied: `sequence_regression` | When the host's previous report was also a `sequence_regression`. One alone is a late retry; two in a row is a restored snapshot or a copied state directory |
-| 5 | Comes from an instance seen before that is no longer current | Not applied: `superseded_instance` | Yes, immediately: someone with the token created a new instance, and this is the real agent being ignored |
+| 5 | Comes from an instance seen before that is not the current one | Not applied: `superseded_instance` | Yes, immediately: someone with the token created a new instance, and this is the real agent being ignored |
 
-The first report of a host is applied by rule 2. A report that is not applied is stored with `applied = false` and changes neither episodes nor state.
+`superseded_instance` only happens when the host has a current instance: without one, rule 0 applies. A report that is not applied is stored with `applied = false` and changes neither episodes nor state.
 
-**Resolving an alert.** An administrator clears it in the host detail. **Rotating the token** also clears it and forgets the known fingerprint: the first report with the new token sets it again. That is how to accept a legitimate change of machine ID (a reinstall that created a new `/etc/machine-id` raises a false alarm by rule 1), and how to lock out whoever had the old token.
+**Resolving an alert.** An administrator can clear an alert in the host detail, but clearing it does not change which reports are applied: the identity stays as it is. **To recover the host, rotate its token.** Rotation unsets the whole identity and clears the alert, and the first report with the new token is applied by rule 0, whatever its instance and `sequence`. That covers every case above:
 
-**Limits.** A clone that keeps `/etc/machine-id` and the state directory is not detected. After a restored snapshot, the instance reports again once its `sequence` passes the last applied one, or at once if the agent is reinstalled. How the server stores this is in the [domain model](domain-model.md#invariants-and-backend-rules).
+- someone with the old token created an instance that became current: the real agent's next report is applied again;
+- someone sent a huge `sequence` (up to 2^53 − 1) from a copied state directory: the counter starts again from the real agent's report;
+- a reinstall created a new `/etc/machine-id` and raised a false alarm by rule 1: its fingerprint becomes the known one.
+
+The old token stops working, which also locks out whoever had it. If [#14](https://github.com/andresBR8/patchconi/issues/14) adds a grace period with two valid tokens, only a report with the new token can set the identity; otherwise the holder of the old token could get in first.
+
+**Limits.** A clone that keeps `/etc/machine-id` and the state directory is not detected. After a restored snapshot, the instance reports again once its `sequence` passes the last applied one, or at once after a reinstall or a token rotation. How the server stores this is in the [domain model](domain-model.md#invariants-and-backend-rules).
 
 ## Untrusted text
 

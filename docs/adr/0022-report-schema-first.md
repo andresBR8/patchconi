@@ -24,9 +24,10 @@
 - Versioning: `schema_version` is `major.minor`; a minor version only adds optional properties; servers are upgraded before agents ([protocol](../product/protocol.md#versioning)).
 - Identity and order travel in the schema, and the server applies them by fixed rules ([protocol](../product/protocol.md#ordering-and-identity)):
   - `agent_instance_id` and `sequence` order the reports, not the host clock.
-  - The first `machine_fingerprint` a host sends becomes its known fingerprint. A report with another fingerprint, from any instance, is not applied and opens an alert: the token is being used from another machine.
-  - A new instance with the known fingerprint is a reinstall and is applied.
-  - A report from a superseded instance opens an alert at once, and so do two `sequence` regressions in a row.
+  - The host's identity is its known fingerprint, its current instance and its last applied `sequence`. It is unset after enrollment and after a token rotation; the first report then is applied, from any instance, and sets all three.
+  - With an identity, a report with another fingerprint, from any instance, is not applied and opens an alert: the token is being used from another machine. A new instance with the known fingerprint is a reinstall and is applied.
+  - A report from a superseded instance opens an alert at once, and so do two `sequence` regressions in a row. Clearing an alert does not change which reports are applied; rotating the token resets the identity and is how a host is recovered.
+  - The first report of an instance records it, whether or not it is applied.
   - A `report_id` names one body: the server keeps its SHA-256, so a repeat with the same body is answered `200` and one with a different body `409`.
 
 ## Alternatives considered
@@ -42,7 +43,7 @@
 - Positive: the examples come from real output and are checked on every commit.
 - Negative and trade-offs: the schema is written by hand, and the API's code must follow it; phase 4 has to wire the file into the generated OpenAPI document instead of deriving it.
 - Negative and trade-offs: strict validation means an agent newer than its server cannot report until the server is upgraded.
-- Negative and trade-offs: a reinstall that creates a new `/etc/machine-id` raises a false alarm; the administrator accepts it by rotating the token, which resets the known fingerprint. A clone that keeps the machine ID is not detected.
+- Negative and trade-offs: a reinstall that creates a new `/etc/machine-id` raises a false alarm; the administrator accepts it by rotating the token, which resets the identity. A clone that keeps the machine ID is not detected.
 - Negative and trade-offs: jv downloads remote references (`$ref`, `$dynamicRef`, `$schema`), and has no option to stop it. The hook checks every reference with a small script, after JSON decoding, before it runs jv.
 - Follow-ups: phase 4 validates with this file and checks the generated OpenAPI document against it in CI; phase 5 adds the agent's tests and the collectors described in the [protocol](../product/protocol.md).
 - Refines [ADR 0008](0008-openapi-contract-checked-in-ci.md) for the agent report only; the rest of the API stays code-first.
