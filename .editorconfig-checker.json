@@ -1,0 +1,6 @@
+{
+  "IgnoreDefaults": true,
+  "Disable": {
+    "IndentSize": true
+  }
+}

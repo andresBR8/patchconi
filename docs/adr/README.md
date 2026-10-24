@@ -21,5 +21,6 @@ Each record describes one decision: its context, what was chosen, the alternativ
 | [0015](0015-branch-pr-ci-and-squash-merge.md) | Git flow: a branch per step, pull request with required CI, squash merge | Accepted | 2026-10-16 |
 | [0016](0016-claude-code-guardrails.md) | Guardrails for the AI coding assistant (Claude Code) | Accepted | 2026-10-17 |
 | [0017](0017-mise-paranoid-toolchain.md) | mise toolchain: exact pins, lockfile and paranoid mode | Accepted | 2026-10-17 |
-| [0018](0018-supply-chain-policy.md) | Supply-chain policy: 3-day delay, SHA pins and blocked install scripts | Accepted | 2026-10-17 |
+| [0018](0018-supply-chain-policy.md) | Supply-chain policy: 3-day delay, SHA pins and blocked install scripts | Accepted (point 4 superseded by [0020](0020-pre-commit-hooks-as-pinned-binaries.md)) | 2026-10-17 |
 | [0019](0019-patch-policy-as-code.md) | Patch policy as code, read-only in the UI | Accepted | 2026-10-24 |
+| [0020](0020-pre-commit-hooks-as-pinned-binaries.md) | pre-commit hooks as binaries pinned by mise | Accepted | 2026-10-24 |

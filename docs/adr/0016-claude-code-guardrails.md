@@ -51,7 +51,7 @@ Two operational rules follow from the sandbox:
 - Positive: the assistant cannot read credentials, reach Docker or other repositories, or edit the user's configuration; deferred execution is caught by review.
 - Positive: the protections are versioned, so every clone gets them.
 - Negative and trade-offs: a deny list is never complete, and review is the last line of defence.
-- Negative and trade-offs: the sandbox workarounds are **not** versioned. pre-commit's cache directory (`PRE_COMMIT_HOME`), `SKIP=end-of-file-fixer` (the hook opens every file for writing and `.claude/` is read-only in the sandbox) and Go's build cache (`GOCACHE`) live in `.claude/settings.local.json` because their paths depend on the user's UID. A fresh clone has to recreate them; the pre-commit learning note describes them.
+- Negative and trade-offs: the sandbox workarounds are **not** versioned. pre-commit's cache directory (`PRE_COMMIT_HOME`) and Go's build cache (`GOCACHE`) live in `.claude/settings.local.json` because their paths depend on the user's UID. A fresh clone has to recreate them; the pre-commit learning note describes them.
 - Negative and trade-offs: `settings.json` names a local folder (`~/homelab`), which is environment-specific in a strict sense.
 - Follow-ups:
   - Resolved when phase 0 closed: `mise install`, `pnpm install` and `pnpm install --frozen-lockfile` were removed from `allow`.

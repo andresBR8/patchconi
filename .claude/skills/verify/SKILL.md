@@ -5,7 +5,7 @@ description: Runs PatchConi's local checks (pre-commit with gitleaks, lint, type
 
 Run the checks that exist in the repo right now, in this order, and stop at the first failure:
 
-1. If `.pre-commit-config.yaml` exists: `pre-commit run --all-files`.
+1. If `.pre-commit-config.yaml` exists: `mise exec -- pre-commit run --all-files`. `mise exec` runs the pre-commit pinned in `mise.toml`, whatever other pre-commit comes first on the `PATH`.
 2. If a root `package.json` exists: `pnpm lint`, `pnpm typecheck` and `pnpm test`, only for the scripts it defines.
 3. If `agent/go.mod` exists: `go vet ./...` and `go test ./...` inside `agent/`.
 

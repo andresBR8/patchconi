@@ -24,7 +24,7 @@ Most compromised packages and releases are published by someone who stole a main
 
 **3. Block dependency install scripts.** `strictDepBuilds: true` with an empty `allowBuilds`: any dependency with an install script fails the install until it is allowlisted with a comment explaining why. `trustPolicy: no-downgrade` and `blockExoticSubdeps: true` reject packages whose trust evidence got weaker and transitive dependencies from git or tarball URLs.
 
-**4. pre-commit hooks from PyPI with pinned dependencies.** The pre-commit-hooks checks run as `repo: local` hooks with `additional_dependencies: ["pre-commit-hooks==6.0.0", "ruamel.yaml==0.19.1"]`, identical in every hook so that one environment is built, and `language: python` so Renovate can update them. Their definitions are copied from the upstream manifest at v6.0.0.
+**4. pre-commit hooks from PyPI with pinned dependencies.** *Superseded by [ADR 0020](0020-pre-commit-hooks-as-pinned-binaries.md): the hooks now run binaries pinned by mise and install nothing. Kept below as the record of the earlier decision.* The pre-commit-hooks checks run as `repo: local` hooks with `additional_dependencies: ["pre-commit-hooks==6.0.0", "ruamel.yaml==0.19.1"]`, identical in every hook so that one environment is built, and `language: python` so Renovate can update them. Their definitions are copied from the upstream manifest at v6.0.0.
 
 - pre-commit drops `GIT_CONFIG_PARAMETERS`, so it cannot clone the hook repository through the assistant's sandbox proxy.
 - A prebuilt wheel avoids building pre-commit-hooks from source. (pip still downloads setuptools once, to build pre-commit's placeholder package; `PIP_UPLOADED_PRIOR_TO` delays it.)
@@ -62,6 +62,6 @@ Most compromised packages and releases are published by someone who stole a main
   - A `git commit` from a shell without mise activated does not get `PIP_UPLOADED_PRIOR_TO`.
   - The system `python3` is not pinned.
 - Follow-ups:
-  - Replace the Python hooks with binaries pinned by mise (for example editorconfig-checker and taplo), with checksums in `mise.lock`: [issue #9](https://github.com/andresBR8/patchconi/issues/9) (phase 1). It also removes the `SKIP=end-of-file-fixer` workaround in the assistant's sandbox.
+  - Done in [ADR 0020](0020-pre-commit-hooks-as-pinned-binaries.md) ([issue #9](https://github.com/andresBR8/patchconi/issues/9)): the Python hooks are replaced by binaries pinned by mise, and the `SKIP=end-of-file-fixer` workaround in the assistant's sandbox is gone.
   - Confirm the pnpm exception with an exact version on the first real urgent fix: [issue #11](https://github.com/andresBR8/patchconi/issues/11).
   - Revisit the even-majors rule for Node.js before April 2027, when Node 27 starts a new release schedule: [issue #12](https://github.com/andresBR8/patchconi/issues/12).

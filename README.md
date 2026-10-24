@@ -6,9 +6,9 @@ A self-hosted, read-only patch compliance dashboard for small Linux fleets.
 
 ## What exists today
 
-- **Pinned toolchain** with [mise](https://mise.jdx.dev/): `mise.toml` pins every tool to an exact version and `mise.lock` records download URLs and checksums for Linux and macOS (x64 and arm64). gitleaks is the exception: it is built from source and verified through sum.golang.org.
+- **Pinned toolchain** with [mise](https://mise.jdx.dev/): `mise.toml` pins every tool to an exact version and `mise.lock` records download URLs and checksums for Linux and macOS (x64 and arm64). gitleaks, editorconfig-checker and tomljson are the exception: they are built from source and verified through sum.golang.org, so `mise.lock` records no checksum for them.
 - **Hardened pnpm workspace** (`pnpm-workspace.yaml`): only versions published at least 3 days ago, dependency install scripts blocked unless allowlisted, trust-downgrade and exotic-source checks.
-- **pre-commit hooks** (`.pre-commit-config.yaml`): file hygiene, [gitleaks](https://github.com/gitleaks/gitleaks) on staged changes and on the whole history, [actionlint](https://github.com/rhysd/actionlint) with shellcheck, and [zizmor](https://github.com/zizmorcore/zizmor) for GitHub Actions security.
+- **pre-commit hooks** (`.pre-commit-config.yaml`): file hygiene with tools pinned by mise (no hook installs anything when it runs), [gitleaks](https://github.com/gitleaks/gitleaks) on staged changes and on the whole history, [actionlint](https://github.com/rhysd/actionlint) with shellcheck, and [zizmor](https://github.com/zizmorcore/zizmor) for GitHub Actions security.
 - **CI** (`.github/workflows/hygiene.yml`): runs the same hooks plus zizmor's online audits on every pull request and on `main`. Actions are pinned by commit SHA and the token is read-only.
 - **Dependency updates** with [Renovate](https://docs.renovatebot.com/) (`renovate.json`): a 3-day delay before proposing a release, weekly batches, and manual approval for the updates that need a closer look.
 - **Platform contract** ([`docs/platform-contract.md`](docs/platform-contract.md)): the rules every PatchConi artifact will follow to run on a container platform.
@@ -31,7 +31,8 @@ Design principles: the agent only observes; least privilege; the host always sta
 | --- | --- |
 | `mise.toml`, `mise.lock` | Pinned developer toolchain |
 | `package.json`, `pnpm-workspace.yaml`, `pnpm-lock.yaml` | pnpm workspace (no packages yet) |
-| `.pre-commit-config.yaml` | pre-commit hooks |
+| `.pre-commit-config.yaml`, `.editorconfig-checker.json` | pre-commit hooks and their configuration |
+| `scripts/hooks/` | Small scripts that pre-commit hooks run |
 | `.github/workflows/` | CI |
 | `renovate.json` | Dependency update configuration |
 | `docs/product/` | Product vision, patch policy and roadmap (drafts) |
