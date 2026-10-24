@@ -28,7 +28,9 @@ repos:
         types: [yaml]
       # jv parses YAML with gopkg.in/yaml.v3, which rejects a duplicate key at
       # any depth. It reads only the first document of a file: the second
-      # document of pnpm-lock.yaml, written by pnpm, is not checked (ADR 0021).
+      # document of pnpm-lock.yaml, written by pnpm, is not checked (ADR 0021,
+      # issue #17). It also fails on an empty file and on non-string keys,
+      # which are valid YAML: give an empty placeholder a "---" line.
       - id: check-yaml-duplicates
         name: check yaml duplicate keys
         entry: jv scripts/hooks/any-document.schema.json

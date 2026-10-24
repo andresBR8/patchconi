@@ -25,6 +25,8 @@ Tested on 2026-10-24 with jv 0.7.0:
 | YAML with a duplicate key, top level or nested | Rejected, with both line numbers |
 | Second document of a multi-document YAML with a duplicate key | **Accepted**: only the first document is read |
 | JSON with a duplicate key | **Accepted** |
+| Empty YAML file, or comments only without `---` | **Rejected** (`EOF`): a false positive |
+| YAML with a key that is not a string (`1: a`, `? [a, b]`) | **Rejected** (`invalid jsonType`, `invalid map key`): a false positive |
 | Every YAML file in the repository | Accepted (7 ms) |
 
 ## Alternatives considered
@@ -37,10 +39,14 @@ Tested on 2026-10-24 with jv 0.7.0:
 
 ## Consequences
 
-- Positive: one small, verified binary validates the protocol schema, its examples and the OpenAPI draft, and closes most of issue #17.
+- Positive: one small, verified binary validates the protocol schema, its examples and the OpenAPI draft. Duplicate keys are now caught in every single-document YAML file, nested keys included.
 - Positive: the agent can use the same Go library in its tests (phase 5).
+- Positive: jv is level 2 in ADR 0020's order and gets the same Renovate treatment as tomljson: no manual approval. `jv --version` reads its versions from the Go build information, not from ldflags, so there is no version string to keep in step.
 - Negative and trade-offs: `go install` builds jv with the library versions in its own `go.mod`: v6.0.1, while the library is at v6.0.3. The fixes since then are error locations, NaN and infinity numbers, the `email` format and number comparison in `const`/`enum`. None affects a schema built from strings, enums and integers. jv's last release is from June 2024.
-- Negative and trade-offs: the second document of `pnpm-lock.yaml` is not checked for duplicate keys. pnpm writes it and nobody edits it by hand, so the risk is accepted.
+- Negative and trade-offs: **only the first document of a YAML file is checked for duplicate keys.** Today that only leaves out the second document of `pnpm-lock.yaml`, which pnpm writes and nobody edits by hand. It matters more in phase 2: Kustomize manifests and Compose files often hold several documents, and a duplicate key from the second one on would pass. Issue #17 stays open for that case.
+- Negative and trade-offs: an empty YAML file (or one with comments only and no `---`) and a key that is not a string fail the hook, although they are valid YAML. Nothing in the repository has either today. A future empty placeholder, such as an Ansible role's `defaults/main.yml`, needs a `---` line (tested: it passes, with or without a comment after it).
 - Negative and trade-offs: jv accepts duplicate keys in JSON. `check-json.py` already rejects them for every JSON file, protocol examples included.
 - Negative and trade-offs: one more tool compiled on the first `mise install`. As with the other `go:` paths, Renovate may not find versions for a tool that is its own module under a subdirectory (tags `cmd/jv/vX.Y.Z`). Check the Dependency Dashboard after merging.
-- Follow-ups: the protocol schema, examples and OpenAPI draft that use jv come in the next step (protocol v1).
+- Follow-ups:
+  - The protocol schema, examples and OpenAPI draft that use jv come in the next step (protocol v1). The schema uses no remote `$ref`, so validation stays offline by design.
+  - Phase 2: duplicate keys in multi-document YAML ([issue #17](https://github.com/andresBR8/patchconi/issues/17)). Proposal: one resource per file in `deploy/`, so that every manifest is a single document.
