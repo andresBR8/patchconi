@@ -20,7 +20,7 @@ Captured on 2026-10-24: the nine supported distributions in containers (`protoco
 
 - On `apt`, the agent measures the metadata age from `update-success-stamp`. It never uses the times of the list files or of `pkgcache.bin`.
 - When there is no reliable signal, the agent sends a null age. A report with a null age is never trusted ([domain model](domain-model.md#nullable-columns)).
-- Still open: whether Debian writes the stamp, and which repository's age counts on `dnf` when the cached repositories differ.
+- Still open: whether Debian writes the stamp, and which repository's age counts on `dnf` when the cached repositories differ ([#25](https://github.com/andresBR8/patchconi/issues/25)).
 
 ### 2. The `apt-daily` delay after boot
 
@@ -33,7 +33,7 @@ Captured on 2026-10-24: the nine supported distributions in containers (`protoco
 **Consequences.**
 
 - A host that is only switched on for a few hours, like Alex's machines ([vision](vision.md#who-it-is-for)), can spend most of its uptime with stale metadata. It shows as *no data* when the age exceeds `metadata_max_age` ([policy](policy.md#default-thresholds)).
-- The panel has to say why the data is stale, and the documentation has to warn operators of such hosts.
+- The panel has to say why the data is stale, and the documentation has to warn operators of such hosts ([#26](https://github.com/andresBR8/patchconi/issues/26)).
 - On `dnf`, `dnf-makecache.timer` has `RandomizedDelayUSec=1h`.
 
 ### 3. What counts as pending on `apt`
@@ -44,7 +44,7 @@ Captured on 2026-10-24: the nine supported distributions in containers (`protoco
 - The containers show the difference for a held package: after `apt-mark hold base-files`, `apt list --upgradable` still lists it, and `apt-get -s upgrade` keeps it back.
 - The host capture holds counts only, so it does not say which 3 packages `apt-get` leaves out: held packages with an update, Ubuntu phased updates, or upgrades that need new packages. The containers have no phased updates.
 
-**Still open.** Whether held packages and phased updates start a policy clock. The report v1 carries both lists: the updates, and the held packages.
+**Still open.** Whether held packages and phased updates start a policy clock ([#27](https://github.com/andresBR8/patchconi/issues/27)). The report v1 carries both lists: the updates, and the held packages.
 
 ### 4. Running without root on `dnf`, and advisories
 
@@ -56,7 +56,7 @@ Captured on 2026-10-24: the nine supported distributions in containers (`protoco
 - On the host, `dnf -C updateinfo list --updates` returns 0 advisories for the 6 updates, which come from `baseos`. The maintainer saw the same result as a user with more groups.
 - In the containers, which refresh the metadata as root, every RHEL-family distribution returns advisories (95 on Rocky Linux 10).
 
-**Still open.** Whether the host's cache lacks the advisory data, or those updates have no advisory yet. This decides whether `security` and advisory dates can be trusted on `dnf` without root.
+**Still open.** Whether the host's cache lacks the advisory data, or those updates have no advisory yet. This decides whether `security` and advisory dates can be trusted on `dnf` without root ([#28](https://github.com/andresBR8/patchconi/issues/28)).
 
 ### 5. A missing `dnf` plugin is not an error
 

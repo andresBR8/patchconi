@@ -28,3 +28,4 @@ It is meant to run as an unprivileged user. That is a hypothesis of the plan, no
 - Positive: a timer instead of a daemon: nothing runs between reports, and missed runs after a shutdown are fine.
 - Negative and trade-offs: a second language and toolchain in the project; Go is new to the maintainer.
 - Follow-ups: collectors, packaging and a distribution matrix in phase 5, including the check that the agent works without root. Changing the read-only rule, or running as root, needs a new ADR.
+- Follow-ups: the phase 1 captures confirm the hypothesis for listing updates on Ubuntu and Rocky, but not for advisories. On a Rocky host, an unprivileged user saw no advisories for 6 updates ([protocol, finding 4](../product/protocol.md#4-running-without-root-on-dnf-and-advisories)). If that holds, the agent on `dnf` cannot tell which updates are security updates without root ([#28](https://github.com/andresBR8/patchconi/issues/28)).
