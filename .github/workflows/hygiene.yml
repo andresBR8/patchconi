@@ -36,8 +36,9 @@ jobs:
           # SHA-256 of the extracted mise binary for linux-x64.
           sha256: 6eb1b890e90818417ca34c90dbbd47881917d5cd199f31b63b062ea9c6b18d85
 
-      # Fails if mise-action stops exporting [env]: without it pip would ignore
-      # the 3-day cutoff when pre-commit builds its hook environment.
+      # Fails if mise-action stops exporting [env]. No hook installs Python
+      # packages today, but without [env] pip would ignore the 3-day cutoff as
+      # soon as one did.
       - name: Check that mise exports [env]
         run: test "${PIP_UPLOADED_PRIOR_TO}" = "P3D"
 

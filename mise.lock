@@ -27,6 +27,35 @@ checksum = "sha256:3c89db4edcab7cf1c27bff178882e0f6f27f7afdf54e859fa041fca10febe
 url = "https://github.com/koalaman/shellcheck/releases/download/v0.11.0/shellcheck-v0.11.0.darwin.x86_64.tar.xz"
 url_api = "https://api.github.com/repos/koalaman/shellcheck/releases/assets/279056930"
 
+[[tools."aqua:mikefarah/yq"]]
+version = "4.54.1"
+backend = "aqua:mikefarah/yq"
+specifiers = ["4.54.1"]
+
+[tools."aqua:mikefarah/yq"."platforms.linux-arm64"]
+checksum = "sha256:189088da0c6429ec5178dfaab1a114805f6cab0b61b165ab236efedf1d57a71b"
+url = "https://github.com/mikefarah/yq/releases/download/v4.54.1/yq_linux_arm64"
+url_api = "https://api.github.com/repos/mikefarah/yq/releases/assets/597222603"
+provenance = "cosign"
+
+[tools."aqua:mikefarah/yq"."platforms.linux-x64"]
+checksum = "sha256:8e34fc298390875de416e6a4afcb8cabeceb25d9aa8506c1a2f9353cf702ea5f"
+url = "https://github.com/mikefarah/yq/releases/download/v4.54.1/yq_linux_amd64"
+url_api = "https://api.github.com/repos/mikefarah/yq/releases/assets/597222595"
+provenance = "cosign"
+
+[tools."aqua:mikefarah/yq"."platforms.macos-arm64"]
+checksum = "sha256:fee511a181bd8b3e6b7da98842b41973bfac8cd3bcd341ed29a584620b5b2844"
+url = "https://github.com/mikefarah/yq/releases/download/v4.54.1/yq_darwin_arm64"
+url_api = "https://api.github.com/repos/mikefarah/yq/releases/assets/597222609"
+provenance = "cosign"
+
+[tools."aqua:mikefarah/yq"."platforms.macos-x64"]
+checksum = "sha256:3a812fce205a4d67014fb71b7fa297092210e580df3d8f52dddc2cf3a599c22b"
+url = "https://github.com/mikefarah/yq/releases/download/v4.54.1/yq_darwin_amd64"
+url_api = "https://api.github.com/repos/mikefarah/yq/releases/assets/597222619"
+provenance = "cosign"
+
 [[tools."aqua:pnpm/pnpm"]]
 version = "12.13.0"
 backend = "aqua:pnpm/pnpm"
@@ -159,6 +188,16 @@ url = "https://dl.google.com/go/go1.27.2.darwin-arm64.tar.gz"
 [tools.go."platforms.macos-x64"]
 checksum = "sha256:587b59182488b23aa6e5fc25110405a3e0e5b38ed2f5b2f46ed13c32aee356fe"
 url = "https://dl.google.com/go/go1.27.2.darwin-amd64.tar.gz"
+
+[[tools."go:github.com/editorconfig-checker/editorconfig-checker/v4/cmd/editorconfig-checker"]]
+version = "4.0.2"
+backend = "go:github.com/editorconfig-checker/editorconfig-checker/v4/cmd/editorconfig-checker"
+specifiers = ["4.0.2"]
+
+[[tools."go:github.com/pelletier/go-toml/v2/cmd/tomljson"]]
+version = "2.4.3"
+backend = "go:github.com/pelletier/go-toml/v2/cmd/tomljson"
+specifiers = ["2.4.3"]
 
 [[tools."go:github.com/zricethezav/gitleaks/v8"]]
 version = "8.30.1"
