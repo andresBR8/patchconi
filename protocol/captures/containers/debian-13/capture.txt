@@ -1,0 +1,3 @@
+image=docker.io/library/debian:trixie-20260518@sha256:4ae67669760b807c19f23902a3fd7c121a6a70cf2ae709035674b23e712e4d62
+captured_at=2026-10-24T19:54:47Z
+script=protocol/captures/capture-containers.sh

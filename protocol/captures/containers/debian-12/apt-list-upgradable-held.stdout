@@ -1,0 +1,8 @@
+Listing...
+base-files/oldstable 12.4+deb12u15 amd64 [upgradable from: 12.4+deb12u14]
+libgcrypt20/oldstable,oldstable-security 1.10.1-3+deb12u1 amd64 [upgradable from: 1.10.1-3]
+libgnutls30/oldstable,oldstable-security 3.7.9-2+deb12u7 amd64 [upgradable from: 3.7.9-2+deb12u6]
+liblzma5/oldstable-security 5.4.1-1+deb12u2 amd64 [upgradable from: 5.4.1-1]
+libpcre2-8-0/oldstable-security 10.42-1+deb12u2 amd64 [upgradable from: 10.42-1]
+perl-base/oldstable-security 5.36.0-7+deb12u4 amd64 [upgradable from: 5.36.0-7+deb12u3]
+tzdata/oldstable-security 2026e-0+deb12u1 all [upgradable from: 2026b-0+deb12u1]

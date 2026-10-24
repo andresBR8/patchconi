@@ -1,0 +1,5 @@
+repo id                          repo name
+appstream                        AlmaLinux 10 - AppStream
+baseos                           AlmaLinux 10 - BaseOS
+crb                              AlmaLinux 10 - CRB
+extras                           AlmaLinux 10 - Extras

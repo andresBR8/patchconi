@@ -1,0 +1,9 @@
+1792871673 4096 /var/lib/apt/lists/auxfiles
+1792869227 34770 /var/lib/apt/lists/deb.debian.org_debian-security_dists_bookworm-security_InRelease
+1792869189 716742 /var/lib/apt/lists/deb.debian.org_debian-security_dists_bookworm-security_main_binary-amd64_Packages.lz4
+1792850964 55403 /var/lib/apt/lists/deb.debian.org_debian_dists_bookworm-updates_InRelease
+1754661485 11648 /var/lib/apt/lists/deb.debian.org_debian_dists_bookworm-updates_main_binary-amd64_Packages.lz4
+1783765271 151075 /var/lib/apt/lists/deb.debian.org_debian_dists_bookworm_InRelease
+1783763355 18840233 /var/lib/apt/lists/deb.debian.org_debian_dists_bookworm_main_binary-amd64_Packages.lz4
+1792871673 0 /var/lib/apt/lists/lock
+1792871674 4096 /var/lib/apt/lists/partial

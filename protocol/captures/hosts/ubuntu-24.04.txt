@@ -1,0 +1,141 @@
+@@patchconi-capture host script=protocol/captures/capture-host.sh
+@@patchconi-capture begin os-release exit=0
+@@cmd grep identification fields of /etc/os-release
+@@stdout
+PRETTY_NAME="Ubuntu 24.04.5 LTS"
+NAME="Ubuntu"
+VERSION_ID="24.04"
+VERSION_CODENAME=noble
+ID=ubuntu
+ID_LIKE=debian
+@@stderr
+@@patchconi-capture end os-release
+@@patchconi-capture begin identity exit=0
+@@cmd id -u; id -G (counts only)
+@@stdout
+uid_is_root=no
+supplementary_groups=0
+@@stderr
+@@patchconi-capture end identity
+@@patchconi-capture begin kernel-and-boot exit=0
+@@cmd uname -r; uname -m; /proc/uptime; systemd-detect-virt; getenforce
+@@stdout
+kernel_running=6.8.0-147-generic
+arch=x86_64
+now_utc=2026-10-24T21:19:49Z
+last_boot_utc=2026-10-24T19:59:48Z
+virtualization=kvm
+@@stderr
+@@patchconi-capture end kernel-and-boot
+@@patchconi-capture begin machine-fingerprint exit=0
+@@cmd systemd-id128 machine-id --app-specific=1a05fda4-d773-446d-80c6-ca4266e023d4 (format only)
+@@stdout
+machine_id_readable=yes
+app_specific_id_format=32-hex
+@@stderr
+@@patchconi-capture end machine-fingerprint
+@@patchconi-capture begin apt-version exit=0
+@@cmd apt --version
+@@stdout
+apt 2.8.3 (amd64)
+@@stderr
+@@patchconi-capture end apt-version
+@@patchconi-capture begin apt-list-upgradable exit=0
+@@cmd apt list --upgradable (counts only)
+@@stdout
+packages=21
+security=0
+@@stderr
+
+WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
+
+@@patchconi-capture end apt-list-upgradable
+@@patchconi-capture begin apt-get-s-upgrade exit=0
+@@cmd apt-get -s upgrade (counts only)
+@@stdout
+inst=18
+conf=18
+@@stderr
+@@patchconi-capture end apt-get-s-upgrade
+@@patchconi-capture begin apt-get-s-dist-upgrade exit=0
+@@cmd apt-get -s dist-upgrade (counts only)
+@@stdout
+inst=18
+conf=18
+@@stderr
+@@patchconi-capture end apt-get-s-dist-upgrade
+@@patchconi-capture begin apt-lists-age exit=0
+@@cmd stat /var/lib/apt/lists/*Release, pkgcache.bin
+@@stdout
+files=5
+oldest_mtime=1714057881
+newest_mtime=1792088107
+now=1792876790
+pkgcache_mtime=1792875544
+@@stderr
+@@patchconi-capture end apt-lists-age
+@@patchconi-capture begin apt-periodic-stamps exit=0
+@@cmd stat /var/lib/apt/periodic/*-stamp
+@@stdout
+unattended-upgrades-stamp=1792875545
+update-success-stamp=1792091422
+upgrade-stamp=1792875545
+@@stderr
+@@patchconi-capture end apt-periodic-stamps
+@@patchconi-capture begin apt-timers exit=0
+@@cmd systemctl show apt-daily.timer apt-daily-upgrade.timer
+@@stdout
+TimersCalendar={ OnCalendar=*-*-* 06,18:00:00 ; next_elapse=Sat 2026-10-24 19:59:49 UTC }
+LastTriggerUSec=Thu 2026-10-15 19:26:48 CEST
+RandomizedDelayUSec=12h
+Persistent=yes
+Id=apt-daily.timer
+LoadState=loaded
+ActiveState=active
+UnitFileState=enabled
+TimersCalendar={ OnCalendar=*-*-* 06:00:00 ; next_elapse=Sun 2026-10-25 05:00:00 UTC }
+LastTriggerUSec=Sat 2026-10-24 22:58:59 CEST
+RandomizedDelayUSec=1h
+Persistent=yes
+Id=apt-daily-upgrade.timer
+LoadState=loaded
+ActiveState=active
+UnitFileState=enabled
+@@stderr
+@@patchconi-capture end apt-timers
+@@patchconi-capture begin dpkg-kernels exit=0
+@@cmd dpkg-query -W 'linux-image-[0-9]*'
+@@stdout
+linux-image-6.8.0-147-generic	6.8.0-147.147	ii 
+@@stderr
+@@patchconi-capture end dpkg-kernels
+@@patchconi-capture begin reboot-required exit=0
+@@cmd /var/run/reboot-required, .pkgs (count)
+@@stdout
+reboot_required=no
+reboot_required_pkgs=0
+@@stderr
+@@patchconi-capture end reboot-required
+@@patchconi-capture begin apt-mark-showhold exit=0
+@@cmd apt-mark showhold (count only)
+@@stdout
+held=5
+@@stderr
+@@patchconi-capture end apt-mark-showhold
+@@patchconi-capture begin unattended-upgrades exit=0
+@@cmd dpkg-query -W unattended-upgrades
+@@stdout
+unattended_upgrades=ii 
+@@stderr
+@@patchconi-capture end unattended-upgrades
+@@patchconi-capture begin pro-esm exit=0
+@@cmd read /var/lib/ubuntu-advantage/status.json (attached, esm-infra, esm-apps); ESM apt sources
+@@stdout
+status_json_mtime=1792085191
+attached=False
+esm-apps=None
+esm-infra=None
+ubuntu-esm-infra_apt_source=absent
+ubuntu-esm-apps_apt_source=absent
+@@stderr
+@@patchconi-capture end pro-esm

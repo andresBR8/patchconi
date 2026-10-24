@@ -1,0 +1,6 @@
+4.20.0
+  Installed: dnf-0:4.20.0-18.el10.rocky.0.1.noarch at Sun Nov 16 00:39:52 2025
+  Built    : Rocky Linux Build System <releng@rockylinux.org> at Fri Aug  1 16:24:16 2025
+
+  Installed: rpm-0:4.19.1.1-20.el10.x86_64 at Sun Nov 16 00:39:52 2025
+  Built    : Rocky Linux Build System <releng@rockylinux.org> at Wed Aug 27 03:08:00 2025

@@ -1,0 +1,20 @@
+os-release	0	cat /etc/os-release
+uname-m	0	uname -m
+uname-r	0	uname -r
+date	0	date -u +%Y-%m-%dT%H:%M:%SZ
+dnf-version	0	dnf --version
+dnf-makecache	0	dnf makecache
+dnf-check-update	100	dnf -C check-update
+dnf-updateinfo-list	0	dnf -C updateinfo list --updates
+dnf-updateinfo-list-security	0	dnf -C updateinfo list --updates --security
+dnf-updateinfo-info	0	dnf -C updateinfo info --updates
+dnf-repoquery-upgrades	0	dnf -C -q repoquery --upgrades --qf %{name}\t%{arch}\t%{epoch}:%{version}-%{release}\t%{repoid}\n
+dnf-repolist	0	dnf -C repolist
+dnf-repodata-mtime	0	sh -c stat -c "%Y %s %n" /var/cache/dnf/*/repodata/*
+rpm-inventory	0	rpm -qa --qf %{NAME}\t%{ARCH}\t%{EPOCHNUM}:%{VERSION}-%{RELEASE}\n
+rpm-kernels	2	rpm -q kernel kernel-core
+dnf-needs-restarting	0	dnf -C needs-restarting -r
+dnf-install-versionlock	0	dnf -y install python3-dnf-plugin-versionlock
+dnf-versionlock-add	0	dnf -C versionlock add acl
+dnf-versionlock-list	0	dnf -C versionlock list
+dnf-check-update-held	100	dnf -C check-update

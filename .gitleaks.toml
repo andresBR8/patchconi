@@ -1,0 +1,16 @@
+# gitleaks reads this file from the repository root. It keeps every default
+# rule and adds narrow exceptions for confirmed false positives only. Each
+# exception names its rule, the files and the exact line shape it allows.
+[extend]
+useDefault = true
+
+# dnf output lists the package python3-hawkey followed by its version, which
+# generic-api-key reads as "key" plus a secret. All three conditions must
+# hold, so a real secret in the same files is still reported.
+[[allowlists]]
+description = "dnf package python3-hawkey in captured output"
+condition = "AND"
+targetRules = ["generic-api-key"]
+paths = ['''^protocol/captures/containers/[a-z0-9.-]+/[a-z0-9-]+\.stdout$''']
+regexTarget = "line"
+regexes = ['''(?m)^python3-hawkey\t''']

@@ -1,0 +1,1500 @@
+Last metadata expiration check: 0:00:01 ago on Sat Oct 24 19:55:10 2026.
+===============================================================================
+  Critical: ca-certificates security update
+===============================================================================
+  Update ID: RLSA-2026:88455
+       Type: security
+    Updated: 2026-10-24 00:12:29
+       Bugs: 2556046 - 
+       CVEs: CVE-2026-114406
+Description: The ca-certificates package contains a set of Certificate Authority (CA) certificates chosen by the Mozilla Foundation for use with the Internet Public Key Infrastructure (PKI).
+           : 
+           : Security Fix(es):
+           : 
+           : * ca-certificates: Distrust eMudhra intermediate CA certificates due to security concerns (CVE-2026-114406)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Critical
+
+===============================================================================
+  Important: curl security update
+===============================================================================
+  Update ID: RLSA-2026:55432
+       Type: security
+    Updated: 2026-08-31 12:13:28
+       Bugs: 2496769 - 
+       CVEs: CVE-2026-8927
+Description: The curl packages provide the libcurl library and the curl utility for downloading files from servers using various protocols, including HTTP, FTP, and LDAP.
+           : 
+           : Security Fix(es):
+           : 
+           : * curl: Information disclosure due to uncleared proxy authentication state (CVE-2026-8927)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Important
+
+===============================================================================
+  Important: expat security update
+===============================================================================
+  Update ID: RLSA-2026:22715
+       Type: security
+    Updated: 2026-06-19 12:06:08
+       Bugs: 2468575 - 
+       CVEs: CVE-2026-45186
+Description: Expat is a C library for parsing XML documents.
+           : 
+           : Security Fix(es):
+           : 
+           : * libexpat: denial of service via crafted XML input (CVE-2026-45186)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Important
+
+===============================================================================
+  Important: expat security update
+===============================================================================
+  Update ID: RLSA-2026:74001
+       Type: security
+    Updated: 2026-10-15 06:40:05
+       Bugs: 2517901 - 
+           : 2538967 - 
+       CVEs: CVE-2026-66046
+           : CVE-2026-93990
+Description: Expat is a C library for parsing XML documents.
+           : 
+           : Security Fix(es):
+           : 
+           : * expat: Expat: Denial of Service via quadratic complexity in attribute processing (CVE-2026-66046)
+           : 
+           : * expat: Expat: XML Injection via Malformed UTF-16 Input (CVE-2026-93990)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Important
+
+===============================================================================
+  Important: expat security update
+===============================================================================
+  Update ID: RLSA-2026:88248
+       Type: security
+    Updated: 2026-10-24 00:12:28
+       Bugs: 2543288 - 
+           : 2547476 - 
+       CVEs: CVE-2026-102633
+           : CVE-2026-77214
+Description: Expat is a C library for parsing XML documents.
+           : 
+           : Security Fix(es):
+           : 
+           : * expat: expat: Denial of Service via integer overflow in expat_realloc (CVE-2026-102633)
+           : 
+           : * expat: expat: Information disclosure via heap buffer over-read in XML_ParseBuffer (CVE-2026-77214)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Important
+
+===============================================================================
+  Important: gnutls security update
+===============================================================================
+  Update ID: RLSA-2026:20613
+       Type: security
+    Updated: 2026-06-19 12:06:07
+       Bugs: 2445762 - 
+           : 2445763 - 
+           : 2450624 - 
+           : 2450625 - 
+           : 2467279 - 
+           : 2467289 - 
+           : 2467437 - 
+           : 2467441 - 
+           : 2467448 - 
+           : 2467450 - 
+           : 2467451 - 
+           : 2467678 - 
+           : 2467686 - 
+       CVEs: CVE-2026-33845
+           : CVE-2026-33846
+           : CVE-2026-3832
+           : CVE-2026-3833
+           : CVE-2026-42009
+           : CVE-2026-42010
+           : CVE-2026-42011
+           : CVE-2026-42012
+           : CVE-2026-42013
+           : CVE-2026-42014
+           : CVE-2026-42015
+           : CVE-2026-5260
+           : CVE-2026-5419
+Description: The gnutls packages provide the GNU Transport Layer Security (GnuTLS) library,
+           : which implements cryptographic algorithms and protocols such as SSL, TLS, and
+           : DTLS.
+           : 
+           : Security Fix(es):
+           : 
+           : * gnutls: Fix qsort comparator in DTLS reassembly (CVE-2026-42009)
+           : * gnutls: Fix crashing on an underflow with a DTLS datagram (CVE-2026-33845)
+           : * gnutls: Fix RSA-PSK identity truncation (CVE-2026-42010)
+           : * gnutls: Fix case-sensitivity of domain name comparison in name constraints (CVE-2026-3833)
+           : * gnutls: Fix intersecting empty name constraints (CVE-2026-42011)
+           : * gnutls: Denial of Service via heap buffer overflow in DTLS handshake fragment reassembly (CVE-2026-33846)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS
+           : score, acknowledgments, and other related information, refer to the CVE page(s)
+           : listed in the References section.
+   Severity: Important
+
+===============================================================================
+  Important: krb5 security update
+===============================================================================
+  Update ID: RLSA-2026:19145
+       Type: security
+    Updated: 2026-06-12 12:06:14
+       Bugs: 2463368 - 
+           : 2463370 - 
+       CVEs: CVE-2026-40355
+           : CVE-2026-40356
+Description: Kerberos is a network authentication system, which can improve the security of your network by eliminating the insecure practice of sending passwords over the network in unencrypted form. It allows clients and servers to authenticate to each other with the help of a trusted third party, the Kerberos key distribution center (KDC).
+           : 
+           : Security Fix(es):
+           : 
+           : * krb5: MIT Kerberos 5 (krb5): Denial of Service via integer underflow and out-of-bounds read (CVE-2026-40356)
+           : 
+           : * krb5: MIT Kerberos 5: Denial of Service via NULL pointer dereference in NegoEx mechanism (CVE-2026-40355)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Important
+
+===============================================================================
+  Important: libarchive security update
+===============================================================================
+  Update ID: RLSA-2026:5063
+       Type: security
+    Updated: 2026-04-10 12:09:40
+       Bugs: 2446453 - 
+       CVEs: CVE-2026-4111
+Description: The libarchive programming library can create and read several different streaming archive formats, including GNU tar, cpio, and ISO 9660 CD-ROM images. Libarchive is used notably in the bsdtar utility, scripting language bindings such as python-libarchive, and several popular desktop file managers.
+           : 
+           : Security Fix(es):
+           : 
+           : * libarchive: Infinite Loop Denial of Service in RAR5 Decompression via archive_read_data() in libarchive (CVE-2026-4111)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Important
+
+===============================================================================
+  Important: libarchive security update
+===============================================================================
+  Update ID: RLSA-2026:8492
+       Type: security
+    Updated: 2026-05-02 12:08:59
+       Bugs: 2449006 - 
+       CVEs: CVE-2026-4424
+Description: The libarchive programming library can create and read several different streaming archive formats, including GNU tar, cpio, and ISO 9660 CD-ROM images. Libarchive is used notably in the bsdtar utility, scripting language bindings such as python-libarchive, and several popular desktop file managers.
+           : 
+           : Security Fix(es):
+           : 
+           : * libarchive: libarchive: Information disclosure via heap out-of-bounds read in RAR archive processing (CVE-2026-4424)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Important
+
+===============================================================================
+  Important: libcap security update
+===============================================================================
+  Update ID: RLSA-2026:12423
+       Type: security
+    Updated: 2026-05-17 12:09:22
+       Bugs: 2451615 - 
+       CVEs: CVE-2026-4878
+Description: Libcap is a library for getting and setting POSIX.1e (formerly POSIX 6) draft 15 capabilities.
+           : 
+           : Security Fix(es):
+           : 
+           : * libcap: libcap: Privilege escalation via TOCTOU race condition in cap_set_file() (CVE-2026-4878)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Important
+
+===============================================================================
+  Important: libcap security update
+===============================================================================
+  Update ID: RLSA-2026:19130
+       Type: security
+    Updated: 2026-06-12 12:06:13
+       Bugs: 2451615 - 
+       CVEs: CVE-2026-4878
+Description: Libcap is a library for getting and setting POSIX.1e (formerly POSIX 6) draft 15 capabilities.
+           : 
+           : Security Fix(es):
+           : 
+           : * libcap: libcap: Privilege escalation via TOCTOU race condition in cap_set_file() (CVE-2026-4878)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Important
+
+===============================================================================
+  Important: libevent security update
+===============================================================================
+  Update ID: RLSA-2026:67909
+       Type: security
+    Updated: 2026-10-01 12:12:26
+       Bugs: 2520654 - 
+           : 2520655 - 
+           : 2520657 - 
+           : 2520658 - 
+           : 2520660 - 
+           : 2520661 - 
+           : 2520666 - 
+           : 2520667 - 
+       CVEs: CVE-2026-63379
+           : CVE-2026-63381
+           : CVE-2026-63382
+           : CVE-2026-63383
+           : CVE-2026-63384
+           : CVE-2026-63385
+           : CVE-2026-63387
+           : CVE-2026-63388
+Description: The libevent packages provide an abstract asynchronous event notification library.
+           : 
+           : Security Fix(es):
+           : 
+           : * libevent: Libevent: Denial of Service via malformed RPC data (CVE-2026-63383)
+           : 
+           : * libevent: Libevent: Off-by-one stack buffer overflow leading to denial of service or data corruption (CVE-2026-63387)
+           : 
+           : * libevent: Libevent: Memory corruption due to use-after-free (CVE-2026-63381)
+           : 
+           : * libevent: Libevent: Denial of Service via integer conversion error in `evtag_unmarshal_header` (CVE-2026-63384)
+           : 
+           : * libevent evhttp: Multiple HTTP Parser Bugs Enable Request Smuggling (CVE-2026-63382)
+           : 
+           : * libevent: Libevent: Arbitrary code execution via heap out-of-bounds write in AF_UNIX handling (CVE-2026-63388)
+           : 
+           : * libevent: Libevent: HTTP header handling bugs create risk of access control bypass. (CVE-2026-63385)
+           : 
+           : * libevent: Libevent: HTTP header smuggling allows authorization bypass or cache poisoning (CVE-2026-63379)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Important
+
+===============================================================================
+  Important: libxml2 security update
+===============================================================================
+  Update ID: RLSA-2026:71586
+       Type: security
+    Updated: 2026-10-09 12:15:42
+       Bugs: 2528986 - 
+           : 2528987 - 
+           : 2528989 - 
+           : 2528990 - 
+           : 2528992 - 
+           : 2529697 - 
+       CVEs: CVE-2026-74860
+           : CVE-2026-86138
+           : CVE-2026-86140
+           : CVE-2026-86142
+           : CVE-2026-86143
+           : CVE-2026-86144
+Description: The libxml2 library is a development toolbox providing the implementation of various XML standards.
+           : 
+           : Security Fix(es):
+           : 
+           : * libxml2: libxml2: Arbitrary code execution via heap-based buffer overflow (CVE-2026-86138)
+           : 
+           : * libxml2: libxml2: Data integrity issues due to integer overflow in write callbacks (CVE-2026-86143)
+           : 
+           : * libxml2: libxml2: Arbitrary code execution via stack-based buffer overflow in xmlSnprintfElements (CVE-2026-86140)
+           : 
+           : * libxml2: libxml2: Heap-based buffer overflow in xmlXPtrEval due to xpointer length saturation (CVE-2026-86142)
+           : 
+           : * libxml2: libxml2: Information disclosure, SSRF, or denial of service due to improper parseFlags propagation. (CVE-2026-86144)
+           : 
+           : * libxml2: double-free/UAF in libxml2 Python bindings (CVE-2026-74860)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Important
+
+===============================================================================
+  Important: nghttp2 security update
+===============================================================================
+  Update ID: RLSA-2026:7666
+       Type: security
+    Updated: 2026-04-29 12:08:57
+       Bugs: 2448754 - 
+       CVEs: CVE-2026-27135
+Description: libnghttp2 is a library implementing the Hypertext Transfer Protocol version 2 (HTTP/2) protocol in C.
+           : 
+           : Security Fix(es):
+           : 
+           : * nghttp2: nghttp2: Denial of Service via malformed HTTP/2 frames after session termination (CVE-2026-27135)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Important
+
+===============================================================================
+  Important: openssl security update
+===============================================================================
+  Update ID: RLSA-2026:1472
+       Type: security
+    Updated: 2026-02-13 09:11:19
+       Bugs: 2430375 - 
+           : 2430376 - 
+           : 2430377 - 
+           : 2430378 - 
+           : 2430379 - 
+           : 2430380 - 
+           : 2430381 - 
+           : 2430386 - 
+           : 2430387 - 
+           : 2430388 - 
+           : 2430389 - 
+           : 2430390 - 
+       CVEs: CVE-2025-11187
+           : CVE-2025-15467
+           : CVE-2025-15468
+           : CVE-2025-15469
+           : CVE-2025-66199
+           : CVE-2025-68160
+           : CVE-2025-69418
+           : CVE-2025-69419
+           : CVE-2025-69420
+           : CVE-2025-69421
+           : CVE-2026-22795
+           : CVE-2026-22796
+Description: OpenSSL is a toolkit that implements the Secure Sockets Layer (SSL) and Transport Layer Security (TLS) protocols, as well as a full-strength general-purpose cryptography library.
+           : 
+           : Security Fix(es):
+           : 
+           : * openssl: OpenSSL: Arbitrary code execution or denial of service through crafted PKCS#12 file (CVE-2025-11187)
+           : 
+           : * openssl: OpenSSL: Remote code execution or Denial of Service via oversized Initialization Vector in CMS parsing (CVE-2025-15467)
+           : 
+           : * openssl: OpenSSL: Denial of Service via NULL pointer dereference in QUIC protocol handling (CVE-2025-15468)
+           : 
+           : * openssl: OpenSSL: Data integrity bypass in `openssl dgst` command due to silent truncation (CVE-2025-15469)
+           : 
+           : * openssl: OpenSSL: Denial of Service due to excessive memory allocation in TLS 1.3 certificate compression (CVE-2025-66199)
+           : 
+           : * openssl: OpenSSL: Denial of Service due to out-of-bounds write in BIO filter (CVE-2025-68160)
+           : 
+           : * openssl: OpenSSL: Information disclosure and data tampering via specific low-level OCB encryption/decryption calls (CVE-2025-69418)
+           : 
+           : * openssl: OpenSSL: Arbitrary code execution due to out-of-bounds write in PKCS#12 processing (CVE-2025-69419)
+           : 
+           : * openssl: OpenSSL: Denial of Service via malformed PKCS#12 file processing (CVE-2025-69421)
+           : 
+           : * openssl: OpenSSL: Denial of Service via malformed TimeStamp Response (CVE-2025-69420)
+           : 
+           : * openssl: OpenSSL: Denial of Service due to type confusion in PKCS#12 file processing (CVE-2026-22795)
+           : 
+           : * openssl: OpenSSL: Denial of Service via type confusion in PKCS#7 signature verification (CVE-2026-22796)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Important
+
+===============================================================================
+  Important: openssl security update
+===============================================================================
+  Update ID: RLSA-2026:25237
+       Type: security
+    Updated: 2026-06-27 00:06:22
+       Bugs: 2481879 - 
+           : 2481880 - 
+           : 2481881 - 
+           : 2481882 - 
+           : 2481884 - 
+           : 2481885 - 
+           : 2481887 - 
+           : 2481890 - 
+           : 2481891 - 
+           : 2481892 - 
+           : 2481893 - 
+           : 2481894 - 
+           : 2481896 - 
+           : 2481897 - 
+           : 2481898 - 
+       CVEs: CVE-2026-34180
+           : CVE-2026-34181
+           : CVE-2026-34182
+           : CVE-2026-34183
+           : CVE-2026-42764
+           : CVE-2026-42766
+           : CVE-2026-42767
+           : CVE-2026-42768
+           : CVE-2026-42769
+           : CVE-2026-42770
+           : CVE-2026-45445
+           : CVE-2026-45446
+           : CVE-2026-45447
+           : CVE-2026-7383
+           : CVE-2026-9076
+Description: OpenSSL is a toolkit that implements the Secure Sockets Layer (SSL) and Transport Layer Security (TLS) protocols, as well as a full-strength general-purpose cryptography library.
+           : 
+           : Security Fix(es):
+           : 
+           : * openssl: OpenSSL: Heap buffer overflow due to signed integer overflow in Unicode output sizing (CVE-2026-7383)
+           : 
+           : * openssl: OpenSSL: Denial of Service due to heap out-of-bounds read in CMS password-based decryption (CVE-2026-9076)
+           : 
+           : * openssl: OpenSSL: Heap buffer over-read in ASN.1 decoding can lead to denial of service or information disclosure. (CVE-2026-34180)
+           : 
+           : * openssl: PKCS#12 Files with PBMAC1 Are Accepted with Short HMAC Keys (CVE-2026-34181)
+           : 
+           : * openssl: CMS AuthEnvelopedData Processing May Accept Forged Messages (CVE-2026-34182)
+           : 
+           : * openssl: Unbounded Memory Growth in the QUIC PATH_CHALLENGE Handler (CVE-2026-34183)
+           : 
+           : * openssl: NULL pointer dereference in QUIC server initial packet handling (CVE-2026-42764)
+           : 
+           : * openssl: Possible NULL Dereference in Password-Based CMS Decryption (CVE-2026-42766)
+           : 
+           : * openssl: NULL Pointer Dereference in CRMF EncryptedValue Decryption (CVE-2026-42767)
+           : 
+           : * openssl: Multi-RecipientInfo Bleichenbacher Oracle in CMS_decrypt() and PKCS7_decrypt() (CVE-2026-42768)
+           : 
+           : * openssl: Trust-Anchor Substitution via cert/issuer Typo in CMP rootCaKeyUpdate (CVE-2026-42769)
+           : 
+           : * openssl: FFC-DH Peer Validation Uses Attacker-Supplied q (CVE-2026-42770)
+           : 
+           : * openssl: AES-OCB IV Ignored on EVP_Cipher() Path (CVE-2026-45445)
+           : 
+           : * openssl: Incorrect Tag Processing for Empty Messages in AES-GCM-SIV and AES-SIV modes (CVE-2026-45446)
+           : 
+           : * openssl: Heap Use-After-Free in OpenSSL PKCS7_verify() (CVE-2026-45447)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Important
+
+===============================================================================
+  Important: openssl security update
+===============================================================================
+  Update ID: RLSA-2026:76918
+       Type: security
+    Updated: 2026-10-22 12:15:48
+       Bugs: 2537080 - 
+       CVEs: CVE-2026-84782
+Description: OpenSSL is a toolkit that implements the Secure Sockets Layer (SSL) and Transport Layer Security (TLS) protocols, as well as a full-strength general-purpose cryptography library.
+           : 
+           : Security Fix(es):
+           : 
+           : * openssl: compat-openssl: DTLS Retransmits Handshake Messages From a Stale Buffer Offset (CVE-2026-84782)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Important
+
+===============================================================================
+  Important: pcre2 security update
+===============================================================================
+  Update ID: RLSA-2026:81522
+       Type: security
+    Updated: 2026-10-24 00:12:27
+       Bugs: 2528993 - 
+           : 2531743 - 
+           : 2531744 - 
+           : 2531745 - 
+           : 2531746 - 
+           : 2531747 - 
+           : 2543797 - 
+       CVEs: CVE-2026-103111
+           : CVE-2026-86145
+           : CVE-2026-89156
+           : CVE-2026-89157
+           : CVE-2026-89158
+           : CVE-2026-89160
+           : CVE-2026-89161
+Description: The pcre2 package contains a new generation of the Perl Compatible Regular Expression libraries for implementing regular expression pattern matching using the same syntax and semantics as Perl. 
+           : 
+           : Security Fix(es):
+           : 
+           : * pcre2: PCRE2: Out-of-bounds write allows arbitrary code execution via crafted regular expressions (CVE-2026-86145)
+           : 
+           : * PCRE2: PCRE2: Out-of-bounds read via invalid UTF data during JIT fallback (CVE-2026-89156)
+           : 
+           : * pcre2: PCRE2: Out-of-bounds write via large pattern input (CVE-2026-89157)
+           : 
+           : * pcre2: PCRE2: Denial of Service via out-of-bounds read during invalid UTF matching (CVE-2026-89160)
+           : 
+           : * PCRE2: PCRE2: Out-of-bounds write via integer overflow on 32-bit platforms (CVE-2026-89158)
+           : 
+           : * pcre2: PCRE2: Memory corruption vulnerability in pcre2_jit_match (CVE-2026-89161)
+           : 
+           : * pcre2: pcre2: Out-of-bounds write via crafted regular expression (CVE-2026-103111)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Important
+
+===============================================================================
+  Important: python3.12 security update
+===============================================================================
+  Update ID: RLSA-2026:19064
+       Type: security
+    Updated: 2026-06-12 12:06:11
+       Bugs: 2395108 - 
+           : 2408891 - 
+           : 2418084 - 
+           : 2431366 - 
+           : 2431374 - 
+           : 2444691 - 
+           : 2448168 - 
+           : 2448181 - 
+           : 2449649 - 
+           : 2457409 - 
+           : 2457932 - 
+           : 2458049 - 
+       CVEs: CVE-2025-13837
+           : CVE-2025-15282
+           : CVE-2025-59375
+           : CVE-2025-6075
+           : CVE-2026-0672
+           : CVE-2026-1502
+           : CVE-2026-2297
+           : CVE-2026-3644
+           : CVE-2026-4224
+           : CVE-2026-4519
+           : CVE-2026-4786
+           : CVE-2026-6100
+Description: Python is an interpreted, interactive, object-oriented programming language, which includes modules, classes, exceptions, very high level dynamic data types and dynamic typing. Python supports interfaces to many system calls and libraries, as well as to various windowing systems.
+           : 
+           : Security Fix(es):
+           : 
+           : * expat: libexpat in Expat allows attackers to trigger large dynamic memory allocations via a small document that is submitted for parsing (CVE-2025-59375)
+           : 
+           : * python: Quadratic complexity in os.path.expandvars() with user-controlled template (CVE-2025-6075)
+           : 
+           : * cpython: Out-of-memory when loading Plist (CVE-2025-13837)
+           : 
+           : * cpython: Header injection via newlines in data URL mediatype in Python (CVE-2025-15282)
+           : 
+           : * cpython: Header injection in http.cookies.Morsel in Python (CVE-2026-0672)
+           : 
+           : * cpython: CPython: Logging Bypass in Legacy .pyc File Handling (CVE-2026-2297)
+           : 
+           : * cpython: Incomplete control character validation in http.cookies (CVE-2026-3644)
+           : 
+           : * cpython: Stack overflow parsing XML with deeply nested DTD content models (CVE-2026-4224)
+           : 
+           : * python: Python: Command-line option injection in webbrowser.open() via crafted URLs (CVE-2026-4519)
+           : 
+           : * python: Python: HTTP header injection via CR/LF in proxy tunnel headers (CVE-2026-1502)
+           : 
+           : * python: Python: Arbitrary code execution or information disclosure via use-after-free in decompression modules (CVE-2026-6100)
+           : 
+           : * python: cpython: Python: Arbitrary code execution via command injection in webbrowser.open() API (CVE-2026-4786)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Important
+
+===============================================================================
+  Important: python3.12 security update
+===============================================================================
+  Update ID: RLSA-2026:77020
+       Type: security
+    Updated: 2026-10-23 12:16:16
+       Bugs: 2544127 - 
+           : 2544138 - 
+       CVEs: CVE-2026-19445
+           : CVE-2026-19553
+Description: Python is an interpreted, interactive, object-oriented programming language, which includes modules, classes, exceptions, very high level dynamic data types and dynamic typing. Python supports interfaces to many system calls and libraries, as well as to various windowing systems.
+           : 
+           : Security Fix(es):
+           : 
+           : * python: python: Certificate verification bypass via missing server_hostname validation in SSLContext.wrap_bio() (CVE-2026-19553)
+           : 
+           : * python: Use-after-free of a server-side SSLContext when sni_callback switches contexts (CVE-2026-19445)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Important
+
+===============================================================================
+  Important: rust-rpm-sequoia security, bug fix, and enhancement update
+===============================================================================
+  Update ID: RLSA-2026:76734
+       Type: security
+    Updated: 2026-10-21 12:11:53
+       Bugs: 2464122 - 
+       CVEs: CVE-2026-42784
+Description: An implementation of the RPM PGP interface using Sequoia.
+           : 
+           : Security Fix(es):
+           : 
+           : * sequoia-openpgp: sequoia-openpgp: Cryptographic integrity compromise via key flag confusion (CVE-2026-42784)
+           : 
+           : Bug Fix(es) and Enhancement(s):
+           : 
+           : * Uninformative error message on --import failure [rhel-10.2.z] (JIRA:Rocky Linux-176906)
+           : 
+           : * Return NotTrusted importing non-allowed keys [rhel-10.2.z] (JIRA:Rocky Linux-176907)
+           : 
+           : * [FTBFS] Update bindgen for LLVM 22 compatibility [rhel-10.2.z] (JIRA:Rocky Linux-176908)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Important
+
+===============================================================================
+  Important: vim security update
+===============================================================================
+  Update ID: RLSA-2026:11389
+       Type: security
+    Updated: 2026-05-15 12:09:35
+       Bugs: 2455400 - 
+       CVEs: CVE-2026-34982
+Description: Vim (Vi IMproved) is an updated and improved version of the vi editor.
+           : 
+           : Security Fix(es):
+           : 
+           : * vim: arbitrary command execution via modeline sandbox bypass (CVE-2026-34982)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Important
+
+===============================================================================
+  Important: vim security update
+===============================================================================
+  Update ID: RLSA-2026:19073
+       Type: security
+    Updated: 2026-06-12 12:06:11
+       Bugs: 2455400 - 
+       CVEs: CVE-2026-34982
+Description: Vim (Vi IMproved) is an updated and improved version of the vi editor.
+           : 
+           : Security Fix(es):
+           : 
+           : * vim: arbitrary command execution via modeline sandbox bypass (CVE-2026-34982)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Important
+
+===============================================================================
+  Important: vim security update
+===============================================================================
+  Update ID: RLSA-2026:48650
+       Type: security
+    Updated: 2026-08-15 00:09:49
+       Bugs: 2492968 - 
+           : 2492972 - 
+           : 2492980 - 
+           : 2498867 - 
+           : 2498868 - 
+       CVEs: CVE-2026-55693
+           : CVE-2026-57455
+           : CVE-2026-57456
+           : CVE-2026-59856
+           : CVE-2026-59858
+Description: Vim (Vi IMproved) is an updated and improved version of the vi editor.
+           : 
+           : Security Fix(es):
+           : 
+           : * vim: Vim: Denial of Service via stack out-of-bounds write in spell_soundfold_sofo() (CVE-2026-57455)
+           : 
+           : * vim: Vim: Arbitrary code execution via malicious docstrings in Python omni-completion (CVE-2026-57456)
+           : 
+           : * vim: Vim: Out-of-bounds Write in Spell File Word Count (CVE-2026-55693)
+           : 
+           : * vim: Vim: Arbitrary code execution via crafted PHP file in omni-completion (CVE-2026-59856)
+           : 
+           : * vim: Vim: Arbitrary command execution via crafted tags file in C omni-completion (CVE-2026-59858)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Important
+
+===============================================================================
+  Important: vim security update
+===============================================================================
+  Update ID: RLSA-2026:66336
+       Type: security
+    Updated: 2026-09-25 12:14:11
+       Bugs: 2443484 - 
+           : 2487989 - 
+           : 2492975 - 
+           : 2498863 - 
+           : 2514034 - 
+           : 2514037 - 
+           : 2514058 - 
+           : 2514065 - 
+       CVEs: CVE-2026-28420
+           : CVE-2026-52859
+           : CVE-2026-55892
+           : CVE-2026-59857
+           : CVE-2026-73072
+           : CVE-2026-73076
+           : CVE-2026-73077
+           : CVE-2026-73078
+Description: Vim (Vi IMproved) is an updated and improved version of the vi editor.
+           : 
+           : Security Fix(es):
+           : 
+           : * vim: Vim: Information disclosure and denial of service via crafted Unicode characters in terminal emulator (CVE-2026-28420)
+           : 
+           : * vim: Vim: Denial of Service via out-of-bounds write in terminal handling (CVE-2026-52859)
+           : 
+           : * vim: Vim: Denial of Service via crafted spell file (CVE-2026-55892)
+           : 
+           : * vim: Vim: Denial of Service via out-of-bounds write in spell sound-folding (CVE-2026-59857)
+           : 
+           : * vim: Vim: Arbitrary command execution via crafted vimball (CVE-2026-73076)
+           : 
+           : * vim: Vim: Heap buffer overflow allows arbitrary code execution (CVE-2026-73072)
+           : 
+           : * vim: Vim: Arbitrary Code Execution via Crafted Netrw Menu Entries (CVE-2026-73078)
+           : 
+           : * vim: Vim: Arbitrary Code Execution via Insecure Shell Command Handling (CVE-2026-73077)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Important
+
+===============================================================================
+  Important: vim security update
+===============================================================================
+  Update ID: RLSA-2026:75769
+       Type: security
+    Updated: 2026-10-20 12:14:59
+       Bugs: 2517950 - 
+       CVEs: CVE-2026-73073
+Description: Vim (Vi IMproved) is an updated and improved version of the vi editor.
+           : 
+           : Security Fix(es):
+           : 
+           : * vim: Vim: Arbitrary command execution via crafted tags file in C omni-completion (CVE-2026-73073)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Important
+
+===============================================================================
+  Important: vim security update
+===============================================================================
+  Update ID: RLSA-2026:7711
+       Type: security
+    Updated: 2026-04-29 12:08:58
+       Bugs: 2443455 - 
+           : 2443474 - 
+           : 2450907 - 
+       CVEs: CVE-2026-28417
+           : CVE-2026-28421
+           : CVE-2026-33412
+Description: Vim (Vi IMproved) is an updated and improved version of the vi editor.
+           : 
+           : Security Fix(es):
+           : 
+           : * vim: Vim: Arbitrary code execution via OS command injection in the netrw plugin (CVE-2026-28417)
+           : 
+           : * vim: Vim: Denial of service and information disclosure via crafted swap file (CVE-2026-28421)
+           : 
+           : * vim: Vim: Arbitrary code execution via command injection in glob() function (CVE-2026-33412)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Important
+
+===============================================================================
+  Moderate: binutils security update
+===============================================================================
+  Update ID: RLSA-2025:23306
+       Type: security
+    Updated: 2026-01-03 09:08:37
+       Bugs: 2399943 - 
+           : 2399948 - 
+       CVEs: CVE-2025-11082
+           : CVE-2025-11083
+Description: The binutils packages provide a collection of binary utilities for the manipulation of object code in various object file formats. It includes the ar, as, gprof, ld, nm, objcopy, objdump, ranlib, readelf, size, strings, strip, and addr2line utilities.
+           : 
+           : Security Fix(es):
+           : 
+           : * binutils: GNU Binutils Linker heap-based overflow (CVE-2025-11082)
+           : 
+           : * binutils: GNU Binutils Linker heap-based overflow (CVE-2025-11083)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Moderate
+
+===============================================================================
+  Moderate: coreutils security update
+===============================================================================
+  Update ID: RLSA-2026:67886
+       Type: security
+    Updated: 2026-10-01 12:12:28
+       Bugs: 2506691 - 
+           : 2506694 - 
+       CVEs: CVE-2026-56391
+           : CVE-2026-56392
+Description: The coreutils packages contain the GNU Core Utilities and represent a combination of the previously used GNU fileutils, sh-utils, and textutils packages.
+           : 
+           : Security Fix(es):
+           : 
+           : * coreutils: GNU coreutils uniq: Denial of Service and information disclosure via out-of-bounds read with multibyte input (CVE-2026-56391)
+           : 
+           : * coreutils: GNU coreutils unexpand: Denial of Service via crafted tab stop values (CVE-2026-56392)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Moderate
+
+===============================================================================
+  Moderate: curl security update
+===============================================================================
+  Update ID: RLSA-2026:1825
+       Type: security
+    Updated: 2026-02-18 09:09:25
+       Bugs: 2394750 - 
+       CVEs: CVE-2025-9086
+Description: The curl packages provide the libcurl library and the curl utility for downloading files from servers using various protocols, including HTTP, FTP, and LDAP.
+           : 
+           : Security Fix(es):
+           : 
+           : * curl: libcurl: Curl out of bounds read for cookie path (CVE-2025-9086)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Moderate
+
+===============================================================================
+  Moderate: curl security update
+===============================================================================
+  Update ID: RLSA-2026:80512
+       Type: security
+    Updated: 2026-10-24 00:12:27
+       Bugs: 2461202 - 
+           : 2461204 - 
+           : 2461205 - 
+           : 2476979 - 
+           : 2496766 - 
+       CVEs: CVE-2026-10536
+           : CVE-2026-5545
+           : CVE-2026-6253
+           : CVE-2026-6429
+           : CVE-2026-7168
+Description: The curl packages provide the libcurl library and the curl utility for downloading files from servers using various protocols, including HTTP, FTP, and LDAP.
+           : 
+           : Security Fix(es):
+           : 
+           : * curl: curl: Proxy credential disclosure via redirects to unauthenticated proxies (CVE-2026-6253)
+           : 
+           : * curl: libcurl: Authentication bypass due to incorrect HTTP Negotiate connection reuse (CVE-2026-5545)
+           : 
+           : * curl: libcurl: Credential leak via reused proxy connection during HTTP redirects (CVE-2026-6429)
+           : 
+           : * curl: libcurl: Information disclosure via incorrect Proxy-Authorization header reuse (CVE-2026-7168)
+           : 
+           : * libcurl: libcurl: Use-after-free vulnerability leading to Denial of Service (CVE-2026-10536)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Moderate
+
+===============================================================================
+  Moderate: expat security update
+===============================================================================
+  Update ID: RLSA-2026:64810
+       Type: security
+    Updated: 2026-09-23 12:11:35
+       Bugs: 2484620 - 
+           : 2490669 - 
+       CVEs: CVE-2026-50219
+           : CVE-2026-56132
+Description: Expat is a C library for parsing XML documents.
+           : 
+           : Security Fix(es):
+           : 
+           : * expat: libexpat: Use-after-free vulnerability due to improper handler call depth tracking (CVE-2026-50219)
+           : 
+           : * expat: libexpat: Arbitrary Code Execution via Heap-based Buffer Overflow (CVE-2026-56132)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Moderate
+
+===============================================================================
+  Moderate: gawk security update
+===============================================================================
+  Update ID: RLSA-2026:73429
+       Type: security
+    Updated: 2026-10-14 12:12:51
+       Bugs: 2499655 - 
+           : 2499657 - 
+           : 2499658 - 
+       CVEs: CVE-2026-40467
+           : CVE-2026-40468
+           : CVE-2026-40553
+Description: The gawk packages contain the GNU version of awk, a text processing utility. Awk interprets a special-purpose programming language to do quick and easy text pattern matching and reformatting jobs.
+           : 
+           : Security Fix(es):
+           : 
+           : * gawk: gawk: Memory corruption via integer overflow (CVE-2026-40468)
+           : 
+           : * gawk: Gawk: Buffer overflow in ftype() routine may lead to code execution or denial of service (CVE-2026-40553)
+           : 
+           : * gawk: gawk: Denial of Service due to Use After Free vulnerability in io.c (CVE-2026-40467)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Moderate
+
+===============================================================================
+  Moderate: glib2 security update
+===============================================================================
+  Update ID: RLSA-2026:15969
+       Type: security
+    Updated: 2026-05-27 12:09:00
+       Bugs: 2419093 - 
+           : 2421339 - 
+       CVEs: CVE-2025-14087
+           : CVE-2025-14512
+Description: GLib provides the core application building blocks for libraries and applications written in C. It provides the core object system used in GNOME, the main loop implementation, and a large set of utility functions for strings and common data structures.
+           : 
+           : Security Fix(es):
+           : 
+           : * glib: GLib: Buffer underflow in GVariant parser leads to heap corruption (CVE-2025-14087)
+           : 
+           : * glib: Integer Overflow in GLib GIO Attribute Escaping Causes Heap Buffer Overflow (CVE-2025-14512)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Moderate
+
+===============================================================================
+  Moderate: glib2 security update
+===============================================================================
+  Update ID: RLSA-2026:19148
+       Type: security
+    Updated: 2026-06-12 12:06:14
+       Bugs: 2419093 - 
+           : 2421339 - 
+       CVEs: CVE-2025-14087
+           : CVE-2025-14512
+Description: GLib provides the core application building blocks for libraries and applications written in C. It provides the core object system used in GNOME, the main loop implementation, and a large set of utility functions for strings and common data structures.
+           : 
+           : Security Fix(es):
+           : 
+           : * glib: GLib: Buffer underflow in GVariant parser leads to heap corruption (CVE-2025-14087)
+           : 
+           : * glib: Integer Overflow in GLib GIO Attribute Escaping Causes Heap Buffer Overflow (CVE-2025-14512)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Moderate
+
+===============================================================================
+  Moderate: glib2 security update
+===============================================================================
+  Update ID: RLSA-2026:64799
+       Type: security
+    Updated: 2026-09-23 12:11:35
+       Bugs: 2501732 - 
+       CVEs: CVE-2026-16118
+Description: GLib provides the core application building blocks for libraries and applications written in C. It provides the core object system used in GNOME, the main loop implementation, and a large set of utility functions for strings and common data structures.
+           : 
+           : Security Fix(es):
+           : 
+           : * xdgmime: heap-based buffer overflow in _xdg_mime_magic_parse_magic_line() in xdgmimemagic.c (CVE-2026-16118)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Moderate
+
+===============================================================================
+  Moderate: glibc security update
+===============================================================================
+  Update ID: RLSA-2026:1334
+       Type: security
+    Updated: 2026-02-13 09:11:18
+       Bugs: 2429771 - 
+           : 2430201 - 
+       CVEs: CVE-2026-0861
+           : CVE-2026-0915
+Description: The glibc packages provide the standard C libraries (libc), POSIX thread libraries (libpthread), standard math libraries (libm), and the name service cache daemon (nscd) used by multiple programs on the system. Without these libraries, the Linux system cannot function correctly.
+           : 
+           : Security Fix(es):
+           : 
+           : * glibc: Integer overflow in memalign leads to heap corruption (CVE-2026-0861)
+           : 
+           : * glibc: glibc: Information disclosure via zero-valued network query (CVE-2026-0915)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Moderate
+
+===============================================================================
+  Moderate: glibc security update
+===============================================================================
+  Update ID: RLSA-2026:19061
+       Type: security
+    Updated: 2026-06-12 12:06:11
+       Bugs: 2449777 - 
+           : 2449783 - 
+       CVEs: CVE-2026-4437
+           : CVE-2026-4438
+Description: The glibc packages provide the standard C libraries (libc), POSIX thread libraries (libpthread), standard math libraries (libm), and the name service cache daemon (nscd) used by multiple programs on the system. Without these libraries, the Linux system cannot function correctly.
+           : 
+           : Security Fix(es):
+           : 
+           : * glibc: glibc: Incorrect DNS response parsing via crafted DNS server response (CVE-2026-4437)
+           : 
+           : * glibc: glibc: Invalid DNS hostname returned via gethostbyaddr functions (CVE-2026-4438)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Moderate
+
+===============================================================================
+  Moderate: glibc security update
+===============================================================================
+  Update ID: RLSA-2026:84753
+       Type: security
+    Updated: 2026-10-24 00:12:28
+       Bugs: 2523274 - 
+           : 2524870 - 
+           : 2525256 - 
+           : 2536382 - 
+       CVEs: CVE-2026-18374
+           : CVE-2026-77117
+           : CVE-2026-80489
+           : CVE-2026-8674
+Description: The glibc packages provide the standard C libraries (libc), POSIX thread libraries (libpthread), standard math libraries (libm), and the name service cache daemon (nscd) used by multiple programs on the system. Without these libraries, the Linux system cannot function correctly.
+           : 
+           : Security Fix(es):
+           : 
+           : * glibc: Non-progress DoS in SHIFT_JISX0213 -&gt (CVE-2026-77117)
+           : 
+           : * glibc: Non-progress DoS in EUC_JISX0213 -> UCS-4 conversion state (CVE-2026-80489)
+           : 
+           : * glibc: glibc: Heap buffer overflow via attacker-controlled fopen mode string (CVE-2026-18374)
+           : 
+           : * glibc: glibc DNS stub resolver: Denial of Service via long search domain in configuration (CVE-2026-8674)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Moderate
+
+===============================================================================
+  Moderate: glibc security, bug fix, and enhancement update
+===============================================================================
+  Update ID: RLSA-2026:76781
+       Type: security
+    Updated: 2026-10-24 00:12:27
+       Bugs: 2513603 - 
+           : 2513608 - 
+           : 2523249 - 
+           : 2523258 - 
+       CVEs: CVE-2026-19499
+           : CVE-2026-19542
+           : CVE-2026-6368
+           : CVE-2026-6791
+Description: The glibc packages provide the standard C libraries (libc), POSIX thread libraries (libpthread), standard math libraries (libm), and the name service cache daemon (nscd) used by multiple programs on the system. Without these libraries, the Linux system cannot function correctly.
+           : 
+           : Security Fix(es):
+           : 
+           : * glibc: Process abort due to invalid memory in wordexp (CVE-2026-6368)
+           : 
+           : * glibc: Denial of Service via stack exhaustion during tilde expansion (CVE-2026-6791)
+           : 
+           : * glibc: Buffer Overflow in strfmon right-justification padding (CVE-2026-19499)
+           : 
+           : * glibc: Fix out-of-bounds array write in tdelete (CVE-2026-19542)
+           : 
+           : Bug Fix(es) and Enhancement(s):
+           : 
+           : * The iconv utility no longer returns exit status 1 after a successful //TRANSLIT transliteration
+           : 
+           : * A counter overflow in __wcsmbs_clone_conv that occurred when setlocale was called has been fixed
+           : 
+           : * A fcntl.h header conflict when compiling on Rocky Linux 10 has been resolved
+           : 
+           : * Minor documentation improvements have been picked up from upstream
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Moderate
+
+===============================================================================
+  Moderate: gnutls security update
+===============================================================================
+  Update ID: RLSA-2026:3477
+       Type: security
+    Updated: 2026-03-19 06:08:03
+       Bugs: 2392528 - 
+           : 2423177 - 
+       CVEs: CVE-2025-14831
+           : CVE-2025-9820
+Description: The gnutls packages provide the GNU Transport Layer Security (GnuTLS) library, which implements cryptographic algorithms and protocols such as SSL, TLS, and DTLS.
+           : 
+           : Security Fix(es):
+           : 
+           : * gnutls: Stack-based Buffer Overflow in gnutls_pkcs11_token_init() Function (CVE-2025-9820)
+           : 
+           : * gnutls: GnuTLS: Denial of Service via excessive resource consumption during certificate verification (CVE-2025-14831)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Moderate
+
+===============================================================================
+  Moderate: gzip security update
+===============================================================================
+  Update ID: RLSA-2026:61625
+       Type: security
+    Updated: 2026-09-15 12:13:01
+       Bugs: 2494158 - 
+           : 2494159 - 
+       CVEs: CVE-2026-41991
+           : CVE-2026-41992
+Description: The gzip packages contain the gzip (GNU zip) data compression utility. gzip is used to compress regular files. It replaces them with files containing the .gz extension, while retaining ownership modes, access, and modification times.
+           : 
+           : Security Fix(es):
+           : 
+           : * gzip: gzip: Arbitrary file overwrite via insecure temporary file handling in gzexe utility (CVE-2026-41991)
+           : 
+           : * gzip: gzip: Information disclosure via global buffer overflow in LZH decompression (CVE-2026-41992)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Moderate
+
+===============================================================================
+  Moderate: iputils security update
+===============================================================================
+  Update ID: RLSA-2026:18162
+       Type: security
+    Updated: 2026-06-12 12:06:18
+       Bugs: 2382657 - 
+       CVEs: CVE-2025-48964
+Description: The iputils packages contain basic utilities for monitoring a network, including ping. 
+           : 
+           : Security Fix(es):
+           : 
+           : * iputils: iputils integer overflow (CVE-2025-48964)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+           : 
+           : Additional Changes:
+           : 
+           : For detailed information on changes in this release, see the Rocky Linux 10 Release Notes linked from the References section.
+   Severity: Moderate
+
+===============================================================================
+  Moderate: ncurses security update
+===============================================================================
+  Update ID: RLSA-2026:5913
+       Type: security
+    Updated: 2026-04-23 12:09:00
+       Bugs: 2449037 - 
+       CVEs: CVE-2025-69720
+Description: The ncurses (new curses) library routines are a terminal-independent method of updating character screens with reasonable optimization. The ncurses packages contain support utilities including a terminfo compiler tic, a decompiler infocmp, clear, tput, tset, and a termcap conversion tool captoinfo.
+           : 
+           : Security Fix(es):
+           : 
+           : * ncurses: ncurses: Buffer overflow vulnerability may lead to arbitrary code execution. (CVE-2025-69720)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Moderate
+
+===============================================================================
+  Moderate: openssl security update
+===============================================================================
+  Update ID: RLSA-2025:21248
+       Type: security
+    Updated: 2025-12-09 09:07:18
+       Bugs: 2396054 - 
+       CVEs: CVE-2025-9230
+Description: OpenSSL is a toolkit that implements the Secure Sockets Layer (SSL) and Transport Layer Security (TLS) protocols, as well as a full-strength general-purpose cryptography library.
+           : 
+           : Security Fix(es):
+           : 
+           : * openssl: Out-of-bounds read & write in RFC 3211 KEK Unwrap (CVE-2025-9230)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Moderate
+
+===============================================================================
+  Moderate: openssl security update
+===============================================================================
+  Update ID: RLSA-2026:19066
+       Type: security
+    Updated: 2026-06-12 12:06:11
+       Bugs: 2451094 - 
+       CVEs: CVE-2026-31790
+Description: OpenSSL is a toolkit that implements the Secure Sockets Layer (SSL) and Transport Layer Security (TLS) protocols, as well as a full-strength general-purpose cryptography library.
+           : 
+           : Security Fix(es):
+           : 
+           : * openssl: openssl: Information Disclosure from Uninitialized Memory via Invalid RSA Public Key (CVE-2026-31790)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Moderate
+
+===============================================================================
+  Moderate: openssl security update
+===============================================================================
+  Update ID: RLSA-2026:22314
+       Type: security
+    Updated: 2026-06-19 12:06:07
+       Bugs: 2456314 - 
+       CVEs: CVE-2026-28390
+Description: OpenSSL is a toolkit that implements the Secure Sockets Layer (SSL) and Transport Layer Security (TLS) protocols, as well as a full-strength general-purpose cryptography library.
+           : 
+           : Security Fix(es):
+           : 
+           : * openssl: OpenSSL: Denial of Service due to NULL pointer dereference in CMS EnvelopedData processing (CVE-2026-28390)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Moderate
+
+===============================================================================
+  Moderate: p11-kit security update
+===============================================================================
+  Update ID: RLSA-2026:18143
+       Type: security
+    Updated: 2026-06-12 12:06:09
+       Bugs: 2437308 - 
+       CVEs: CVE-2026-2100
+Description: The p11-kit packages provide a mechanism to manage PKCS#11 modules. The p11-kit-trust subpackage includes a PKCS#11 trust module that provides certificate anchors and black lists based on configuration files.
+           : 
+           : Security Fix(es):
+           : 
+           : * p11-kit: p11-kit: NULL dereference via C_DeriveKey with specific NULL parameters (CVE-2026-2100)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+           : 
+           : Additional Changes:
+           : 
+           : For detailed information on changes in this release, see the Rocky Linux 10 Release Notes linked from the References section.
+   Severity: Moderate
+
+===============================================================================
+  Moderate: python3.12 security update
+===============================================================================
+  Update ID: RLSA-2025:23940
+       Type: security
+    Updated: 2026-01-07 09:06:58
+       Bugs: 2402342 - 
+       CVEs: CVE-2025-8291
+Description: Python is an interpreted, interactive, object-oriented programming language, which includes modules, classes, exceptions, very high level dynamic data types and dynamic typing. Python supports interfaces to many system calls and libraries, as well as to various windowing systems.
+           : 
+           : Security Fix(es):
+           : 
+           : * cpython: python: Python zipfile End of Central Directory (EOCD) Locator record offset not checked (CVE-2025-8291)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Moderate
+
+===============================================================================
+  Moderate: python3.12 security update
+===============================================================================
+  Update ID: RLSA-2026:1828
+       Type: security
+    Updated: 2026-02-18 09:09:25
+       Bugs: 2418078 - 
+           : 2418655 - 
+       CVEs: CVE-2025-12084
+           : CVE-2025-13836
+Description: Python is an interpreted, interactive, object-oriented programming language, which includes modules, classes, exceptions, very high level dynamic data types and dynamic typing. Python supports interfaces to many system calls and libraries, as well as to various windowing systems.
+           : 
+           : Security Fix(es):
+           : 
+           : * cpython: Excessive read buffering DoS in http.client (CVE-2025-13836)
+           : 
+           : * cpython: python: cpython: Quadratic algorithm in xml.dom.minidom leads to denial of service (CVE-2025-12084)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Moderate
+
+===============================================================================
+  Moderate: python3.12 security update
+===============================================================================
+  Update ID: RLSA-2026:4713
+       Type: security
+    Updated: 2026-04-10 12:09:40
+       Bugs: 2431367 - 
+           : 2431368 - 
+           : 2431373 - 
+           : 2432437 - 
+       CVEs: CVE-2025-15366
+           : CVE-2025-15367
+           : CVE-2026-0865
+           : CVE-2026-1299
+Description: Python is an interpreted, interactive, object-oriented programming language, which includes modules, classes, exceptions, very high level dynamic data types and dynamic typing. Python supports interfaces to many system calls and libraries, as well as to various windowing systems.
+           : 
+           : Security Fix(es):
+           : 
+           : * cpython: wsgiref.headers.Headers allows header newline injection in Python (CVE-2026-0865)
+           : 
+           : * cpython: IMAP command injection in user-controlled commands (CVE-2025-15366)
+           : 
+           : * cpython: POP3 command injection in user-controlled commands (CVE-2025-15367)
+           : 
+           : * cpython: email header injection due to unquoted newlines (CVE-2026-1299)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Moderate
+
+===============================================================================
+  Moderate: systemd security update
+===============================================================================
+  Update ID: RLSA-2026:13651
+       Type: security
+    Updated: 2026-05-29 12:08:30
+       Bugs: 2450505 - 
+       CVEs: CVE-2026-29111
+Description: The systemd packages contain systemd, a system and service manager for Linux, compatible with the SysV and LSB init scripts. It provides aggressive parallelism capabilities, uses socket and D-Bus activation for starting services, offers on-demand starting of daemons, and keeps track of processes using Linux cgroups. In addition, it supports snapshotting and restoring of the system state, maintains mount and automount points, and implements an elaborate transactional dependency-based service control logic. It can also work as a drop-in replacement for sysvinit.
+           : 
+           : Security Fix(es):
+           : 
+           : * systemd: systemd: Arbitrary code execution or Denial of Service via spurious IPC API call data (CVE-2026-29111)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Moderate
+
+===============================================================================
+  Moderate: systemd security update
+===============================================================================
+  Update ID: RLSA-2026:18153
+       Type: security
+    Updated: 2026-06-12 12:06:06
+       Bugs: 2369242 - 
+       CVEs: CVE-2025-4598
+Description: The systemd packages contain systemd, a system and service manager for Linux, compatible with the SysV and LSB init scripts. It provides aggressive parallelism capabilities, uses socket and D-Bus activation for starting services, offers on-demand starting of daemons, and keeps track of processes using Linux cgroups. In addition, it supports snapshotting and restoring of the system state, maintains mount and automount points, and implements an elaborate transactional dependency-based service control logic. It can also work as a drop-in replacement for sysvinit.
+           : 
+           : Security Fix(es):
+           : 
+           : * systemd-coredump: race condition that allows a local attacker to crash a SUID program and gain read access to the resulting core dump (CVE-2025-4598)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+           : 
+           : Additional Changes:
+           : 
+           : For detailed information on changes in this release, see the Rocky Linux 10 Release Notes linked from the References section.
+   Severity: Moderate
+
+===============================================================================
+  Moderate: systemd security update
+===============================================================================
+  Update ID: RLSA-2026:19068
+       Type: security
+    Updated: 2026-06-12 12:06:11
+       Bugs: 2450505 - 
+       CVEs: CVE-2026-29111
+Description: The systemd packages contain systemd, a system and service manager for Linux, compatible with the SysV and LSB init scripts. It provides aggressive parallelism capabilities, uses socket and D-Bus activation for starting services, offers on-demand starting of daemons, and keeps track of processes using Linux cgroups. In addition, it supports snapshotting and restoring of the system state, maintains mount and automount points, and implements an elaborate transactional dependency-based service control logic. It can also work as a drop-in replacement for sysvinit.
+           : 
+           : Security Fix(es):
+           : 
+           : * systemd: systemd: Arbitrary code execution or Denial of Service via spurious IPC API call data (CVE-2026-29111)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Moderate
+
+===============================================================================
+  Moderate: tar security update
+===============================================================================
+  Update ID: RLSA-2026:0002
+       Type: security
+    Updated: 2026-01-19 09:09:13
+       Bugs: 2379592 - 
+       CVEs: CVE-2025-45582
+Description: The GNU tar program can save multiple files in an archive and restore files from an archive.
+           : 
+           : Security Fix(es):
+           : 
+           : * tar: Tar path traversal (CVE-2025-45582)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Moderate
+
+===============================================================================
+  Moderate: tar security, bug fix, and enhancement update
+===============================================================================
+  Update ID: RLSA-2026:61586
+       Type: security
+    Updated: 2026-09-25 00:14:09
+       Bugs: 2455360 - 
+           : 2509735 - 
+           : 2509843 - 
+       CVEs: CVE-2026-18477
+           : CVE-2026-18508
+           : CVE-2026-5704
+Description: The GNU tar program can save multiple files in an archive and restore files from an archive.
+           : 
+           : Security Fix(es):
+           : 
+           : * tar: tar: Hidden file injection via crafted archives (CVE-2026-5704)
+           : 
+           : * tar: tar: TOCTOU in incremental dumpdir 'X' rename handling allows restore path escape (CVE-2026-18477)
+           : 
+           : * tar: tar: --one-top-level hardlink targets not confined to top-level directory enabling arbitrary file overwrite (CVE-2026-18508)
+           : 
+           : Bug Fix(es) and Enhancement(s):
+           : 
+           : * tar: --one-top-level with absolute path fails (JIRA:Rocky Linux-143906)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Moderate
+
+===============================================================================
+  Moderate: util-linux security update
+===============================================================================
+  Update ID: RLSA-2026:1696
+       Type: security
+    Updated: 2026-02-18 09:09:25
+       Bugs: 2419369 - 
+       CVEs: CVE-2025-14104
+Description: The util-linux packages contain a large variety of low-level system utilities that are necessary for a Linux system to function. Among others, these include the fdisk configuration tool and the login program.
+           : 
+           : Security Fix(es):
+           : 
+           : * util-linux: util-linux: Heap buffer overread in setpwnam() when processing 256-byte usernames (CVE-2025-14104)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Moderate
+
+===============================================================================
+  Moderate: vim security update
+===============================================================================
+  Update ID: RLSA-2025:21015
+       Type: security
+    Updated: 2026-05-29 12:08:30
+       Bugs: 2380360 - 
+           : 2380362 - 
+       CVEs: CVE-2025-53905
+           : CVE-2025-53906
+Description: Vim (Vi IMproved) is an updated and improved version of the vi editor.
+           : 
+           : Security Fix(es):
+           : 
+           : * vim: Vim path traversal (CVE-2025-53906)
+           : 
+           : * vim: Vim path traversial (CVE-2025-53905)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Moderate
+
+===============================================================================
+  Moderate: vim security update
+===============================================================================
+  Update ID: RLSA-2026:22711
+       Type: security
+    Updated: 2026-06-19 12:06:08
+       Bugs: 2455542 - 
+       CVEs: CVE-2026-35177
+Description: Vim (Vi IMproved) is an updated and improved version of the vi editor.
+           : 
+           : Security Fix(es):
+           : 
+           : * vim: zip.vim: Vim zip.vim plugin: Arbitrary file overwrite via path traversal bypass (CVE-2026-35177)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Moderate
+
+===============================================================================
+  Moderate: vim security update
+===============================================================================
+  Update ID: RLSA-2026:4715
+       Type: security
+    Updated: 2026-04-10 12:09:40
+       Bugs: 2437843 - 
+       CVEs: CVE-2026-25749
+Description: Vim (Vi IMproved) is an updated and improved version of the vi editor.
+           : 
+           : Security Fix(es):
+           : 
+           : * vim: Vim: Arbitrary code execution via 'helpfile' option processing (CVE-2026-25749)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Moderate
+
+===============================================================================
+  Moderate: xz security update
+===============================================================================
+  Update ID: RLSA-2026:64787
+       Type: security
+    Updated: 2026-09-23 12:11:35
+       Bugs: 2454589 - 
+       CVEs: CVE-2026-34743
+Description: XZ Utils is an integrated collection of user-space file compression utilities based on the Lempel-Ziv-Markov chain algorithm (LZMA), which performs lossless data compression. The algorithm provides a high compression ratio while keeping the decompression time short.
+           : 
+           : Security Fix(es):
+           : 
+           : * xz: XZ Utils: Denial of Service via buffer overflow in index decoding (CVE-2026-34743)
+           : 
+           : For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+   Severity: Moderate

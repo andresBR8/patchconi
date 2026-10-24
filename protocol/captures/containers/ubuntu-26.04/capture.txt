@@ -1,0 +1,3 @@
+image=docker.io/library/ubuntu:resolute-20260610@sha256:53958ec7b67c2c9355df922dd08dbf0360611f8c3cdb656875e81873db9ffdba
+captured_at=2026-10-24T19:54:30Z
+script=protocol/captures/capture-containers.sh
