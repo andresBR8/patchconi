@@ -90,7 +90,7 @@ v0.1.0 knows whether an update is a security update, but not how severe it is, w
 
 Alternatives: **7 days** (stricter, fits teams that patch weekly) or **30 days** (only the PCI DSS deadline). Risk-aware thresholds come with vulnerability data.
 
-> Note: the PCI DSS text is behind the PCI SSC document library's license agreement; the wording above is to be checked against the official v4.0.1 document before the phase closes.
+> Note: the PCI DSS text is behind the PCI SSC document library's license agreement; the wording above is to be checked against the official v4.0.1 document before the phase closes ([issue #15](https://github.com/andresBR8/patchconi/issues/15)).
 
 ### `stale_after`: why 24 hours
 

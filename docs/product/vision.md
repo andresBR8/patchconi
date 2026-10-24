@@ -83,7 +83,7 @@ Each criterion must be demonstrable with a test or a command. Sections marked *I
 
 - AC-1.1 An administrator creates a host; the UI shows its token **once**. Reloading the page does not show it again.
 - AC-1.2 The database stores only a hash of the token. The token has an identifiable prefix, so a secret scanner can recognize a leaked one.
-- AC-1.3 Rotating a token returns a new one; the old one is rejected from then on.
+- AC-1.3 Rotating a token returns a new one; the old one is rejected from then on. Whether the old token gets a short grace period is open: [issue #14](https://github.com/andresBR8/patchconi/issues/14).
 - AC-1.4 A revoked token is rejected with `401` on the next report, and the host keeps its history.
 
 ### Report ingestion (UC-1, UC-4)
@@ -180,4 +180,4 @@ PatchConi runs in environments its maintainer does not control. The agent and th
 
 Tracked as issues in the phase 1 milestone before the phase closes:
 
-1. Token rotation: should the old token keep working for a short grace period, so an automated rotation does not lose a report?
+1. Token rotation: should the old token keep working for a short grace period, so an automated rotation does not lose a report? [Issue #14](https://github.com/andresBR8/patchconi/issues/14).
