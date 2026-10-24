@@ -199,6 +199,11 @@ version = "2.4.3"
 backend = "go:github.com/pelletier/go-toml/v2/cmd/tomljson"
 specifiers = ["2.4.3"]
 
+[[tools."go:github.com/santhosh-tekuri/jsonschema/cmd/jv"]]
+version = "0.7.0"
+backend = "go:github.com/santhosh-tekuri/jsonschema/cmd/jv"
+specifiers = ["0.7.0"]
+
 [[tools."go:github.com/zricethezav/gitleaks/v8"]]
 version = "8.30.1"
 backend = "go:github.com/zricethezav/gitleaks/v8"

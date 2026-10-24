@@ -30,6 +30,10 @@ go = "1.27.2"
 "aqua:mikefarah/yq" = "4.54.1"
 "go:github.com/editorconfig-checker/editorconfig-checker/v4/cmd/editorconfig-checker" = { version = "4.0.2", install_env = { CGO_ENABLED = "0", GOTOOLCHAIN = "local", GOPROXY = "https://proxy.golang.org", GOSUMDB = "sum.golang.org", GONOPROXY = "", GONOSUMDB = "", GOPRIVATE = "", GOINSECURE = "" } }
 "go:github.com/pelletier/go-toml/v2/cmd/tomljson" = { version = "2.4.3", install_env = { CGO_ENABLED = "0", GOTOOLCHAIN = "local", GOPROXY = "https://proxy.golang.org", GOSUMDB = "sum.golang.org", GONOPROXY = "", GONOSUMDB = "", GOPRIVATE = "", GOINSECURE = "" } }
+# JSON Schema validator for the protocol examples and YAML duplicate keys
+# (ADR 0021). Its release binaries come with md5 sums only, so it is built
+# from source like the tools above.
+"go:github.com/santhosh-tekuri/jsonschema/cmd/jv" = { version = "0.7.0", install_env = { CGO_ENABLED = "0", GOTOOLCHAIN = "local", GOPROXY = "https://proxy.golang.org", GOSUMDB = "sum.golang.org", GONOPROXY = "", GONOSUMDB = "", GOPRIVATE = "", GOINSECURE = "" } }
 
 [env]
 # pip only installs packages uploaded at least 3 days ago, including pip's

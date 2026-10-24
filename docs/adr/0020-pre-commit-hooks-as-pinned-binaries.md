@@ -78,7 +78,7 @@ Go and pre-commit may be able to move up a level: issues [#18](https://github.co
 - Positive: pip and PyPI leave the hook chain. Every hook runs a pinned, verified tool or a script reviewed in this repository.
 - Positive: the hooks only read files, so they run unchanged in the assistant's sandbox; the `SKIP` is gone.
 - Negative and trade-offs: nothing fixes files automatically any more.
-- Negative and trade-offs: yq accepts duplicate keys in YAML. actionlint reports them in workflows (tested); other YAML files are not checked for them. Accepted for now: [issue #17](https://github.com/andresBR8/patchconi/issues/17), to be checked again when the schema validator is chosen in phase 1.
+- Negative and trade-offs: yq accepts duplicate keys in YAML. actionlint reports them in workflows (tested); other YAML files are not checked for them. Accepted for now: [issue #17](https://github.com/andresBR8/patchconi/issues/17), to be checked again when the schema validator is chosen in phase 1. Done in [ADR 0021](0021-json-schema-validator-jv.md): the `check-yaml-duplicates` hook.
 - Negative and trade-offs: the first `mise install` compiles two more tools. Renovate may not find versions for the `go:` paths that point to a command inside a module (`.../cmd/...`); check the Dependency Dashboard after merging. Unlike gitleaks, their Renovate updates need no manual approval: Go verifies them through sum.golang.org and they carry no version in ldflags, so the 3-day delay and CI are enough.
 - Negative and trade-offs: the hook scripts and `check-json.py` use the system `bash` and `python3`, which are not pinned.
 - Follow-ups:

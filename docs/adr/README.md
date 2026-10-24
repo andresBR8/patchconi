@@ -24,3 +24,4 @@ Each record describes one decision: its context, what was chosen, the alternativ
 | [0018](0018-supply-chain-policy.md) | Supply-chain policy: 3-day delay, SHA pins and blocked install scripts | Accepted (point 4 superseded by [0020](0020-pre-commit-hooks-as-pinned-binaries.md)) | 2026-10-17 |
 | [0019](0019-patch-policy-as-code.md) | Patch policy as code, read-only in the UI | Accepted | 2026-10-24 |
 | [0020](0020-pre-commit-hooks-as-pinned-binaries.md) | pre-commit hooks as binaries pinned by mise | Accepted | 2026-10-24 |
+| [0021](0021-json-schema-validator-jv.md) | JSON Schema validator: jv, built from source by mise | Accepted | 2026-10-24 |

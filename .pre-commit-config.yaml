@@ -26,6 +26,14 @@ repos:
         entry: yq --input-format yaml --output-format yaml "true"
         language: system
         types: [yaml]
+      # jv parses YAML with gopkg.in/yaml.v3, which rejects a duplicate key at
+      # any depth. It reads only the first document of a file: the second
+      # document of pnpm-lock.yaml, written by pnpm, is not checked (ADR 0021).
+      - id: check-yaml-duplicates
+        name: check yaml duplicate keys
+        entry: jv scripts/hooks/any-document.schema.json
+        language: system
+        types: [yaml]
       # Standard library only, run isolated (-I) so that no module from the
       # repository can shadow the json module. Also rejects duplicate keys.
       - id: check-json
