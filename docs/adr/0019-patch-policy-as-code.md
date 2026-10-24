@@ -23,5 +23,4 @@ The file format and variable names are defined in phase 7, when the policy engin
 
 - Positive: every policy change is a reviewed diff with history (git, GitOps); the same policy can be applied to several installations; the UI cannot be used to relax it.
 - Negative and trade-offs: changing a threshold needs access to the deployment and a restart, not a click; people without access to the configuration cannot experiment with values.
-- Follow-ups: phase 6 shows the policy read-only instead of a settings screen; phase 7 defines the file format, the variable names and whether a reload without restart is worth it.
-- Follow-ups: expiring exceptions, when they are built, follow this same decision: they are declared in the policy configuration, not created in the UI (see the [domain model](../product/domain-model.md#exceptions)).
+- Follow-ups: phase 6 shows the policy read-only instead of a settings screen; phase 7 defines the file format, the variable names and whether a reload without restart is worth it; expiring exceptions, when they are built, follow this same decision: they are declared in the policy configuration, not created in the UI (see the [domain model](../product/domain-model.md#exceptions)).

@@ -19,7 +19,9 @@ En su lugar, cada informe es **una fila** y lo pendiente se guarda como **episod
 
 - El paquete se identifica por **nombre y arquitectura**: `libc6:amd64` y `libc6:i386` son dos episodios, porque se actualizan por separado.
 - Hay **dos relojes**: `pending_since` (cualquier actualización, cuenta para `other_max_age`) y `security_since` (desde que aparece una de seguridad, cuenta para `security_max_age`). Ejemplo: un paquete con un arreglo de errores pendiente desde hace 20 días recibe hoy una versión de seguridad. Con un solo reloj saldría fuera de política hoy mismo; con dos, la de seguridad tiene sus 14 días.
-- Solo un **informe de confianza** (parser correcto y metadatos recientes) cierra un episodio. Si no, un `apt clean` borraría las listas, `apt` no listaría nada y el host parecería parcheado sin haber instalado nada.
+- La regla es **asimétrica**. Cualquier informe con el parser correcto puede **abrir** episodios: lo que dice que está pendiente es real aunque sus metadatos sean viejos (como mucho, la lista está incompleta). Solo un **informe de confianza** (parser correcto y metadatos recientes) puede **cerrarlos**: que un paquete no aparezca solo es fiable con metadatos recientes. Si se borran las listas (`/var/lib/apt/lists`), `apt` no lista nada y el host parecería parcheado sin haber instalado nada. Y si solo los informes de confianza abrieran episodios, un host con el refresco de `apt` roto durante semanas saldría «no data» con parches de seguridad pendientes a la vista.
+- Al llegar el **primer informe de confianza**, los episodios que sigan abiertos sin fecha de aviso se marcan «pending before enrollment». Sus relojes no se reinician: guardan la primera vez que el servidor los vio.
+- Los relojes **solo retroceden**. Si llega una candidata de seguridad con un aviso anterior al `pending_since` del episodio, `security_since` retrocede y arrastra a `pending_since`, que nunca es posterior a `security_since`.
 
 ## Por qué el aviso no es una tabla global
 
