@@ -26,6 +26,16 @@ repos:
         entry: yq --input-format yaml --output-format yaml "true"
         language: system
         types: [yaml]
+      # jv parses YAML with gopkg.in/yaml.v3, which rejects a duplicate key at
+      # any depth. It reads only the first document of a file: the second
+      # document of pnpm-lock.yaml, written by pnpm, is not checked (ADR 0021,
+      # issue #17). It also fails on an empty file and on non-string keys,
+      # which are valid YAML: give an empty placeholder a "---" line.
+      - id: check-yaml-duplicates
+        name: check yaml duplicate keys
+        entry: jv scripts/hooks/any-document.schema.json
+        language: system
+        types: [yaml]
       # Standard library only, run isolated (-I) so that no module from the
       # repository can shadow the json module. Also rejects duplicate keys.
       - id: check-json
@@ -53,13 +63,15 @@ repos:
         entry: scripts/hooks/check-large-files.sh
         language: system
         stages: [pre-commit, pre-push, manual]
-      # The headers of detect-private-key in pre-commit-hooks 6.0.0. They are
-      # written as alternatives and character classes so that this file does
-      # not match itself. gitleaks also looks for private keys, but only
-      # complete ones; this hook flags a header on its own.
+      # The headers of detect-private-key in pre-commit-hooks 6.0.0, plus
+      # PuTTY key format 3 (written by PuTTY 0.75 and later; upstream only
+      # matches format 2). They are written as alternatives and character
+      # classes so that this file does not match itself. gitleaks also looks
+      # for private keys, but only complete ones; this hook flags a header on
+      # its own.
       - id: detect-private-key
         name: detect private key
-        entry: 'BEGIN (RSA |DSA |EC |OPENSSH |ENCRYPTED |SSH2 ENCRYPTED |PGP |)PRIVATE KEY|PuTTY-User-Key-File-[2]|BEGIN OpenVPN Static key V[1]'
+        entry: 'BEGIN (RSA |DSA |EC |OPENSSH |ENCRYPTED |SSH2 ENCRYPTED |PGP |)PRIVATE KEY|PuTTY-User-Key-File-[23]|BEGIN OpenVPN Static key V[1]'
         language: pygrep
         types: [text]
       # The hook scripts run on every commit, so they are linted too.

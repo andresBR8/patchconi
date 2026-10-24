@@ -1,0 +1,4 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "Accepts any document. The check-yaml-duplicates hook validates YAML files against it, so that jv only parses them and reports duplicate keys (ADR 0021)."
+}
