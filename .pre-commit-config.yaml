@@ -53,13 +53,15 @@ repos:
         entry: scripts/hooks/check-large-files.sh
         language: system
         stages: [pre-commit, pre-push, manual]
-      # The headers of detect-private-key in pre-commit-hooks 6.0.0. They are
-      # written as alternatives and character classes so that this file does
-      # not match itself. gitleaks also looks for private keys, but only
-      # complete ones; this hook flags a header on its own.
+      # The headers of detect-private-key in pre-commit-hooks 6.0.0, plus
+      # PuTTY key format 3 (written by PuTTY 0.75 and later; upstream only
+      # matches format 2). They are written as alternatives and character
+      # classes so that this file does not match itself. gitleaks also looks
+      # for private keys, but only complete ones; this hook flags a header on
+      # its own.
       - id: detect-private-key
         name: detect private key
-        entry: 'BEGIN (RSA |DSA |EC |OPENSSH |ENCRYPTED |SSH2 ENCRYPTED |PGP |)PRIVATE KEY|PuTTY-User-Key-File-[2]|BEGIN OpenVPN Static key V[1]'
+        entry: 'BEGIN (RSA |DSA |EC |OPENSSH |ENCRYPTED |SSH2 ENCRYPTED |PGP |)PRIVATE KEY|PuTTY-User-Key-File-[23]|BEGIN OpenVPN Static key V[1]'
         language: pygrep
         types: [text]
       # The hook scripts run on every commit, so they are linted too.
