@@ -1,0 +1,23 @@
+# Container images for capture-containers.sh: one per supported distribution
+# (docs/product/vision.md#support-matrix).
+#
+# Format: <capture name> <image:tag@digest>
+#
+# Tags are a few months old on purpose, so that every image has updates
+# pending once its package metadata is refreshed. The digest is the
+# multi-architecture index, checked against registry-1.docker.io on
+# 2026-10-24; Docker uses the digest and ignores the tag.
+#
+# ubuntu, debian and almalinux are Docker Official Images. Rocky Linux is
+# published by the Rocky Enterprise Software Foundation (rockylinux/rockylinux);
+# the old Docker Official Image "rockylinux" is no longer updated.
+
+ubuntu-22.04 docker.io/library/ubuntu:jammy-20260509@sha256:4f838adc7181d9039ac795a7d0aba05a9bd9ecd480d294483169c5def983b64d
+ubuntu-24.04 docker.io/library/ubuntu:noble-20260509.1@sha256:786a8b558f7be160c6c8c4a54f9a57274f3b4fb1491cf65146521ae77ff1dc54
+ubuntu-26.04 docker.io/library/ubuntu:resolute-20260610@sha256:53958ec7b67c2c9355df922dd08dbf0360611f8c3cdb656875e81873db9ffdba
+debian-12 docker.io/library/debian:bookworm-20260518@sha256:ed4fcc40bb1162b6d2d32e7bec15044d13963779abbe63f67f1cd62b06220519
+debian-13 docker.io/library/debian:trixie-20260518@sha256:4ae67669760b807c19f23902a3fd7c121a6a70cf2ae709035674b23e712e4d62
+rocky-9 docker.io/rockylinux/rockylinux:9.7.20251123@sha256:53f4c6dcb34e1403bd93207351f0af9a593610faeb7165cb8a037346765199b0
+rocky-10 docker.io/rockylinux/rockylinux:10.1.20251126@sha256:f4da504c18e7aced902f4f728cde787cd9d9b817bc639fe171026d18364dca6c
+almalinux-9 docker.io/library/almalinux:9.7-20260509@sha256:606be3c7b71a40dd3b024646e9b5a0b5023d0fdf111060f249b08f04cec0ca3e
+almalinux-10 docker.io/library/almalinux:10.1-20260509@sha256:f683953b33aa4ea37b60e7dee002f29969e2d578b0037d2c7e1563447040995f

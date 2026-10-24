@@ -74,13 +74,14 @@ repos:
         entry: 'BEGIN (RSA |DSA |EC |OPENSSH |ENCRYPTED |SSH2 ENCRYPTED |PGP |)PRIVATE KEY|PuTTY-User-Key-File-[23]|BEGIN OpenVPN Static key V[1]'
         language: pygrep
         types: [text]
-      # The hook scripts run on every commit, so they are linted too.
+      # The hook scripts run on every commit and the capture scripts run on
+      # the maintainer's machine and hosts, so they are linted too.
       - id: shellcheck
-        name: shellcheck (hook scripts)
+        name: shellcheck (hook and capture scripts)
         entry: shellcheck
         language: system
         types: [shell]
-        files: ^scripts/
+        files: ^(scripts|protocol/captures)/
 
   # Security tools installed by mise (single source of versions).
   - repo: local
