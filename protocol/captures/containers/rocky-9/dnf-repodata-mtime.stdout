@@ -1,0 +1,14 @@
+1792871696 24969704 /var/cache/dnf/appstream-25485261a76941d3/repodata/2b172b4a5ddb488e49fe6279a82a1af76effa25f97976be27d80726953c0553b-filelists.xml.gz
+1792871695 1924684 /var/cache/dnf/appstream-25485261a76941d3/repodata/3a0d13c00c56a1c8cf5771d40afec90cecd8dab9c002e5c79acd9a61d57d9726-updateinfo.xml.gz
+1792871695 15080 /var/cache/dnf/appstream-25485261a76941d3/repodata/3b3f46f2f3d686cb3fdbcf8b825afb19c2c1a48192abe38b657c488e71bacf57-modules.yaml.xz
+1792871695 2605478 /var/cache/dnf/appstream-25485261a76941d3/repodata/8695e8cbe28616b0f7960913463d22f28c30a28fe699ba3c9593c38a170e7cae-primary.xml.gz
+1792871695 539964 /var/cache/dnf/appstream-25485261a76941d3/repodata/fc6d30ae23db7b2d1ff02c7328497f26318ab4203417f2dd5320d013091c709b-comps-AppStream.x86_64.xml
+1792871695 4918 /var/cache/dnf/appstream-25485261a76941d3/repodata/repomd.xml
+1792871692 289672 /var/cache/dnf/baseos-522ed8e2b2f761ff/repodata/370bd00fee648eb0ea5f1d817c5a113529ca57a3c0e073c37414ea0197752d6f-comps-BaseOS.x86_64.xml
+1792871692 679547 /var/cache/dnf/baseos-522ed8e2b2f761ff/repodata/4160666b981df9b5d5298fcccb2d8ddd39cbed8845b23f5f6ef6f35ddef850e1-updateinfo.xml.gz
+1792871692 2771082 /var/cache/dnf/baseos-522ed8e2b2f761ff/repodata/4c303f15732816d353fc04439144354991f68a30fd473642dd606226d82f1b5e-filelists.xml.gz
+1792871693 39613428 /var/cache/dnf/baseos-522ed8e2b2f761ff/repodata/b2eb2a4ad7e705fd9b0e096526a22d669004e992d77dfa175873fcbaf0d1fe90-primary.xml.gz
+1792871692 4449 /var/cache/dnf/baseos-522ed8e2b2f761ff/repodata/repomd.xml
+1792871699 5676 /var/cache/dnf/extras-90dfbd6ba528f77b/repodata/955ed8dd710d9b4a5012ed53bb4c5d8717d41ecc9b09eae1f9fad673d338fec2-filelists.xml.gz
+1792871699 11942 /var/cache/dnf/extras-90dfbd6ba528f77b/repodata/ae975aeff5fd8b163d0acabbdcfd35b5c1bf7f0562e2d78f7ff9dc584227e8c7-primary.xml.gz
+1792871699 3160 /var/cache/dnf/extras-90dfbd6ba528f77b/repodata/repomd.xml

@@ -1,0 +1,3 @@
+image=docker.io/library/almalinux:10.1-20260509@sha256:f683953b33aa4ea37b60e7dee002f29969e2d578b0037d2c7e1563447040995f
+captured_at=2026-10-24T19:55:48Z
+script=protocol/captures/capture-containers.sh

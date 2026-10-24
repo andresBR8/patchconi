@@ -16,6 +16,7 @@ PatchConi is a self-hosted, read-only patch compliance dashboard for small Linux
 - `apps/web`: React + Vite static SPA served by unprivileged nginx. Calls `/api` on the same origin.
 - `agent/`: Go, read-only, started by a systemd timer. Reports to `/api/v1/agent/reports` with a per-host token.
 - `deploy/`: Docker Compose example, Kustomize base and a generic Ansible role for the agent.
+- `protocol/`: the agent report contract, shared by the API and the agent. `v1/report.schema.json` is the source of truth (ADR 0022), with examples built from the captured `apt`/`dnf` output in `captures/`. No remote `$ref`. Rules: `docs/product/protocol.md`.
 - Monorepo with pnpm workspaces; toolchain pinned with `mise`.
 
 ## How we work
@@ -36,7 +37,7 @@ PatchConi is a self-hosted, read-only patch compliance dashboard for small Linux
 2. Stay inside this repository. Never touch other repositories, infrastructure or clusters: `kubectl`, `helm`, `terraform`, `ansible` and `packer` are denied here.
 3. No secrets in versioned files; only `.env.example`. Before each commit: `pre-commit run --all-files` and review `git diff --staged`. Stage files by explicit path: never `git add -A`, `git add .` or `git commit -a`. On Linux the sandbox creates empty placeholder files (`.bashrc`, `.gitconfig`, `.claude/hooks`, ...) while a command runs, and a bulk add would commit them.
 4. Never push. The maintainer runs `git push` from their own terminal after review.
-5. Claude Code does not run Docker or kind: `docker` is denied and the sandbox blocks the Docker socket, because Docker access is root access on the dev machine. When a step needs them, propose the exact command and show any compose file change; the maintainer runs it from their own terminal.
+5. Claude Code does not run Docker or kind: `docker` is denied and the sandbox blocks the Docker socket, because Docker access is root access on the dev machine. When a step needs them, propose the exact command and show any compose file change; the maintainer runs it from their own terminal. The same applies to scripts that call a denied tool (`docker`, `kind`, `kubectl`, `helm`, `terraform`, `ansible`, `packer`): Claude Code does not run them, not even to test a part that does not need the tool; it hands them to the maintainer.
 6. Pin everything: dependencies through the lockfile, tools through `mise`, base images by version (and digest in releases), GitHub Actions by full commit SHA with the version in a comment.
 7. pnpm only, never npm, npx or yarn. Dependency lifecycle scripts stay blocked unless allowlisted with a written reason. Before adding a dependency, say why and what it costs (size, maintenance, alternatives).
 8. Check current versions (Node LTS, Go, PostgreSQL, libraries, actions) before pinning them. Never pin from memory.

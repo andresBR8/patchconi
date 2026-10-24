@@ -1,0 +1,15 @@
+# One line per invalid example: file, the error jv must print (after "- at "), what is wrong.
+# The error text is jv 0.7.0's; a jv update that rewords it fails the hook on purpose.
+collected-at-offset.json	'/collected_at': '2026-10-24T21:54:09+02:00' does not match pattern	a time with an offset instead of Z
+error-with-updates.json	'/packages': additional properties 'updates' not allowed	a parser error that also lists updates
+fingerprint-short.json	'/machine_fingerprint': '2710aafe7f92808f' does not match pattern	a fingerprint that is not 32 hex digits
+issued-on-invalid-date.json	'/packages/updates/1/advisories/0/issued_on': '2026-13-03' is not valid date	an advisory date that does not exist
+message-control-character.json	'/packages/error/message': 'line 3\x1b[31m' does not match pattern	a control character in the error message
+metadata-age-negative.json	'/metadata_age_seconds': minimum: got -60, want 0	a negative metadata age
+ok-without-held.json	'/packages': missing property 'held'	status ok without the held list
+report-id-uppercase.json	'/report_id': '1963FBBF-3AA8-48A2-8A72-21489F4377C7' does not match pattern	a UUID in uppercase
+rocky-with-esm.json	'/esm_enabled': false schema	esm_enabled on a host that is not Ubuntu
+schema-version-2.json	'/schema_version': value must be '1.0'	an unknown schema version
+sequence-zero.json	'/sequence': minimum: got 0, want 1	sequence 0
+ubuntu-without-esm.json	'': missing property 'esm_enabled'	Ubuntu without esm_enabled
+unknown-property.json	'': additional properties 'hostname' not allowed	an unknown top-level property

@@ -1,0 +1,58 @@
+Reading package lists...
+Building dependency tree...
+Reading state information...
+Calculating upgrade...
+The following packages have been kept back:
+  base-files
+The following packages will be upgraded:
+  bash bsdutils gzip libaudit-common libaudit1 libblkid1 libc-bin libc6
+  libcap2 liblastlog2-2 liblzma5 libmount1 libpcre2-8-0 libsmartcols1
+  libsqlite3-0 libssl3t64 libuuid1 login mount openssl-provider-legacy
+  perl-base tzdata util-linux
+23 upgraded, 0 newly installed, 0 to remove and 1 not upgraded.
+Inst bash [5.2.37-2+b9] (5.2.37-2+b10 Debian:13.7/stable [amd64])
+Conf bash (5.2.37-2+b10 Debian:13.7/stable [amd64])
+Inst bsdutils [1:2.41-5] (1:2.41.5-0+deb13u1 Debian:13.7/stable, Debian-Security:13/stable-security [amd64])
+Conf bsdutils (1:2.41.5-0+deb13u1 Debian:13.7/stable, Debian-Security:13/stable-security [amd64])
+Inst gzip [1.13-1] (1.13-1+deb13u1 Debian:13.7/stable [amd64])
+Conf gzip (1.13-1+deb13u1 Debian:13.7/stable [amd64])
+Inst perl-base [5.40.1-6] (5.40.1-6+deb13u1 Debian:13.7/stable [amd64])
+Conf perl-base (5.40.1-6+deb13u1 Debian:13.7/stable [amd64])
+Inst libc6 [2.41-12+deb13u3] (2.41-12+deb13u4 Debian:13.7/stable [amd64])
+Conf libc6 (2.41-12+deb13u4 Debian:13.7/stable [amd64])
+Inst liblastlog2-2 [2.41-5] (2.41.5-0+deb13u1 Debian:13.7/stable, Debian-Security:13/stable-security [amd64]) [util-linux:amd64 on liblastlog2-2:amd64] [util-linux:amd64 ]
+Conf liblastlog2-2 (2.41.5-0+deb13u1 Debian:13.7/stable, Debian-Security:13/stable-security [amd64]) [util-linux:amd64 ]
+Inst libuuid1 [2.41-5] (2.41.5-0+deb13u1 Debian:13.7/stable, Debian-Security:13/stable-security [amd64]) [util-linux:amd64 on liblastlog2-2:amd64] [util-linux:amd64 on libuuid1:amd64] [util-linux:amd64 ]
+Conf libuuid1 (2.41.5-0+deb13u1 Debian:13.7/stable, Debian-Security:13/stable-security [amd64]) [util-linux:amd64 ]
+Inst libblkid1 [2.41-5] (2.41.5-0+deb13u1 Debian:13.7/stable, Debian-Security:13/stable-security [amd64]) [util-linux:amd64 on libblkid1:amd64] [util-linux:amd64 on liblastlog2-2:amd64] [util-linux:amd64 on libuuid1:amd64] [mount:amd64 on libblkid1:amd64] [libmount1:amd64 util-linux:amd64 mount:amd64 ]
+Conf libblkid1 (2.41.5-0+deb13u1 Debian:13.7/stable, Debian-Security:13/stable-security [amd64]) [libmount1:amd64 util-linux:amd64 mount:amd64 ]
+Inst libmount1 [2.41-5] (2.41.5-0+deb13u1 Debian:13.7/stable, Debian-Security:13/stable-security [amd64]) [util-linux:amd64 on libblkid1:amd64] [util-linux:amd64 on liblastlog2-2:amd64] [util-linux:amd64 on libmount1:amd64] [util-linux:amd64 on libuuid1:amd64] [mount:amd64 on libblkid1:amd64] [mount:amd64 on libmount1:amd64] [util-linux:amd64 mount:amd64 ]
+Conf libmount1 (2.41.5-0+deb13u1 Debian:13.7/stable, Debian-Security:13/stable-security [amd64]) [util-linux:amd64 mount:amd64 ]
+Inst libsmartcols1 [2.41-5] (2.41.5-0+deb13u1 Debian:13.7/stable, Debian-Security:13/stable-security [amd64]) [util-linux:amd64 on libblkid1:amd64] [util-linux:amd64 on liblastlog2-2:amd64] [util-linux:amd64 on libmount1:amd64] [util-linux:amd64 on libsmartcols1:amd64] [util-linux:amd64 on libuuid1:amd64] [mount:amd64 on libblkid1:amd64] [mount:amd64 on libmount1:amd64] [mount:amd64 on libsmartcols1:amd64] [util-linux:amd64 mount:amd64 ]
+Conf libsmartcols1 (2.41.5-0+deb13u1 Debian:13.7/stable, Debian-Security:13/stable-security [amd64]) [util-linux:amd64 mount:amd64 ]
+Inst util-linux [2.41-5] (2.41.5-0+deb13u1 Debian:13.7/stable, Debian-Security:13/stable-security [amd64]) [mount:amd64 on libblkid1:amd64] [mount:amd64 on libmount1:amd64] [mount:amd64 on libsmartcols1:amd64] [mount:amd64 ]
+Conf util-linux (2.41.5-0+deb13u1 Debian:13.7/stable, Debian-Security:13/stable-security [amd64]) [mount:amd64 ]
+Inst mount [2.41-5] (2.41.5-0+deb13u1 Debian:13.7/stable, Debian-Security:13/stable-security [amd64])
+Inst libsqlite3-0 [3.46.1-7+deb13u1] (3.46.1-7+deb13u2 Debian:13.7/stable [amd64])
+Conf libsqlite3-0 (3.46.1-7+deb13u2 Debian:13.7/stable [amd64])
+Inst libc-bin [2.41-12+deb13u3] (2.41-12+deb13u4 Debian:13.7/stable [amd64])
+Conf libc-bin (2.41-12+deb13u4 Debian:13.7/stable [amd64])
+Inst libaudit-common [1:4.0.2-2] (1:4.0.2-2+deb13u1 Debian:13.7/stable [all])
+Conf libaudit-common (1:4.0.2-2+deb13u1 Debian:13.7/stable [all])
+Inst libaudit1 [1:4.0.2-2+b2] (1:4.0.2-2+deb13u1 Debian:13.7/stable [amd64])
+Conf libaudit1 (1:4.0.2-2+deb13u1 Debian:13.7/stable [amd64])
+Inst login [1:4.16.0-2+really2.41-5] (1:4.16.0-2+really2.41.5-0+deb13u1 Debian:13.7/stable, Debian-Security:13/stable-security [amd64])
+Inst libcap2 [1:2.75-10+deb13u1+b1] (1:2.75-10+deb13u1+b3 Debian:13.7/stable [amd64])
+Conf libcap2 (1:2.75-10+deb13u1+b3 Debian:13.7/stable [amd64])
+Inst liblzma5 [5.8.1-1] (5.8.1-1+deb13u2 Debian-Security:13/stable-security [amd64])
+Conf liblzma5 (5.8.1-1+deb13u2 Debian-Security:13/stable-security [amd64])
+Inst libpcre2-8-0 [10.46-1~deb13u1] (10.46-1~deb13u3 Debian-Security:13/stable-security [amd64])
+Conf libpcre2-8-0 (10.46-1~deb13u3 Debian-Security:13/stable-security [amd64])
+Inst openssl-provider-legacy [3.5.6-1~deb13u1] (3.5.7-1~deb13u3 Debian-Security:13/stable-security [amd64])
+Conf openssl-provider-legacy (3.5.7-1~deb13u3 Debian-Security:13/stable-security [amd64])
+Inst libssl3t64 [3.5.6-1~deb13u1] (3.5.7-1~deb13u3 Debian-Security:13/stable-security [amd64])
+Conf libssl3t64 (3.5.7-1~deb13u3 Debian-Security:13/stable-security [amd64])
+Inst tzdata [2026b-0+deb13u1] (2026e-0+deb13u1 Debian:13-updates/stable-updates [all])
+Conf mount (2.41.5-0+deb13u1 Debian:13.7/stable, Debian-Security:13/stable-security [amd64])
+Conf login (1:4.16.0-2+really2.41.5-0+deb13u1 Debian:13.7/stable, Debian-Security:13/stable-security [amd64])
+Conf tzdata (2026e-0+deb13u1 Debian:13-updates/stable-updates [all])

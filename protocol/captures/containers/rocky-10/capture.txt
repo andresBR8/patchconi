@@ -1,0 +1,3 @@
+image=docker.io/rockylinux/rockylinux:10.1.20251126@sha256:f4da504c18e7aced902f4f728cde787cd9d9b817bc639fe171026d18364dca6c
+captured_at=2026-10-24T19:55:13Z
+script=protocol/captures/capture-containers.sh

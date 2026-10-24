@@ -1,0 +1,20 @@
+os-release	0	cat /etc/os-release
+uname-m	0	uname -m
+uname-r	0	uname -r
+date	0	date -u +%Y-%m-%dT%H:%M:%SZ
+apt-version	0	apt --version
+apt-get-update	0	apt-get update
+apt-list-upgradable	0	apt list --upgradable
+apt-get-s-upgrade	0	apt-get -s upgrade
+apt-get-s-dist-upgrade	0	apt-get -s dist-upgrade
+apt-cache-policy	0	apt-cache policy
+apt-lists-mtime	1	sh -c stat -c "%Y %s %n" /var/lib/apt/lists/* /var/cache/apt/*.bin
+apt-periodic-stamps	1	sh -c stat -c "%Y %n" /var/lib/apt/periodic/*-stamp
+dpkg-inventory	0	dpkg-query -W -f ${binary:Package}\t${Version}\t${Architecture}\n
+dpkg-kernels	1	dpkg-query -W -f ${binary:Package}\t${Version}\t${db:Status-Abbrev}\n linux-image-*
+reboot-required	1	sh -c cat /var/run/reboot-required /var/run/reboot-required.pkgs
+pro-version	127	sh -c command -v pro && pro version
+apt-mark-hold	0	apt-mark hold bsdutils
+apt-mark-showhold	0	apt-mark showhold
+apt-get-s-upgrade-held	0	apt-get -s upgrade
+apt-list-upgradable-held	0	apt list --upgradable

@@ -1,0 +1,9 @@
+1792871681 4096 /var/lib/apt/lists/auxfiles
+1792869227 43409 /var/lib/apt/lists/deb.debian.org_debian-security_dists_trixie-security_InRelease
+1792814432 541142 /var/lib/apt/lists/deb.debian.org_debian-security_dists_trixie-security_main_binary-amd64_Packages.lz4
+1792850967 47340 /var/lib/apt/lists/deb.debian.org_debian_dists_trixie-updates_InRelease
+1792699296 865 /var/lib/apt/lists/deb.debian.org_debian_dists_trixie-updates_main_binary-amd64_Packages.lz4
+1789199950 140421 /var/lib/apt/lists/deb.debian.org_debian_dists_trixie_InRelease
+1789198192 20802454 /var/lib/apt/lists/deb.debian.org_debian_dists_trixie_main_binary-amd64_Packages.lz4
+1792871681 0 /var/lib/apt/lists/lock
+1792871682 4096 /var/lib/apt/lists/partial

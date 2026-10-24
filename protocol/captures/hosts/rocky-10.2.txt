@@ -1,0 +1,132 @@
+@@patchconi-capture host script=protocol/captures/capture-host.sh
+@@patchconi-capture begin os-release exit=0
+@@cmd grep identification fields of /etc/os-release
+@@stdout
+NAME="Rocky Linux"
+ID="rocky"
+ID_LIKE="rhel centos fedora"
+VERSION_ID="10.2"
+PRETTY_NAME="Rocky Linux 10.2 (Red Quartz)"
+@@stderr
+@@patchconi-capture end os-release
+@@patchconi-capture begin identity exit=0
+@@cmd id -u; id -G (counts only)
+@@stdout
+uid_is_root=no
+supplementary_groups=0
+@@stderr
+@@patchconi-capture end identity
+@@patchconi-capture begin kernel-and-boot exit=0
+@@cmd uname -r; uname -m; /proc/uptime; systemd-detect-virt; getenforce
+@@stdout
+kernel_running=6.12.0-211.65.1.el10_2.x86_64
+arch=x86_64
+now_utc=2026-10-24T21:19:51Z
+last_boot_utc=2026-10-24T20:01:30Z
+virtualization=kvm
+selinux=Enforcing
+@@stderr
+@@patchconi-capture end kernel-and-boot
+@@patchconi-capture begin machine-fingerprint exit=0
+@@cmd systemd-id128 machine-id --app-specific=1a05fda4-d773-446d-80c6-ca4266e023d4 (format only)
+@@stdout
+machine_id_readable=yes
+app_specific_id_format=32-hex
+@@stderr
+@@patchconi-capture end machine-fingerprint
+@@patchconi-capture begin dnf-version exit=0
+@@cmd dnf --version
+@@stdout
+4.20.0
+@@stderr
+@@patchconi-capture end dnf-version
+@@patchconi-capture begin dnf-check-update exit=100
+@@cmd dnf -C check-update (count only)
+@@stdout
+packages=6
+@@stderr
+@@patchconi-capture end dnf-check-update
+@@patchconi-capture begin dnf-check-update-system-cache exit=100
+@@cmd dnf -C --setopt=cachedir=/var/cache/dnf check-update (count only)
+@@stdout
+packages=6
+@@stderr
+@@patchconi-capture end dnf-check-update-system-cache
+@@patchconi-capture begin dnf-updateinfo-list exit=0
+@@cmd dnf -C updateinfo list --updates (count only)
+@@stdout
+advisories=0
+@@stderr
+@@patchconi-capture end dnf-updateinfo-list
+@@patchconi-capture begin dnf-updateinfo-list-security exit=0
+@@cmd dnf -C updateinfo list --updates --security (count only)
+@@stdout
+advisories=0
+@@stderr
+@@patchconi-capture end dnf-updateinfo-list-security
+@@patchconi-capture begin dnf-repodata-age exit=0
+@@cmd stat /var/cache/dnf/*/repodata/repomd.xml
+@@stdout
+files=4
+oldest_mtime=1792084958
+newest_mtime=1792872415
+now=1792876792
+@@stderr
+@@patchconi-capture end dnf-repodata-age
+@@patchconi-capture begin dnf-timers exit=0
+@@cmd systemctl show dnf-makecache.timer dnf-automatic*.timer
+@@stdout
+LastTriggerUSec=Sat 2026-10-24 22:57:12 CEST
+RandomizedDelayUSec=1h
+Persistent=no
+Id=dnf-makecache.timer
+LoadState=loaded
+ActiveState=active
+UnitFileState=enabled
+TimersCalendar={ OnCalendar=*-*-* 06:00:00 ; next_elapse=Sun 2026-10-25 05:00:00 UTC }
+LastTriggerUSec=Sat 2026-10-24 22:06:51 CEST
+RandomizedDelayUSec=1h
+Persistent=yes
+Id=dnf-automatic.timer
+LoadState=loaded
+ActiveState=active
+UnitFileState=enabled
+TimersCalendar={ OnCalendar=*-*-* 06:00:00 ; next_elapse=(null) }
+LastTriggerUSec=
+RandomizedDelayUSec=1h
+Persistent=yes
+Id=dnf-automatic-install.timer
+LoadState=loaded
+ActiveState=inactive
+UnitFileState=disabled
+@@stderr
+@@patchconi-capture end dnf-timers
+@@patchconi-capture begin dnf-automatic-conf exit=0
+@@cmd grep upgrade_type, download_updates, apply_updates in /etc/dnf/automatic.conf
+@@stdout
+upgrade_type = security
+download_updates = yes
+apply_updates = yes
+@@stderr
+@@patchconi-capture end dnf-automatic-conf
+@@patchconi-capture begin rpm-kernels exit=0
+@@cmd rpm -q kernel-core
+@@stdout
+6.12.0-211.65.1.el10_2.x86_64
+6.12.0-211.68.1.el10_2.x86_64
+@@stderr
+@@patchconi-capture end rpm-kernels
+@@patchconi-capture begin dnf-needs-restarting exit=1
+@@cmd dnf -C needs-restarting -r
+@@stdout
+reboot_required=yes
+@@stderr
+@@patchconi-capture end dnf-needs-restarting
+@@patchconi-capture begin dnf-versionlock exit=1
+@@cmd dnf -C versionlock list (count only)
+@@stdout
+locks=0
+@@stderr
+No such command: versionlock. Please use /usr/bin/dnf --help
+It could be a DNF plugin command, try: "<redacted>"
+@@patchconi-capture end dnf-versionlock

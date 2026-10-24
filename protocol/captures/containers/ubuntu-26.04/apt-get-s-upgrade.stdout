@@ -1,0 +1,80 @@
+Reading package lists...
+Building dependency tree...
+Reading state information...
+Calculating upgrade...
+The following packages will be upgraded:
+  base-files bsdutils diffutils gnu-coreutils gpgv gzip libattr1
+  libaudit-common libaudit1 libblkid1 libbz2-1.0 libc-bin
+  libc-gconv-modules-extra libc6 libgcrypt20 liblzma5 libmount1 libpam-modules
+  libpam-modules-bin libpam-runtime libpam0g libsmartcols1 libssl3t64
+  libsystemd0 libudev1 libuuid1 login mount openssl-provider-legacy perl-base
+  rust-coreutils tar util-linux zlib1g
+34 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+Inst libc-gconv-modules-extra [2.43-2ubuntu2] (2.43-2ubuntu2.4 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64]) [libc6:amd64 ]
+Conf libc-gconv-modules-extra (2.43-2ubuntu2.4 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64]) [libc6:amd64 ]
+Inst libc6 [2.43-2ubuntu2] (2.43-2ubuntu2.4 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64])
+Conf libc6 (2.43-2ubuntu2.4 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64])
+Inst base-files [14ubuntu6.1] (14ubuntu6.2 Ubuntu:26.04/resolute-updates [amd64])
+Conf base-files (14ubuntu6.2 Ubuntu:26.04/resolute-updates [amd64])
+Inst diffutils [1:3.12-1] (1:3.12-1ubuntu0.1 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64])
+Conf diffutils (1:3.12-1ubuntu0.1 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64])
+Inst gzip [1.14-1~exp2ubuntu1] (1.14-1~exp2ubuntu1.1 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64])
+Conf gzip (1.14-1~exp2ubuntu1.1 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64])
+Inst perl-base [5.40.1-7build1] (5.40.1-7ubuntu0.3 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64])
+Conf perl-base (5.40.1-7ubuntu0.3 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64])
+Inst tar [1.35+dfsg-4] (1.35+dfsg-4ubuntu0.4 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64])
+Conf tar (1.35+dfsg-4ubuntu0.4 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64])
+Inst libblkid1 [2.41.3-3ubuntu2] (2.41.3-3ubuntu2.2 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64]) [util-linux:amd64 on libblkid1:amd64] [mount:amd64 on libblkid1:amd64] [libmount1:amd64 util-linux:amd64 mount:amd64 ]
+Conf libblkid1 (2.41.3-3ubuntu2.2 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64]) [libmount1:amd64 util-linux:amd64 mount:amd64 ]
+Inst libmount1 [2.41.3-3ubuntu2] (2.41.3-3ubuntu2.2 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64]) [util-linux:amd64 on libblkid1:amd64] [util-linux:amd64 on libmount1:amd64] [mount:amd64 on libblkid1:amd64] [mount:amd64 on libmount1:amd64] [util-linux:amd64 mount:amd64 ]
+Conf libmount1 (2.41.3-3ubuntu2.2 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64]) [util-linux:amd64 mount:amd64 ]
+Inst libsmartcols1 [2.41.3-3ubuntu2] (2.41.3-3ubuntu2.2 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64]) [util-linux:amd64 on libblkid1:amd64] [util-linux:amd64 on libmount1:amd64] [util-linux:amd64 on libsmartcols1:amd64] [mount:amd64 on libblkid1:amd64] [mount:amd64 on libmount1:amd64] [mount:amd64 on libsmartcols1:amd64] [util-linux:amd64 mount:amd64 ]
+Conf libsmartcols1 (2.41.3-3ubuntu2.2 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64]) [util-linux:amd64 mount:amd64 ]
+Inst mount [2.41.3-3ubuntu2] (2.41.3-3ubuntu2.2 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64]) [util-linux:amd64 on libblkid1:amd64] [util-linux:amd64 on libmount1:amd64] [util-linux:amd64 on libsmartcols1:amd64] [util-linux:amd64 ]
+Inst libuuid1 [2.41.3-3ubuntu2] (2.41.3-3ubuntu2.2 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64]) [util-linux:amd64 on libblkid1:amd64] [util-linux:amd64 on libmount1:amd64] [util-linux:amd64 on libsmartcols1:amd64] [util-linux:amd64 on libuuid1:amd64] [util-linux:amd64 ]
+Conf libuuid1 (2.41.3-3ubuntu2.2 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64]) [util-linux:amd64 ]
+Inst util-linux [2.41.3-3ubuntu2] (2.41.3-3ubuntu2.2 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64])
+Conf util-linux (2.41.3-3ubuntu2.2 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64])
+Inst libc-bin [2.43-2ubuntu2] (2.43-2ubuntu2.4 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64])
+Conf libc-bin (2.43-2ubuntu2.4 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64])
+Inst gnu-coreutils [9.7-3ubuntu2] (9.7-3ubuntu2.1 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64])
+Conf gnu-coreutils (9.7-3ubuntu2.1 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64])
+Inst libpam-runtime [1.7.0-5ubuntu3] (1.7.0-5ubuntu3.2 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [all])
+Conf libpam-runtime (1.7.0-5ubuntu3.2 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [all])
+Inst libaudit-common [1:4.1.2-1build1] (1:4.1.2-1ubuntu0.1 Ubuntu:26.04/resolute-updates [all])
+Conf libaudit-common (1:4.1.2-1ubuntu0.1 Ubuntu:26.04/resolute-updates [all])
+Inst libaudit1 [1:4.1.2-1build1] (1:4.1.2-1ubuntu0.1 Ubuntu:26.04/resolute-updates [amd64])
+Conf libaudit1 (1:4.1.2-1ubuntu0.1 Ubuntu:26.04/resolute-updates [amd64])
+Inst libpam0g [1.7.0-5ubuntu3] (1.7.0-5ubuntu3.2 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64])
+Conf libpam0g (1.7.0-5ubuntu3.2 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64])
+Inst libsystemd0 [259.5-0ubuntu3] (259.9-0ubuntu0.1 Ubuntu:26.04/resolute-updates [amd64])
+Conf libsystemd0 (259.9-0ubuntu0.1 Ubuntu:26.04/resolute-updates [amd64])
+Inst libpam-modules-bin [1.7.0-5ubuntu3] (1.7.0-5ubuntu3.2 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64]) [libpam-modules:amd64 on libpam-modules-bin:amd64] [libpam-modules:amd64 ]
+Conf libpam-modules-bin (1.7.0-5ubuntu3.2 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64]) [libpam-modules:amd64 ]
+Inst libpam-modules [1.7.0-5ubuntu3] (1.7.0-5ubuntu3.2 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64])
+Conf libpam-modules (1.7.0-5ubuntu3.2 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64])
+Inst login [1:4.16.0-2+really2.41.3-3ubuntu2] (1:4.16.0-2+really2.41.3-3ubuntu2.2 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64])
+Inst libattr1 [1:2.5.2-4] (1:2.5.2-4ubuntu0.1 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64])
+Conf libattr1 (1:2.5.2-4ubuntu0.1 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64])
+Inst libbz2-1.0 [1.0.8-6build2] (1.0.8-6ubuntu0.1 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64])
+Conf libbz2-1.0 (1.0.8-6ubuntu0.1 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64])
+Inst liblzma5 [5.8.3-1] (5.8.3-1ubuntu0.1 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64])
+Conf liblzma5 (5.8.3-1ubuntu0.1 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64])
+Inst openssl-provider-legacy [3.5.5-1ubuntu3.2] (3.5.5-1ubuntu3.7 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64])
+Conf openssl-provider-legacy (3.5.5-1ubuntu3.7 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64])
+Inst zlib1g [1:1.3.dfsg+really1.3.1-1ubuntu3] (1:1.3.dfsg+really1.3.1-1ubuntu3.2 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64])
+Conf zlib1g (1:1.3.dfsg+really1.3.1-1ubuntu3.2 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64])
+Inst libssl3t64 [3.5.5-1ubuntu3.2] (3.5.5-1ubuntu3.7 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64])
+Conf libssl3t64 (3.5.5-1ubuntu3.7 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64])
+Inst libudev1 [259.5-0ubuntu3] (259.9-0ubuntu0.1 Ubuntu:26.04/resolute-updates [amd64])
+Conf libudev1 (259.9-0ubuntu0.1 Ubuntu:26.04/resolute-updates [amd64])
+Inst rust-coreutils [0.8.0-0ubuntu3] (0.10.0-1ubuntu2~26.04.1 Ubuntu:26.04/resolute-updates [amd64])
+Conf rust-coreutils (0.10.0-1ubuntu2~26.04.1 Ubuntu:26.04/resolute-updates [amd64])
+Inst libgcrypt20 [1.12.0-2ubuntu0.1] (1.12.0-2ubuntu1.1 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64])
+Conf libgcrypt20 (1.12.0-2ubuntu1.1 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64])
+Inst gpgv [2.4.8-4ubuntu3] (2.4.8-4ubuntu3.1 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64])
+Conf gpgv (2.4.8-4ubuntu3.1 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64])
+Inst bsdutils [1:2.41.3-3ubuntu2] (1:2.41.3-3ubuntu2.2 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64])
+Conf mount (2.41.3-3ubuntu2.2 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64])
+Conf login (1:4.16.0-2+really2.41.3-3ubuntu2.2 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64])
+Conf bsdutils (1:2.41.3-3ubuntu2.2 Ubuntu:26.04/resolute-updates, Ubuntu:26.04/resolute-security [amd64])

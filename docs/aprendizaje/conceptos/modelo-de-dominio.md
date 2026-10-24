@@ -53,4 +53,4 @@ Cada punto, con lo que se rompería sin él:
 
 - `docs/product/domain-model.md` es la referencia: el esquema de Drizzle de la fase 3 sale de ahí, y si hay que cambiar una regla se cambia primero el documento.
 - La política (`docs/product/policy.md`) define los relojes y los estados; el modelo dice dónde se guardan.
-- El orden de los informes (la regla) está en el modelo; el mecanismo (por ejemplo, una secuencia del agente) se define en el protocolo del paso 5.
+- El orden de los informes (la regla) está en el modelo; el mecanismo (instancia y secuencia del agente) está en el protocolo: [orden de informes](orden-de-informes.md).

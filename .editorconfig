@@ -13,3 +13,8 @@ indent_style = tab
 
 [Makefile]
 indent_style = tab
+
+# Captured command output, kept byte for byte: the agent's parser tests read
+# it as golden files, and dnf pads some lines with spaces.
+[protocol/captures/{containers,hosts}/**]
+trim_trailing_whitespace = false

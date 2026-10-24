@@ -1,0 +1,3 @@
+image=docker.io/library/debian:bookworm-20260518@sha256:ed4fcc40bb1162b6d2d32e7bec15044d13963779abbe63f67f1cd62b06220519
+captured_at=2026-10-24T19:54:38Z
+script=protocol/captures/capture-containers.sh

@@ -1,0 +1,38 @@
+Last metadata expiration check: 0:00:02 ago on Sat Oct 24 19:55:44 2026.
+Dependencies resolved.
+================================================================================
+ Package                           Arch      Version            Repo       Size
+================================================================================
+Installing:
+ python3-dnf-plugin-versionlock    noarch    4.7.0-10.el10      baseos     27 k
+Upgrading:
+ python3-dnf-plugins-core          noarch    4.7.0-10.el10      baseos    294 k
+
+Transaction Summary
+================================================================================
+Install  1 Package
+Upgrade  1 Package
+
+Total download size: 320 k
+Downloading Packages:
+(1/2): python3-dnf-plugin-versionlock-4.7.0-10. 201 kB/s |  27 kB     00:00    
+(2/2): python3-dnf-plugins-core-4.7.0-10.el10.n 1.3 MB/s | 294 kB     00:00    
+--------------------------------------------------------------------------------
+Total                                           614 kB/s | 320 kB     00:00     
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                        1/1 
+  Upgrading        : python3-dnf-plugins-core-4.7.0-10.el10.noarch          1/3 
+  Installing       : python3-dnf-plugin-versionlock-4.7.0-10.el10.noarch    2/3 
+  Cleanup          : python3-dnf-plugins-core-4.7.0-9.el10.noarch           3/3 
+  Running scriptlet: python3-dnf-plugins-core-4.7.0-9.el10.noarch           3/3 
+
+Upgraded:
+  python3-dnf-plugins-core-4.7.0-10.el10.noarch                                 
+Installed:
+  python3-dnf-plugin-versionlock-4.7.0-10.el10.noarch                           
+
+Complete!
