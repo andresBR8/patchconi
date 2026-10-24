@@ -34,6 +34,7 @@ Design principles: the agent only observes; least privilege; the host always sta
 | `.pre-commit-config.yaml` | pre-commit hooks |
 | `.github/workflows/` | CI |
 | `renovate.json` | Dependency update configuration |
+| `docs/product/` | Product vision, patch policy and roadmap (drafts) |
 | `docs/platform-contract.md` | Deployment contract for container platforms |
 | `docs/aprendizaje/` | The maintainer's learning notes and project plan, in Spanish |
 | `CLAUDE.md`, `.claude/` | Instructions and guardrails for the AI coding assistant used during development |
