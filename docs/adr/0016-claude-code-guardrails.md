@@ -53,6 +53,7 @@ Two operational rules follow from the sandbox:
 - Negative and trade-offs: a deny list is never complete, and review is the last line of defence.
 - Negative and trade-offs: the sandbox workarounds are **not** versioned. pre-commit's cache directory (`PRE_COMMIT_HOME`) and Go's build cache (`GOCACHE`) live in `.claude/settings.local.json` because their paths depend on the user's UID. A fresh clone has to recreate them; the pre-commit learning note describes them.
 - Negative and trade-offs: `settings.json` names a local folder (`~/homelab`), which is environment-specific in a strict sense.
+- Evidence (2026-10-25): a script that called `docker` passed the permission rules, which match the text of the command typed, not what it runs inside; the sandbox stopped it by blocking the Docker socket. That is why the boundary is the sandbox, not the permission rules.
 - Follow-ups:
   - Resolved when phase 0 closed: `mise install`, `pnpm install` and `pnpm install --frozen-lockfile` were removed from `allow`.
   - Try denying every read outside the repository: [issue #10](https://github.com/andresBR8/patchconi/issues/10) (phase 1).
