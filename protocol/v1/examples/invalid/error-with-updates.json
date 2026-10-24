@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0",
+  "report_id": "ff39641e-3ea8-414e-a6bd-094a58cff1ca",
+  "agent_instance_id": "32aadd1e-44e3-421e-bb6d-49e1ebdcc987",
+  "sequence": 214,
+  "machine_fingerprint": "2710aafe7f92808fa785c097c5d51df9",
+  "agent": {
+    "version": "0.1.0"
+  },
+  "collected_at": "2026-10-24T21:19:51Z",
+  "os": {
+    "id": "rocky",
+    "version_id": "10.2",
+    "pretty_name": "Rocky Linux 10.2 (Red Quartz)",
+    "id_like": [
+      "rhel",
+      "centos",
+      "fedora"
+    ]
+  },
+  "arch": "x86_64",
+  "kernel": {
+    "running": "6.12.0-211.65.1.el10_2.x86_64",
+    "newest_installed": "6.12.0-211.68.1.el10_2.x86_64"
+  },
+  "reboot_required": true,
+  "last_boot_at": "2026-10-24T20:01:30Z",
+  "metadata_age_seconds": 791834,
+  "package_manager": {
+    "name": "dnf",
+    "version": "4.20.0"
+  },
+  "packages": {
+    "status": "error",
+    "error": {
+      "message": "dnf check-update: line 3: expected name.arch, version and repository, got 2 fields",
+      "command": "dnf -C check-update",
+      "exit_code": 100
+    },
+    "updates": []
+  }
+}

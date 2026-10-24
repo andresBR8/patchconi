@@ -1,0 +1,101 @@
+{
+  "schema_version": "1.0",
+  "report_id": "bd4b800d-cab0-4650-98bb-ccb06c7d9b4c",
+  "agent_instance_id": "c4d66220-95ed-428e-838e-141294797f12",
+  "sequence": 1,
+  "machine_fingerprint": null,
+  "agent": {
+    "version": "0.1.0"
+  },
+  "collected_at": "2026-10-24T19:55:13Z",
+  "os": {
+    "id": "rocky",
+    "version_id": "10.1",
+    "pretty_name": "Rocky Linux 10.1 (Red Quartz)",
+    "id_like": [
+      "rhel",
+      "centos",
+      "fedora"
+    ]
+  },
+  "arch": "x86_64",
+  "kernel": {
+    "running": "6.8.0-147-generic",
+    "newest_installed": null
+  },
+  "reboot_required": null,
+  "last_boot_at": "2026-10-24T19:50:00Z",
+  "metadata_age_seconds": 3,
+  "package_manager": {
+    "name": "dnf",
+    "version": "4.20.0"
+  },
+  "packages": {
+    "status": "ok",
+    "updates": [
+      {
+        "name": "audit-libs",
+        "arch": "x86_64",
+        "installed_version": "0:4.0.3-4.el10",
+        "candidate_version": "0:4.0.3-5.el10",
+        "repository": "baseos",
+        "security": false,
+        "advisories": []
+      },
+      {
+        "name": "binutils",
+        "arch": "x86_64",
+        "installed_version": "0:2.41-58.el10",
+        "candidate_version": "0:2.41-63.el10",
+        "repository": "baseos",
+        "security": true,
+        "advisories": [
+          {
+            "id": "RLSA-2025:23306",
+            "issued_on": "2026-01-03"
+          }
+        ]
+      },
+      {
+        "name": "ca-certificates",
+        "arch": "noarch",
+        "installed_version": "0:2025.2.80_v9.0.305-102.el10",
+        "candidate_version": "0:2026.2.92_v9.0.319-100.3.el10_2",
+        "repository": "baseos",
+        "security": true,
+        "advisories": [
+          {
+            "id": "RLSA-2026:88455",
+            "issued_on": "2026-10-24"
+          }
+        ]
+      },
+      {
+        "name": "curl",
+        "arch": "x86_64",
+        "installed_version": "0:8.12.1-2.el10",
+        "candidate_version": "0:8.12.1-4.el10_2.7",
+        "repository": "baseos",
+        "security": true,
+        "advisories": [
+          {
+            "id": "RLSA-2026:1825",
+            "issued_on": "2026-02-18"
+          },
+          {
+            "id": "RLSA-2026:55432",
+            "issued_on": "2026-08-31"
+          },
+          {
+            "id": "RLSA-2026:80512",
+            "issued_on": "2026-10-24"
+          }
+        ]
+      }
+    ],
+    "held": [
+      "attr-0:2.5.2-5.el10.*"
+    ]
+  },
+  "esm_enabled": false
+}

@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0",
+  "report_id": "0a508922-04b6-47f9-bf87-3f60d92fdb08",
+  "agent_instance_id": "466c5a91-b9da-48e3-90d3-3ecd7901b4d5",
+  "sequence": 1,
+  "machine_fingerprint": null,
+  "agent": { "version": "0.1.0" },
+  "collected_at": "2026-10-24T19:54:41Z",
+  "os": {
+    "id": "debian",
+    "version_id": "13",
+    "pretty_name": "Debian GNU/Linux 13 (trixie)",
+    "id_like": []
+  },
+  "arch": "x86_64",
+  "kernel": {
+    "running": "6.8.0-147-generic",
+    "newest_installed": null
+  },
+  "reboot_required": false,
+  "last_boot_at": "2026-10-24T19:50:00Z",
+  "metadata_age_seconds": null,
+  "package_manager": { "name": "apt", "version": "3.0.3" },
+  "packages": {
+    "status": "ok",
+    "updates": [
+      {
+        "name": "base-files",
+        "arch": "amd64",
+        "installed_version": "13.8+deb13u5",
+        "candidate_version": "13.8+deb13u7",
+        "repository": "stable",
+        "security": false,
+        "advisories": []
+      },
+      {
+        "name": "bash",
+        "arch": "amd64",
+        "installed_version": "5.2.37-2+b9",
+        "candidate_version": "5.2.37-2+b10",
+        "repository": "stable",
+        "security": false,
+        "advisories": []
+      },
+      {
+        "name": "bsdutils",
+        "arch": "amd64",
+        "installed_version": "1:2.41-5",
+        "candidate_version": "1:2.41.5-0+deb13u1",
+        "repository": "stable,stable-security",
+        "security": true,
+        "advisories": []
+      },
+      {
+        "name": "libaudit-common",
+        "arch": "all",
+        "installed_version": "1:4.0.2-2",
+        "candidate_version": "1:4.0.2-2+deb13u1",
+        "repository": "stable",
+        "security": false,
+        "advisories": []
+      },
+      {
+        "name": "libblkid1",
+        "arch": "amd64",
+        "installed_version": "2.41-5",
+        "candidate_version": "2.41.5-0+deb13u1",
+        "repository": "stable,stable-security",
+        "security": true,
+        "advisories": []
+      }
+    ],
+    "held": []
+  }
+}

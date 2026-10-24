@@ -43,6 +43,15 @@ repos:
         entry: python3 -I scripts/hooks/check-json.py
         language: system
         types: [json]
+      # The report schema and its examples are checked together whenever one
+      # of them changes: valid examples must pass, invalid ones must fail
+      # with the error listed for them.
+      - id: check-protocol-examples
+        name: check protocol examples
+        entry: scripts/hooks/check-protocol-examples.sh
+        language: system
+        pass_filenames: false
+        files: ^(protocol/v1/|scripts/hooks/check-protocol-examples\.sh$)
       - id: check-toml
         name: check toml
         entry: scripts/hooks/check-toml.sh

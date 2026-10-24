@@ -1,0 +1,307 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PatchConi agent report, protocol v1",
+  "description": "One report sent by the agent to POST /api/v1/agent/reports. The API and the agent's tests validate against this file. Every object rejects unknown properties: servers are upgraded before agents, and a 1.x version only adds optional properties. Field meanings and sources: docs/product/protocol.md.",
+  "$comment": "No remote $ref: every reference points into this file, so validation works offline. Patterns use only syntax that ECMA-262 and RE2 read the same way.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "report_id",
+    "agent_instance_id",
+    "sequence",
+    "machine_fingerprint",
+    "agent",
+    "collected_at",
+    "os",
+    "arch",
+    "kernel",
+    "reboot_required",
+    "last_boot_at",
+    "metadata_age_seconds",
+    "package_manager",
+    "packages"
+  ],
+  "properties": {
+    "schema_version": {
+      "description": "Version of this schema. The API reads it before validating, so that a newer version gets its own error instead of a list of unknown properties.",
+      "enum": ["1.0"]
+    },
+    "report_id": {
+      "description": "Random UUID chosen by the agent for this report. Retries send the same value; the server stores a report once per host and report_id.",
+      "$ref": "#/$defs/uuid"
+    },
+    "agent_instance_id": {
+      "description": "Random UUID created when the agent's state directory is created. A reinstall, or a lost state directory, creates a new one.",
+      "$ref": "#/$defs/uuid"
+    },
+    "sequence": {
+      "description": "Counter kept in the agent's state directory: 1 for the first report of an instance, one more for each later report. With agent_instance_id it orders reports without trusting the host clock.",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "machine_fingerprint": {
+      "description": "Application-specific ID derived from /etc/machine-id (as systemd-id128 machine-id --app-specific prints it), so that the raw machine ID never leaves the host. Null when the host has no readable machine ID.",
+      "oneOf": [
+        { "type": "string", "pattern": "^[0-9a-f]{32}$" },
+        { "type": "null" }
+      ]
+    },
+    "agent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version"],
+      "properties": {
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9A-Za-z.+~-]{1,64}$"
+        }
+      }
+    },
+    "collected_at": {
+      "description": "When the agent started collecting, by the host clock. Shown, never used for ordering or for policy clocks.",
+      "$ref": "#/$defs/timestamp"
+    },
+    "os": {
+      "description": "Fields of /etc/os-release, unquoted.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version_id", "pretty_name", "id_like"],
+      "properties": {
+        "id": { "$ref": "#/$defs/os_id" },
+        "version_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._~-]{1,64}$"
+        },
+        "pretty_name": { "$ref": "#/$defs/short_text" },
+        "id_like": {
+          "description": "ID_LIKE split on spaces; empty when the file has none.",
+          "type": "array",
+          "maxItems": 16,
+          "items": { "$ref": "#/$defs/os_id" }
+        }
+      }
+    },
+    "arch": {
+      "description": "Machine hardware name, as uname -m prints it.",
+      "type": "string",
+      "pattern": "^[a-z0-9_]{1,32}$"
+    },
+    "kernel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["running", "newest_installed"],
+      "properties": {
+        "running": {
+          "description": "Kernel release, as uname -r prints it.",
+          "$ref": "#/$defs/token"
+        },
+        "newest_installed": {
+          "description": "Newest kernel package installed. Null when no kernel package is installed, as in containers.",
+          "oneOf": [{ "$ref": "#/$defs/token" }, { "type": "null" }]
+        }
+      }
+    },
+    "reboot_required": {
+      "description": "Whether the host says a reboot is required. Null when the agent cannot tell, for example when dnf needs-restarting is not installed.",
+      "type": ["boolean", "null"]
+    },
+    "last_boot_at": {
+      "description": "Last boot, by the host clock.",
+      "$ref": "#/$defs/timestamp"
+    },
+    "metadata_age_seconds": {
+      "description": "Age of the package metadata the agent read, in seconds. Null when the agent cannot measure it; such a report is never trusted.",
+      "oneOf": [
+        { "type": "integer", "minimum": 0, "maximum": 4294967295 },
+        { "type": "null" }
+      ]
+    },
+    "esm_enabled": {
+      "description": "Ubuntu only: whether the Expanded Security Maintenance repositories are enabled. Required when os.id is ubuntu, absent otherwise.",
+      "type": "boolean"
+    },
+    "package_manager": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "enum": ["apt", "dnf"] },
+        "version": { "$ref": "#/$defs/token" }
+      }
+    },
+    "packages": {
+      "description": "What the package manager reported, or why the agent could not read it.",
+      "oneOf": [
+        { "$ref": "#/$defs/packages_ok" },
+        { "$ref": "#/$defs/packages_error" }
+      ]
+    },
+    "inventory": {
+      "description": "Optional list of installed packages.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["packages"],
+      "properties": {
+        "packages": {
+          "type": "array",
+          "maxItems": 10000,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "arch", "version"],
+            "properties": {
+              "name": { "$ref": "#/$defs/token" },
+              "arch": { "$ref": "#/$defs/package_arch" },
+              "version": { "$ref": "#/$defs/token" }
+            }
+          }
+        }
+      }
+    }
+  },
+  "if": {
+    "properties": { "os": { "properties": { "id": { "const": "ubuntu" } } } }
+  },
+  "then": { "required": ["esm_enabled"] },
+  "else": { "properties": { "esm_enabled": false } },
+  "$defs": {
+    "uuid": {
+      "description": "Lowercase UUID in the canonical form.",
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "timestamp": {
+      "description": "RFC 3339 date and time in UTC, with a Z suffix.",
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,9})?Z$"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "token": {
+      "description": "Printable ASCII without spaces: package names, versions, kernel releases.",
+      "type": "string",
+      "pattern": "^[!-~]{1,256}$"
+    },
+    "short_text": {
+      "description": "Free text from the host. Untrusted: the web escapes it.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[^\\x00-\\x1f\\x7f]*$"
+    },
+    "os_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9._-]{1,64}$"
+    },
+    "package_arch": {
+      "description": "Package architecture: amd64, all (dpkg); x86_64, noarch (rpm).",
+      "type": "string",
+      "pattern": "^[a-z0-9_]{1,32}$"
+    },
+    "packages_ok": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "updates", "held"],
+      "properties": {
+        "status": { "const": "ok" },
+        "updates": {
+          "type": "array",
+          "maxItems": 5000,
+          "items": { "$ref": "#/$defs/update" }
+        },
+        "held": {
+          "description": "Held packages as the package manager lists them: apt-mark showhold names, dnf versionlock patterns. For display.",
+          "type": "array",
+          "maxItems": 1000,
+          "items": { "$ref": "#/$defs/token" }
+        }
+      }
+    },
+    "packages_error": {
+      "description": "The agent could not read the package manager's output (AC-8.7). The rest of the report is still valid.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "error"],
+      "properties": {
+        "status": { "const": "error" },
+        "error": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["message", "command", "exit_code"],
+          "properties": {
+            "message": {
+              "description": "What went wrong, written by the agent. Untrusted: the web escapes it.",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1000,
+              "pattern": "^[^\\x00-\\x1f\\x7f]*$"
+            },
+            "command": {
+              "description": "The command that failed, without its environment.",
+              "$ref": "#/$defs/short_text"
+            },
+            "exit_code": {
+              "description": "Its exit code; null when it did not exit (killed or timed out).",
+              "oneOf": [
+                { "type": "integer", "minimum": 0, "maximum": 255 },
+                { "type": "null" }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "update": {
+      "description": "One package with a newer version available. The server identifies it by name and arch.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "arch",
+        "installed_version",
+        "candidate_version",
+        "repository",
+        "security",
+        "advisories"
+      ],
+      "properties": {
+        "name": { "$ref": "#/$defs/token" },
+        "arch": { "$ref": "#/$defs/package_arch" },
+        "installed_version": { "$ref": "#/$defs/token" },
+        "candidate_version": { "$ref": "#/$defs/token" },
+        "repository": {
+          "description": "Where the candidate comes from, as the package manager prints it: apt suites (comma separated), the dnf repository ID.",
+          "$ref": "#/$defs/token"
+        },
+        "security": { "type": "boolean" },
+        "advisories": {
+          "description": "Advisories fixed by the update. apt has none: an empty list.",
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "issued_on"],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9:._-]{0,63}$"
+              },
+              "issued_on": {
+                "description": "Advisory date from the repository metadata; null when it has none.",
+                "oneOf": [{ "$ref": "#/$defs/date" }, { "type": "null" }]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
