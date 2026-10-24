@@ -98,13 +98,13 @@
           "$ref": "#/$defs/token"
         },
         "newest_installed": {
-          "description": "Newest kernel package installed. Null when no kernel package is installed, as in containers.",
+          "description": "Release of the newest installed kernel package, in the form uname -r prints, so that it compares with running. Null when no kernel package is installed, as in containers.",
           "oneOf": [{ "$ref": "#/$defs/token" }, { "type": "null" }]
         }
       }
     },
     "reboot_required": {
-      "description": "Whether the host says a reboot is required. Null when the agent cannot tell, for example when dnf needs-restarting is not installed.",
+      "description": "Whether the host says a reboot is required. Null when the agent cannot tell: dnf needs-restarting is not installed, or on apt no installed package maintains /var/run/reboot-required.",
       "type": ["boolean", "null"]
     },
     "last_boot_at": {
@@ -259,7 +259,7 @@
       }
     },
     "update": {
-      "description": "One package with a newer version available. The server identifies it by name and arch.",
+      "description": "One package with a newer version available, and the version the package manager would install. The server identifies it by name and arch: one entry per pair, which the API checks, since a schema cannot.",
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -295,7 +295,7 @@
                 "pattern": "^[A-Za-z0-9][A-Za-z0-9:._-]{0,63}$"
               },
               "issued_on": {
-                "description": "Advisory date from the repository metadata; null when it has none.",
+                "description": "Advisory date from the repository metadata; null when it has none. In v1 it is the date dnf updateinfo prints (Updated), which can be later than the issue date.",
                 "oneOf": [{ "$ref": "#/$defs/date" }, { "type": "null" }]
               }
             }

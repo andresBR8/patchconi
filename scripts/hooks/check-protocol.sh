@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Checks the protocol v1 files. Used by pre-commit; reads files only.
-#   - No remote $ref: in the report schema every $ref points into the file
-#     itself, and the OpenAPI document only points at local files.
+#   - No remote reference ($ref, $dynamicRef, $schema), checked by
+#     check-local-refs.py before jv runs, because jv downloads them. The
+#     OpenAPI document may also point at files next to it.
 #   - The OpenAPI document is valid against the vendored OpenAPI 3.1 schema.
 #   - The report schema compiles (jv checks it against the 2020-12
 #     metaschema built into it).
@@ -19,15 +20,11 @@ oas_schema=protocol/vendor/openapi-3.1-schema-2026-08-03.json
 expected="$dir/examples/invalid/expected.tsv"
 status=0
 
-if grep -n -E '"[$]ref": *"[^#]' "$schema" >&2; then
-  echo "$schema: every \$ref must start with #" >&2
-  status=1
-fi
-if grep -n -E '[$]ref: *"?([A-Za-z][A-Za-z0-9+.-]*:|//)' "$openapi" >&2; then
-  echo "$openapi: no remote \$ref" >&2
-  status=1
-fi
-# jv downloads remote references, so it must not run on such a file.
+refs=scripts/hooks/check-local-refs.py
+python3 -I "$refs" "$schema" "$oas_schema" || status=1
+yq --input-format yaml --output-format json . "$openapi" |
+  python3 -I "$refs" --allow-files - || status=1
+# jv must not run on a file with a remote reference: it would download it.
 [ "$status" -eq 0 ] || exit "$status"
 
 if ! out=$(jv -f "$oas_schema" "$openapi" 2>&1); then
@@ -49,7 +46,10 @@ while IFS=$'\t' read -r name error _; do
   case $name in '' | '#'*) continue ;; esac
   listed+=("$name")
   file="$dir/examples/invalid/$name"
-  if [ ! -f "$file" ]; then
+  if [ -z "$error" ]; then
+    echo "$expected: no expected error for $name" >&2
+    status=1
+  elif [ ! -f "$file" ]; then
     echo "$expected: $name does not exist" >&2
     status=1
   elif out=$(jv -f "$schema" "$file" 2>&1); then

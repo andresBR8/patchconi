@@ -7,6 +7,7 @@ How the agent reports to the server. The contract is in [`protocol/v1/`](../../p
 - `POST /api/v1/agent/reports` with `Authorization: Bearer <token>`, the host's agent token ([ADR 0006](../adr/0006-per-host-agent-tokens.md)).
 - **HTTPS only.** The agent refuses a server URL with `http://` unless its host is `localhost`, `127.0.0.1` or `::1`, for development. It verifies the certificate against the system's CA store, or against a CA file set in its configuration.
 - The body is one report, `Content-Type: application/json`, at most **1 MiB**. No `Content-Encoding`: a compressed body could expand far beyond the limit after it is accepted (a decompression bomb), and reports are small.
+- **A report over 1 MiB** is never sent as it is, since a `413` is not retried and the host would never report. The agent drops `inventory` first. If the report is still too large, it sends `packages` as an error ("report larger than 1 MiB, N updates"), so the operating system, kernel and reboot fields still arrive.
 - One run of the agent sends one report. There is no queue on disk: a report that cannot be delivered is dropped, and the next run sends a new one with the current state.
 
 ## Responses and what the agent does
@@ -14,16 +15,19 @@ How the agent reports to the server. The contract is in [`protocol/v1/`](../../p
 | Status | When | Agent |
 | --- | --- | --- |
 | `201` | The report is stored for the first time. | Done. |
-| `200` | A report with the same `report_id` was already stored for this host (AC-2.4). Nothing changes. | Done. |
+| `200` | A report with the same `report_id` and the same body was already stored for this host (AC-2.4). Nothing changes. | Done. |
 | `400` | The body is not a valid report. [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457) problem details, with a JSON Pointer per error. | Logs it, no retry. |
 | `400`, type `/problems/unsupported-schema-version` | `schema_version` is newer than the server knows. The body lists the versions it supports. | Logs that the server must be upgraded first, no retry. |
 | `401` | Missing, unknown or revoked token, or a retired host. | Stops and logs it, no retry. |
+| `409`, type `/problems/report-id-conflict` | A report with the same `report_id` but a different body was already stored for this host. | Logs it, no retry. |
 | `413` | Body over 1 MiB. | Logs it, no retry. |
 | `415` | Not `application/json`, or a `Content-Encoding`. | Logs it, no retry. |
 | `429` | Too many requests, with `Retry-After`. | Retries. |
 | `5xx`, or no response | Server or network error. | Retries. |
 
-**Retries** send the same body, so the same `report_id`: a report that was stored but whose response was lost is answered with `200`. Within one run the agent makes at most 5 attempts, waiting a random time between 0 and min(60 s, 2 s × 2^attempt) before each retry (exponential backoff with full jitter, so that hosts that lost the server at the same moment do not come back at the same moment). It waits for `Retry-After` when there is one, up to 5 minutes. Then it gives up until the next run.
+**Duplicates.** The server stores the SHA-256 of each report's body. A report whose `report_id` is already stored for the host is compared by that hash: the same body is a retry (`200`), a different one is a bug or a forgery (`409`). Either way the stored report does not change.
+
+**Retries** send the same bytes, so the same `report_id` and the same hash: a report that was stored but whose response was lost is answered with `200`. Within one run the agent makes at most 5 attempts, waiting a random time between 0 and min(60 s, 2 s × 2^attempt) before each retry (exponential backoff with full jitter, so that hosts that lost the server at the same moment do not come back at the same moment). With a `Retry-After`, it waits that long instead, unless the wait would end after the next scheduled run of its timer: then it gives up, and the next run's report replaces this one (there is no queue on disk). After the last attempt it gives up until the next run.
 
 The response carries nothing the agent acts on besides those rules. The agent never runs commands from the server ([ADR 0007](../adr/0007-agent-in-go.md)).
 
@@ -36,20 +40,21 @@ The schema is strict: every object rejects unknown properties, strings have maxi
 | `schema_version` | `"1.0"` |
 | `report_id` | A random UUID per report, reused by its retries. |
 | `agent_instance_id`, `sequence` | The agent's state directory; see [ordering](#ordering-and-identity). |
-| `machine_fingerprint` | `systemd-id128 machine-id --app-specific=1a05fda4-d773-446d-80c6-ca4266e023d4`, which is the HMAC-SHA-256 of that fixed application ID keyed by the machine ID in `/etc/machine-id`, cut to 128 bits and marked as a version 4 UUID. Checked against `systemd-id128` on Ubuntu 24.04, so the agent can compute it without the tool. The raw machine ID never leaves the host. Null when there is no readable machine ID. |
+| `machine_fingerprint` | `systemd-id128 machine-id --app-specific=1a05fda4-d773-446d-80c6-ca4266e023d4`, which is the HMAC-SHA-256 of that fixed application ID keyed by the machine ID in `/etc/machine-id`, cut to 128 bits and marked as a version 4 UUID. As documented in [sd_id128_get_machine_app_specific(3)](https://www.freedesktop.org/software/systemd/man/latest/sd_id128_get_machine_app_specific.html), and checked against `systemd-id128` on Ubuntu 24.04, so the agent can compute it without the tool. The raw machine ID never leaves the host. Null when there is no readable machine ID. |
 | `agent.version` | Built into the agent. |
 | `collected_at` | Host clock when collection started. Shown, never used to order reports or for policy clocks. |
 | `os` | `ID`, `VERSION_ID`, `PRETTY_NAME` and `ID_LIKE` from `/etc/os-release` (AC-8.3). |
 | `arch` | `uname -m`. |
 | `kernel.running` | `uname -r`. |
-| `kernel.newest_installed` | `dpkg-query` on `linux-image-*`, `rpm -q kernel-core`. Null when no kernel package is installed (containers). |
-| `reboot_required` | `/var/run/reboot-required` (apt), `dnf needs-restarting -r` (dnf). Null when the agent cannot tell ([finding 5](#5-a-missing-dnf-plugin-is-not-an-error)). |
+| `kernel.newest_installed` | The highest installed version of `dpkg-query -W 'linux-image-[0-9]*'` (the `[0-9]` leaves out metapackages such as `linux-image-generic`), compared with dpkg's rules; or of `rpm -q kernel-core --qf '%{VERSION}-%{RELEASE}.%{ARCH}'`, compared with rpm's. Sent in the form `uname -r` prints (`6.8.0-147-generic`, `6.12.0-211.68.1.el10_2.x86_64`), so that the server can compare it with `kernel.running` for equality only. Null when no kernel package is installed (containers). |
+| `reboot_required` | dnf: `dnf needs-restarting -r`, when the command is installed ([finding 5](#5-a-missing-dnf-plugin-is-not-an-error)). apt: true when `/var/run/reboot-required` exists. False only when an installed package maintains that file on kernel and library updates (expected to be `update-notifier-common` on Ubuntu; which package does it on Ubuntu and Debian is checked in phase 5, [#25](https://github.com/andresBR8/patchconi/issues/25)); otherwise null, because a missing file proves nothing. |
 | `last_boot_at` | Host clock minus `/proc/uptime`. |
-| `metadata_age_seconds` | apt: age of `/var/lib/apt/periodic/update-success-stamp`; dnf: age of `repodata/repomd.xml` in the system cache ([finding 1](#1-the-age-of-the-package-metadata)). Null when there is no reliable signal, or when the source is in the future of the host clock. |
-| `esm_enabled` | Ubuntu only (AC-8.5): `/var/lib/ubuntu-advantage/status.json` and the ESM apt sources. The agent never runs `pro status`: without root it writes a log file and contacts Canonical's servers. |
+| `metadata_age_seconds` | apt: age of `/var/lib/apt/periodic/update-success-stamp`; dnf: age of the oldest `repodata/repomd.xml` in the system cache, the conservative choice until [#25](https://github.com/andresBR8/patchconi/issues/25) decides ([finding 1](#1-the-age-of-the-package-metadata)). Null when there is no reliable signal, or when the source is in the future of the host clock. |
+| `esm_enabled` | Ubuntu only (AC-8.5): `/var/lib/ubuntu-advantage/status.json` and the ESM apt sources; false when Ubuntu Pro is not installed. The agent never runs `pro status`: on Ubuntu 24.04, run without root while writing the capture script, it wrote a log under `~/.cache` and contacted Canonical's servers. |
 | `package_manager` | `apt --version`, `dnf --version`. |
-| `packages.updates` | apt: `apt list --upgradable`; dnf: `dnf -C repoquery --upgrades` and `dnf -C updateinfo` for advisories (AC-8.6). `security` is true for an apt suite ending in `-security`, or a dnf security advisory. Versions are opaque text. |
+| `packages.updates` | One entry per package name and architecture, with the version the package manager would install; the API rejects a report with two entries for the same pair (`400`). apt: `apt list --upgradable`. dnf: `dnf -C check-update` for the candidates (`repoquery --upgrades` lists every newer version, four for `curl` in the Rocky 10 capture), `rpm -q` for the installed version, and `dnf -C updateinfo` for advisories (AC-8.6). `security` is true for an apt suite ending in `-security`, or a dnf security advisory. Versions are opaque text. |
 | `packages.held` | `apt-mark showhold`; `dnf versionlock list` when the plugin is installed (AC-8.2). |
+| `packages.updates[].advisories[].issued_on` | The date `dnf updateinfo info` prints for the advisory. It is the `Updated` field, which can be later than the issue date, so clocks that use it can start late. Reading the `issued` date from `updateinfo.xml` is part of [#28](https://github.com/andresBR8/patchconi/issues/28). |
 | `packages.error` | Instead of the lists when the agent cannot parse the output (AC-8.7): the message, the command and its exit code. |
 | `inventory` | Optional: `dpkg-query -W`, `rpm -qa`. |
 
@@ -62,15 +67,21 @@ Reports can arrive out of order (a slow retry, a host that was off) or at the sa
 - On first run the agent creates `agent_instance_id`, a random UUID, in its state directory. A reinstall or a lost state directory creates a new one.
 - Each run takes a lock (`flock`) on the state directory, so two runs never overlap, adds one to `sequence`, writes it to disk and only then sends the report. A report that is not delivered leaves a gap, which is harmless.
 
-The server applies a report, under a per-host lock, when:
+The server keeps, per host, the **known fingerprint**: the `machine_fingerprint` of the first report it receives (two nulls count as equal). Under a per-host lock, after the [duplicate check](#responses-and-what-the-agent-does), a report is decided in this order:
 
-1. the host has no applied report yet; or
-2. it comes from the instance of the last applied report, with a higher `sequence`; or
-3. it comes from an instance never seen on this host: a reinstall.
+| # | The report | Result | Alert |
+| --- | --- | --- | --- |
+| 1 | Has a fingerprint different from the known one, from any instance | Not applied: `fingerprint_mismatch` | Yes: the token is used from another machine, or from a clone with a new machine ID |
+| 2 | Comes from an instance new to the host, with the known fingerprint | Applied; the instance becomes current. A reinstall on the same machine | No |
+| 3 | Comes from the current instance with a higher `sequence` | Applied | No |
+| 4 | Comes from the current instance with a lower or equal `sequence` | Not applied: `sequence_regression` | When the host's previous report was also a `sequence_regression`. One alone is a late retry; two in a row is a restored snapshot or a copied state directory |
+| 5 | Comes from an instance seen before that is no longer current | Not applied: `superseded_instance` | Yes, immediately: someone with the token created a new instance, and this is the real agent being ignored |
 
-Otherwise the report is stored with `applied = false` and changes nothing: a lower or equal `sequence`, or an instance that was seen before but is no longer the current one (a late report from before a reinstall). Duplicates by `report_id` are answered first and stored once.
+The first report of a host is applied by rule 2. A report that is not applied is stored with `applied = false` and changes neither episodes nor state.
 
-**Fingerprint.** A report from a known instance with a different `machine_fingerprint` than that instance had is not applied, and the host shows an alert. That is the state directory, and with it the token, copied to another machine. A new instance may come with a new fingerprint: a rebuilt host looks like that. The limit: a clone that keeps `/etc/machine-id` is not detected. How the server stores instances is in the [domain model](domain-model.md#invariants-and-backend-rules).
+**Resolving an alert.** An administrator clears it in the host detail. **Rotating the token** also clears it and forgets the known fingerprint: the first report with the new token sets it again. That is how to accept a legitimate change of machine ID (a reinstall that created a new `/etc/machine-id` raises a false alarm by rule 1), and how to lock out whoever had the old token.
+
+**Limits.** A clone that keeps `/etc/machine-id` and the state directory is not detected. After a restored snapshot, the instance reports again once its `sequence` passes the last applied one, or at once if the agent is reinstalled. How the server stores this is in the [domain model](domain-model.md#invariants-and-backend-rules).
 
 ## Untrusted text
 
@@ -133,8 +144,8 @@ Captured on 2026-10-24: the nine supported distributions in containers (`protoco
 - On the Rocky host, as an unprivileged user, `dnf -C` reads the system cache. `check-update` lists 6 updates with or without `--setopt=cachedir=/var/cache/dnf`.
 - `dnf needs-restarting -r` detects the pending reboot: the newest installed kernel is not the running one.
 - The [ADR 0007](../adr/0007-agent-in-go.md) hypothesis holds for listing updates without root on both hosts.
-- On the host, `dnf -C updateinfo list --updates` returns 0 advisories for the 6 updates, which come from `baseos`. The maintainer saw the same result as a user with more groups.
-- In the containers, which refresh the metadata as root, every RHEL-family distribution returns advisories (95 on Rocky Linux 10).
+- On the host, `dnf -C updateinfo list --updates` returns 0 advisories for the 6 updates, which come from `baseos`. The maintainer saw the same result as a user with more groups, outside the capture.
+- In the containers, which refresh the metadata as root, every RHEL-family distribution returns advisories (61 distinct advisories in 95 package lines on Rocky Linux 10).
 
 **Still open.** Whether the host's cache lacks the advisory data, or those updates have no advisory yet. This decides whether `security` and advisory dates can be trusted on `dnf` without root ([#28](https://github.com/andresBR8/patchconi/issues/28)).
 
@@ -148,7 +159,7 @@ Captured on 2026-10-24: the nine supported distributions in containers (`protoco
 **Rules for the agent.**
 
 - No versionlock plugin means no held packages: the agent reports an empty list, not an error.
-- The agent checks whether a plugin is installed before running its command. It never infers that from the exit code or from the message.
+- The agent checks whether a plugin is installed before running its command, from the package that provides it (`rpm -q --whatprovides 'dnf-command(versionlock)'`). It never infers that from the exit code or from the message.
 - Without `needs-restarting`, the agent sends `reboot_required` as unknown, not as `true`.
 
 ### 6. Times from `systemctl`

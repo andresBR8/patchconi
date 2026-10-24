@@ -52,7 +52,7 @@ repos:
         entry: scripts/hooks/check-protocol.sh
         language: system
         pass_filenames: false
-        files: ^(protocol/(v1|vendor)/|scripts/hooks/check-protocol\.sh$)
+        files: ^(protocol/(v1|vendor)/|scripts/hooks/check-(protocol\.sh|local-refs\.py)$)
       - id: check-toml
         name: check toml
         entry: scripts/hooks/check-toml.sh

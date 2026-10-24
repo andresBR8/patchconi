@@ -18,8 +18,8 @@ paths:
       operationId: submitReport
       summary: Submit one agent report
       description: >-
-        HTTPS only (plain HTTP is accepted from localhost, for development).
-        Retries must send the same report_id. The response carries nothing
+        HTTPS only: the agent refuses plain HTTP except to localhost, for
+        development. Retries send the same body, so the same report_id. The response carries nothing
         the agent acts on besides retrying: the agent never runs commands
         from the server.
       security:
@@ -39,8 +39,9 @@ paths:
                 $ref: "#/components/schemas/Receipt"
         "200":
           description: >-
-            A report with this report_id was already stored for this host.
-            Nothing changes; the receipt is the original one.
+            A report with this report_id and the same body (by SHA-256) was
+            already stored for this host. Nothing changes; the receipt is the
+            original one.
           content:
             application/json:
               schema:
@@ -58,6 +59,15 @@ paths:
           description: >-
             Missing, unknown or revoked token, or a retired host. The agent
             stops and logs it.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "409":
+          description: >-
+            A report with this report_id but a different body was already
+            stored for this host. Type /problems/report-id-conflict. Not
+            retried.
           content:
             application/problem+json:
               schema:
@@ -118,7 +128,8 @@ components:
         applied:
           description: >-
             False when the report was stored but did not change the host's
-            facts: out of order, or a fingerprint mismatch.
+            facts: fingerprint_mismatch, sequence_regression or
+            superseded_instance (docs/product/protocol.md).
           type: boolean
     Problem:
       description: RFC 9457 problem details.

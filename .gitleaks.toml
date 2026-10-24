@@ -1,6 +1,8 @@
-# gitleaks reads this file from the repository root. It keeps every default
-# rule and adds narrow exceptions for confirmed false positives only. Each
-# exception names its rule, the files and the exact line shape it allows.
+# gitleaks reads this file from the directory it scans: the hooks and CI scan
+# the repository root. To scan a subdirectory, pass --config .gitleaks.toml.
+# It keeps every default rule and adds narrow exceptions for confirmed false
+# positives only. Each exception names its rule, the files and the exact line
+# shape it allows.
 [extend]
 useDefault = true
 

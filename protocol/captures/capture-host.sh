@@ -20,8 +20,10 @@
 #   - systemctl show for the metadata and automatic update timers;
 #   - modification times of the package metadata files.
 # What it prints: counts, times, versions and states, never package lists,
-# repository names, mirror URLs, host names or addresses. Error output is
-# printed with quoted strings, URLs and IPv4 addresses replaced.
+# repository names or mirror URLs. Error output is printed with quoted
+# strings, URLs, IPv4 and IPv6 addresses and dotted names replaced. That is
+# best effort: check-capture.sh --deny-patterns is what keeps host names and
+# addresses out of the repository.
 #
 # What it may leave behind: nothing. Temporary files live in a private
 # directory removed on exit. dnf run as a normal user may create its own
@@ -29,6 +31,10 @@
 
 set -u
 export LC_ALL=C
+# Times in UTC, so that the output does not reveal the host's time zone.
+# systemctl show --timestamp=utc alone still printed local times (protocol
+# finding 6).
+export TZ=UTC
 
 # Fixed application ID for systemd's app-specific machine ID. The agent
 # reports this hash instead of /etc/machine-id (docs/product/protocol.md).
@@ -51,7 +57,9 @@ redact() {
     -e "s/'[^']*'/'<redacted>'/g" \
     -e 's/"[^"]*"/"<redacted>"/g' \
     -e 's#[A-Za-z][A-Za-z0-9+.-]*://[^[:space:]]*#<url>#g' \
-    -e 's/[0-9]{1,3}(\.[0-9]{1,3}){3}/<ipv4>/g' |
+    -e 's/[0-9]{1,3}(\.[0-9]{1,3}){3}/<ipv4>/g' \
+    -e 's/[0-9A-Fa-f]*::[0-9A-Fa-f:]*|([0-9A-Fa-f]{1,4}:){4,7}[0-9A-Fa-f]{1,4}/<ipv6>/g' \
+    -e 's/[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}/<name>/g' |
     head -n 20
 }
 
@@ -122,7 +130,8 @@ kernel_and_boot() {
   printf 'kernel_running=%s\narch=%s\n' "$(uname -r)" "$(uname -m)"
   printf 'now_utc=%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
   printf 'last_boot_utc=%s\n' "$(date -u -d "@$(($(date +%s) - ${up%.*}))" +%Y-%m-%dT%H:%M:%SZ)"
-  printf 'virtualization=%s\n' "$(systemd-detect-virt 2>/dev/null || echo none)"
+  # systemd-detect-virt prints "none" itself, and exits non-zero, on bare metal.
+  printf 'virtualization=%s\n' "$(systemd-detect-virt 2>/dev/null)"
   if command -v getenforce >/dev/null; then printf 'selinux=%s\n' "$(getenforce)"; fi
 }
 
@@ -248,12 +257,28 @@ dnf_automatic_conf() {
 
 rpm_kernels() { run rpm -q kernel-core --qf '%{VERSION}-%{RELEASE}.%{ARCH}\n'; cat "$work/out"; }
 
+# Whether a dnf plugin command is installed, from the package that provides
+# it. A missing command also exits with 1, which needs-restarting -r uses to
+# mean "reboot required", so the exit code cannot tell (protocol finding 5).
+dnf_command() { rpm -q --whatprovides "dnf-command($1)" >/dev/null 2>&1; }
+
 dnf_needs_restarting() {
+  if ! dnf_command needs-restarting; then
+    echo 'plugin=absent'
+    return
+  fi
   dnf_cached needs-restarting -r
   printf 'reboot_required=%s\n' "$(if [ "$(cat "$work/rc")" = 1 ]; then echo yes; else echo no; fi)"
 }
 
-dnf_versionlock() { dnf_cached versionlock list; printf 'locks=%s\n' "$(count '^[^ ]+-[0-9]')"; }
+dnf_versionlock() {
+  if ! dnf_command versionlock; then
+    echo 'plugin=absent'
+    return
+  fi
+  dnf_cached versionlock list
+  printf 'locks=%s\n' "$(count '^[^ ]+-[0-9]')"
+}
 
 # --- Main -------------------------------------------------------------------
 
@@ -288,6 +313,6 @@ if command -v dnf >/dev/null; then
   section dnf-timers 'systemctl show dnf-makecache.timer dnf-automatic*.timer' timers dnf-makecache.timer dnf-automatic.timer dnf-automatic-install.timer
   section dnf-automatic-conf 'grep upgrade_type, download_updates, apply_updates in /etc/dnf/automatic.conf' dnf_automatic_conf
   section rpm-kernels 'rpm -q kernel-core' rpm_kernels
-  section dnf-needs-restarting 'dnf -C needs-restarting -r' dnf_needs_restarting
-  section dnf-versionlock 'dnf -C versionlock list (count only)' dnf_versionlock
+  section dnf-needs-restarting "rpm -q --whatprovides 'dnf-command(needs-restarting)'; dnf -C needs-restarting -r" dnf_needs_restarting
+  section dnf-versionlock "rpm -q --whatprovides 'dnf-command(versionlock)'; dnf -C versionlock list (count only)" dnf_versionlock
 fi

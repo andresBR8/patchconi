@@ -118,8 +118,13 @@ split_sections() {
   '
 }
 
+# The capture in progress, removed if the script stops before moving it to
+# its final place (docker fails, or a bad section name).
+tmp=''
+trap 'if [ -n "$tmp" ]; then rm -rf -- "$tmp"; fi' EXIT
+
 capture() {
-  local name=$1 image=$2 dest="$out_root/$1" tmp
+  local name=$1 image=$2 dest="$out_root/$1"
   if [ -e "$dest" ]; then
     echo "$dest already exists; remove it to capture $name again" >&2
     return 1
@@ -133,6 +138,7 @@ capture() {
     printf 'script=protocol/captures/capture-containers.sh\n'
   } >"$tmp/capture.txt"
   mv "$tmp" "$dest"
+  tmp=''
 }
 
 main() {

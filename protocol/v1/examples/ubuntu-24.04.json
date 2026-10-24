@@ -17,7 +17,7 @@
     "running": "6.8.0-147-generic",
     "newest_installed": null
   },
-  "reboot_required": false,
+  "reboot_required": null,
   "last_boot_at": "2026-10-24T19:50:00Z",
   "metadata_age_seconds": null,
   "esm_enabled": false,

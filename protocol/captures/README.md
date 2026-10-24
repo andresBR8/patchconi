@@ -40,7 +40,7 @@ The script refuses to overwrite an existing capture: remove `containers/<name>/`
 
 ## Hosts
 
-What a container cannot show (kernels, a pending reboot, the last boot, the metadata timers, running without root) comes from virtual machines. `capture-host.sh` runs on the host as an unprivileged user without sudo and refuses to run as root. It arrives on standard input, reads no file from this repository and leaves nothing on the host. It prints counts and times only: no package lists, repository names, mirror URLs, host names or addresses.
+What a container cannot show (kernels, a pending reboot, the last boot, the metadata timers, running without root) comes from virtual machines. `capture-host.sh` runs on the host as an unprivileged user without sudo and refuses to run as root. It arrives on standard input, reads no file from this repository and leaves nothing on the host. It prints counts, times and versions, in UTC: no package lists, repository names or mirror URLs. Error output is passed through a best-effort filter for URLs, addresses and dotted names; what keeps host names and addresses out of the repository is the deny patterns check below.
 
 Replace `<user>`, `<host>` and the output name:
 
@@ -49,6 +49,6 @@ ssh <user>@<host> 'LC_ALL=C bash -s' < protocol/captures/capture-host.sh > ~/pat
 protocol/captures/check-capture.sh --deny-patterns ~/patchconi-deny.txt ~/patchconi-capture-ubuntu-24.04.txt
 ```
 
-The deny patterns file lists, one per line, the strings that must never reach the repository: host names, domains, addresses, user names. It must live outside the repository; the script refuses one inside it. A match fails the check. Lines that look like IPv4, MAC or email addresses are listed for review but do not fail the check, because package versions can look like addresses.
+The deny patterns file lists, one per line, the strings that must never reach the repository: host names, domains, IPv4 and IPv6 addresses, user names. It must live outside the repository; the script refuses one inside it. A match fails the check. Lines that look like IPv4, MAC or email addresses are listed for review but do not fail the check, because package versions can look like addresses.
 
 Only after the check passes, and after reading the file, copy it to `protocol/captures/hosts/<distribution>-<version>.txt`.
