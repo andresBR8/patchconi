@@ -8,10 +8,10 @@ Thanks for your interest. PatchConi is pre-alpha: there is no product code yet, 
 
 ## Requirements
 
-- [mise](https://mise.jdx.dev/getting-started.html), **activated in your shell** (see [Activate mise](https://mise.jdx.dev/getting-started.html#activate-mise) in the official guide) or with its shims on your `PATH`. The pre-commit hooks for gitleaks, actionlint and zizmor (and the shellcheck that actionlint calls) look for those binaries on the `PATH`, and the `[env]` section of `mise.toml` sets `PIP_UPLOADED_PRIOR_TO`, which pip needs when pre-commit builds its hook environment.
-- `git` and `python3` (pre-commit runs on the system Python).
+- [mise](https://mise.jdx.dev/getting-started.html), **activated in your shell** (see [Activate mise](https://mise.jdx.dev/getting-started.html#activate-mise) in the official guide) or with its shims on your `PATH`. The pre-commit hooks look for the tools pinned in `mise.toml` on the `PATH` (editorconfig-checker, yq, tomljson, shellcheck, gitleaks, actionlint, zizmor). The `[env]` section of `mise.toml` also sets `PIP_UPLOADED_PRIOR_TO`: no hook installs Python packages today, so pip does not use it to set up the hooks, but it stays as a safety net for any hook that would.
+- `git`, `bash` and `python3` (pre-commit runs on the system Python, and the hook scripts in `scripts/hooks/` use `bash` and `python3`).
 
-Every other tool (Node.js, pnpm, Go, pre-commit, gitleaks, actionlint, shellcheck, zizmor) is pinned in `mise.toml` and installed by mise.
+Every other tool (Node.js, pnpm, Go, pre-commit, editorconfig-checker, yq, tomljson, gitleaks, actionlint, shellcheck, zizmor) is pinned in `mise.toml` and installed by mise.
 
 ## Setup
 
@@ -43,7 +43,7 @@ By default mise trusts a config file by its **path**: after a `git pull`, a chan
 - **New versions wait 3 days.** pnpm (`minimumReleaseAge`), pip (`PIP_UPLOADED_PRIOR_TO`) and Renovate only take releases published at least 3 days ago. Do not pin anything newer.
 - **No install scripts by default.** A dependency that needs one goes into `allowBuilds` in `pnpm-workspace.yaml`, with a comment explaining why.
 - **No secrets** in the repository. gitleaks runs on every commit and in CI.
-- **Files that run code get a separate review.** The criterion: any file, tracked or not, that a tool executes or that changes what a tool executes. They run on contributors' machines, in CI or on users' hosts, so every change to one of them must be called out in the pull request description. Some examples, not a complete list: `.github/**`, `mise.toml` and `mise.lock`, `package.json` (scripts, `packageManager`), `pnpm-workspace.yaml`, `.npmrc`, `.pnpmfile.cjs`, lockfiles, `go.mod` and `go.sum`, `.pre-commit-config.yaml`, tool configs written in code (`*.config.ts`), Dockerfiles, `deploy/**`, and `CLAUDE.md` and `.claude/` (for example, `.claude/settings.json` can define hooks that run commands). Rule 11 in `CLAUDE.md` is the same rule and keeps the fuller list of examples.
+- **Files that run code get a separate review.** The criterion: any file, tracked or not, that a tool executes or that changes what a tool executes. They run on contributors' machines, in CI or on users' hosts, so every change to one of them must be called out in the pull request description. Some examples, not a complete list: `.github/**`, `mise.toml` and `mise.lock`, `package.json` (scripts, `packageManager`), `pnpm-workspace.yaml`, `.npmrc`, `.pnpmfile.cjs`, lockfiles, `go.mod` and `go.sum`, `.pre-commit-config.yaml` and the scripts in `scripts/`, tool configs written in code (`*.config.ts`), Dockerfiles, `deploy/**`, and `CLAUDE.md` and `.claude/` (for example, `.claude/settings.json` can define hooks that run commands). Rule 11 in `CLAUDE.md` is the same rule and keeps the fuller list of examples.
 
 ## Commits and pull requests
 

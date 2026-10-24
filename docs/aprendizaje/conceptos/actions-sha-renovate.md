@@ -19,7 +19,7 @@
 | checkout con `fetch-depth: 0` | Trae todo el historial. Con el valor por defecto (1 commit), `gitleaks-history` daría un falso verde |
 | `jdx/mise-action` con `version` y `sha256` | Instala mise 2026.10.7 y compara el binario con el hash fijado. Con `sha256`, la action **solo** compara ese hash; la verificación del `SHASUMS256.txt` firmado con minisign solo se hace cuando no se le pasa hash (`verifyDownloadedMiseAsset` en su código). Después ejecuta `mise install --locked` (lo añade sola al ver `mise.lock`) |
 | Paso «Check that mise exports [env]» | Falla si `PIP_UPLOADED_PRIOR_TO` no llega. La documentación de mise-action dice que exporta `[env]` (`env: true`), pero la CI lo **comprueba** en vez de fiarse |
-| `pre-commit run --all-files` | Los mismos hooks que en tu portátil, con `end-of-file-fixer` completo (en la CI no hay `SKIP`) |
+| `pre-commit run --all-files` | Los mismos hooks que en tu portátil, con las herramientas que instala mise |
 | zizmor online | Auditorías con la API de GitHub: «impostor commits» (un SHA que no pertenece al repo de la action, sino a un fork) y actions con vulnerabilidades conocidas. Usa el token de solo lectura |
 
 El `sha256` del binario de mise viene de dos fuentes independientes que coinciden: el `SHASUMS256.txt` de la release (que lista el binario suelto con su hash) y el binario que ya estaba instalado en la VM de desarrollo, que se instaló por otro camino, fuera de este repo.

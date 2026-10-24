@@ -10,11 +10,14 @@ Un gestor de *hooks* de git. `.pre-commit-config.yaml` dice qué comprobaciones 
 
 | Hook | Qué comprueba | De dónde sale |
 | --- | --- | --- |
-| trailing-whitespace, end-of-file-fixer | Espacios al final de línea y salto de línea final (los arreglan) | pre-commit-hooks 6.0.0 (PyPI) |
-| check-yaml, check-json, check-toml | Que la sintaxis sea válida. `check-yaml` admite varios documentos, porque pnpm 12 escribe así `pnpm-lock.yaml` | pre-commit-hooks |
-| check-merge-conflict | Marcas de conflicto. Con `--assume-in-merge`, porque sin él solo mira algo durante un merge | pre-commit-hooks |
-| check-added-large-files | Ficheros de más de 500 KB. Con `--enforce-all`, porque sin él solo mira los ficheros recién añadidos al índice | pre-commit-hooks |
-| detect-private-key | Claves privadas | pre-commit-hooks |
+| editorconfig-checker | Lo que dice `.editorconfig`: espacios al final, salto de línea final, LF y utf-8. Avisa, no arregla. En `.editorconfig-checker.json` están desactivados el tamaño de sangría y sus exclusiones por defecto, que sin avisar se saltaban `pnpm-lock.yaml`, `go.sum` o `*.svg` | editorconfig-checker (mise, `go:`) |
+| check-yaml | Sintaxis YAML. yq lee todos los documentos, así que `pnpm-lock.yaml` (dos documentos) pasa sin flags. **No detecta claves duplicadas** | yq (mise, `aqua:` con cosign) |
+| check-json | Sintaxis JSON y claves duplicadas | `scripts/hooks/check-json.py` (solo la librería estándar) |
+| check-toml | Sintaxis TOML 1.0, también claves duplicadas | `scripts/hooks/check-toml.sh` con tomljson (mise, `go:`) |
+| check-merge-conflict | Marcas de conflicto, siempre (no solo durante un merge) | `language: pygrep`, patrones de pre-commit-hooks 6.0.0 |
+| check-large-files | Ficheros de más de 500 KB, todos los que pasa pre-commit (no solo los recién añadidos) | `scripts/hooks/check-large-files.sh` |
+| detect-private-key | Cabeceras de clave privada, aunque falte el resto de la clave (gitleaks solo ve claves completas) | `language: pygrep`, patrones de pre-commit-hooks 6.0.0 |
+| shellcheck | Los scripts de `scripts/`, que se ejecutan en cada commit | shellcheck (mise) |
 | gitleaks-staged | Secretos en lo que vas a confirmar | gitleaks (mise) |
 | gitleaks-history | Secretos en todo el historial de git | gitleaks (mise) |
 | actionlint | Errores en los workflows de GitHub Actions. Revisa los scripts `run:` con el shellcheck fijado en mise; pyflakes desactivado | actionlint + shellcheck (mise) |
@@ -25,10 +28,10 @@ Un gestor de *hooks* de git. `.pre-commit-config.yaml` dice qué comprobaciones 
 Varios hooks están pensados para mirar solo lo que entra en un commit. Con `pre-commit run --all-files` (`verify` y la CI) no hay nada preparado, y dicen «Passed» sin haber revisado nada:
 
 - **gitleaks oficial** (`--staged`): solo mira lo preparado.
-- **check-added-large-files:** solo mira los ficheros *añadidos* al índice. Arreglo: `--enforce-all`. En un commit, pre-commit solo le pasa los ficheros preparados, así que no se vuelve lento.
-- **check-merge-conflict:** fuera de un merge devuelve 0 sin leer nada. Arreglo: `--assume-in-merge`.
+- **check-added-large-files** de pre-commit-hooks: solo miraba los ficheros *añadidos* al índice (por eso usábamos `--enforce-all`). Nuestro script mira todos los ficheros que le pasa pre-commit.
+- **check-merge-conflict** de pre-commit-hooks: fuera de un merge devolvía 0 sin leer nada (por eso usábamos `--assume-in-merge`). El hook pygrep siempre mira.
 
-La forma de detectarlos es leer el código del hook, o probar con un fichero que debería fallar.
+La forma de detectarlos es leer el código del hook, o probar con un fichero que debería fallar. Con los hooks de la #9 (24-oct-2026) se probó así cada uno, en un repo temporal: YAML y JSON rotos, JSON y TOML con claves repetidas, una marca de conflicto, una cabecera de clave privada, un fichero de 600 KB, un fichero sin salto final, otro con espacios al final y un script con un fallo de shellcheck. Todos fallaron salvo un caso: **yq aceptó un YAML con una clave repetida**. Por eso JSON va con el script de Python, y en YAML queda como riesgo conocido (actionlint sí las detecta en los workflows).
 
 ### gitleaks: dos hooks
 
@@ -52,43 +55,40 @@ Analiza la seguridad de GitHub Actions (permisos, inyección de expresiones, acc
 
 ## Hooks locales: binarios de mise
 
-gitleaks, actionlint y zizmor van como `repo: local` con `language: system`: pre-commit ejecuta el binario que ya instaló mise. Así hay una sola fuente de versiones (`mise.toml` y `mise.lock`). Con los hooks remotos oficiales, pre-commit compilaría Go o bajaría otros binarios por su cuenta.
+Todos los hooks van como `repo: local`. Con `language: system`, pre-commit ejecuta el binario que ya instaló mise; con `language: pygrep`, usa una búsqueda por expresión regular que trae el propio pre-commit. Ningún hook instala nada al ejecutarse y hay una sola fuente de versiones (`mise.toml` y `mise.lock`). Con los hooks remotos oficiales, pre-commit compilaría Go o bajaría otros binarios por su cuenta.
 
-## pre-commit-hooks desde PyPI, no desde git
+## Por qué ya no usamos pre-commit-hooks desde PyPI (ADR 0020)
 
-Lo normal es `repo: https://github.com/pre-commit/pre-commit-hooks` con `rev:` fijado por SHA. No sirve aquí por dos motivos:
+Hasta la #9, los 8 hooks de higiene venían de pre-commit-hooks 6.0.0, instalado con pip desde PyPI. Eso dejaba otro registro de paquetes en la cadena (pip, PyPI y un setuptools sin fijar) y obligaba a saltarse `end-of-file-fixer` en el sandbox. El ADR 0020 los sustituye y fija un **orden de preferencia** para el origen de cada herramienta:
 
-1. **El sandbox de Claude Code.** El sandbox pasa a git la configuración de su proxy en la variable `GIT_CONFIG_PARAMETERS`, y pre-commit lanza git con un entorno filtrado que la descarta (`no_git_env`). El `git fetch` del repo de hooks no pasa por el proxy y falla. Comprobado a mano: el mismo `fetch` funciona con la variable y falla sin ella.
-2. **Compilar desde el código fuente.** Desde git, pip tiene que **construir** pre-commit-hooks a partir del código; con la wheel de PyPI instala un paquete ya construido. setuptools se descarga igual, una vez, para el paquete placeholder de pre-commit (ver «Riesgos que quedan»).
+1. aqua con firma o procedencia que mise verifique (yq con cosign; pnpm, actionlint y zizmor con attestations de GitHub);
+2. `go:` desde el código, verificado con sum.golang.org (gitleaks, editorconfig-checker, tomljson);
+3. aqua solo con checksums, cuando no hay otra cosa (pre-commit, shellcheck).
 
-Así que los 8 hooks van como `repo: local` + `language: python`, con `additional_dependencies: ["pre-commit-hooks==6.0.0", "ruamel.yaml==0.19.1"]`:
+El ADR tiene la tabla completa, con Node.js y Go.
 
-- `entry`, `types` y `stages` están copiados del `.pre-commit-hooks.yaml` del commit `3e8a8703` (etiqueta v6.0.0).
-- `ruamel.yaml` es la única dependencia que pip instala de verdad con Python 3.12. `tomli` solo hace falta con Python < 3.11, y desde 0.19 `ruamel.yaml.clib` es un extra opcional.
-- Los 8 hooks llevan **la misma** lista: pre-commit crea un entorno por cada combinación de dependencias, y un hook sin ella tendría otro entorno con `ruamel.yaml` sin fijar.
-- Los dos paquetes se instalan desde **wheels** ya construidos. `pip download --only-binary=:all:` resuelve solo a `pre_commit_hooks-6.0.0-py2.py3-none-any.whl` y `ruamel_yaml-0.19.1-py3-none-any.whl`.
-- **Para el paso 4 (Renovate):** su gestor `pre-commit` solo actualiza `additional_dependencies` de Python si el hook declara `language: python` (comprobado en su código fuente, `extract.ts`). Por eso va explícito en cada hook.
+Una nota de por qué entonces se usaba PyPI y no el repo de git de pre-commit-hooks, porque sigue valiendo para cualquier hook remoto: el sandbox de Claude Code pasa a git la configuración de su proxy en `GIT_CONFIG_PARAMETERS`, y pre-commit lanza git con un entorno filtrado que la descarta (`no_git_env`), así que no puede clonar repos de hooks a través del proxy.
 
 ## Riesgos que quedan
 
-- **PyPI permite añadir ficheros a una versión ya publicada.** No deja reemplazar un fichero existente, pero el mantenedor (o quien robe su cuenta) puede subir, por ejemplo, un wheel nuevo para otra plataforma dentro de la 6.0.0, y pip podría preferirlo. pre-commit no permite fijar dependencias por hash (`--require-hashes`).
-- **El paquete placeholder y setuptools.** Para los hooks Python `local`, pre-commit siempre crea un paquete vacío (`pre-commit-placeholder-package`) y lo instala con `pip install .`, así que pip **construye** ese paquete y descarga setuptools en su última versión. Pasa una vez, al crear el entorno, no en cada commit.
-  - **Mitigación:** `PIP_UPLOADED_PRIOR_TO = "P3D"` en el `[env]` de `mise.toml`. pip solo acepta paquetes subidos hace al menos 3 días, también en la construcción aislada.
-  - **Comprobado:** con el binario real de pre-commit y `PIP_UPLOADED_PRIOR_TO=P100D` en la orden, el placeholder salió construido con setuptools 83.0.0 en lugar de 84.0.0. Los shims de mise entregan `P3D` y tu shell con mise activado también.
-  - **Lo que no cubre:**
-    - La versión de setuptools sigue **sin fijar**; solo cumple la regla de los 3 días.
-    - `.git/hooks/pre-commit` llama directamente al Python de pre-commit, sin pasar por un shim. Si el entorno se crea en un `git commit` lanzado desde un shell sin mise activado (por ejemplo, la interfaz de git de un editor), pip no ve la variable y la regla se pierde en silencio. La CI tiene que exportarla (paso 4: comprobar que `jdx/mise-action` exporta el `[env]` o ponerla en el `env` del workflow).
-- **El `python3` del sistema no está fijado.** En la VM de desarrollo es 3.12. En un Mac con el Python 3.9 de las herramientas de línea de comandos de Xcode, pip instalaría además `tomli` sin fijar.
+- **yq acepta claves duplicadas en YAML.** actionlint las detecta en los workflows; en el resto de ficheros YAML (`.pre-commit-config.yaml`, `pnpm-workspace.yaml`…) no se comprueban. Riesgo aceptado por ahora ([issue #17](https://github.com/andresBR8/patchconi/issues/17)); se revisa al elegir el validador del paso 5.
+- **Ya nada arregla ficheros.** Si editorconfig-checker falla, se arregla a mano.
+- **El `bash` y el `python3` del sistema no están fijados.** Los usan pre-commit y los scripts de `scripts/hooks/`. `check-json.py` solo usa la librería estándar y se ejecuta con `python3 -I`, así que ningún módulo del repo puede hacerse pasar por `json`.
+- **El límite de 500 KB y `pnpm-lock.yaml`:** cuando las apps tengan dependencias, el lockfile pasará de 500 KB. Hay que revisarlo en la fase 2.
+- **`PIP_UPLOADED_PRIOR_TO` sigue en `mise.toml`** como red de seguridad: hoy ningún hook instala paquetes de Python, pero si alguien añade uno, pip aplicará la regla de los 3 días. La CI sigue comprobando que mise exporta el `[env]`.
 - **actionlint y las herramientas del PATH:** actionlint usa shellcheck y pyflakes si los encuentra. shellcheck está fijado en mise (los runners de GitHub traen el suyo, sin fijar) y pyflakes está desactivado (`-pyflakes=`), así que el resultado es el mismo en todas las máquinas.
-- **Mejora futura:** sustituir estos hooks de Python por binarios fijados con mise, con checksums en `mise.lock`. Por ejemplo, `editorconfig-checker` para espacios y saltos de línea, y `taplo` para TOML. Eso elimina Python, pip y setuptools de la cadena.
+- **El orden del PATH importa.** Un `pre-commit` instalado fuera de mise (por ejemplo, con pipx en `~/.local/bin`) puede ir antes que el de mise. Por eso `verify` llama a `mise exec -- pre-commit run --all-files`. Dentro de `mise exec`, `~/.local/bin` sigue yendo primero en el PATH: si ahí hubiera otro `yq` o `shellcheck`, los hooks `system` lo usarían.
 
 ## Particularidades del sandbox de Claude Code
 
 - `PRE_COMMIT_HOME` apunta a una ruta del directorio temporal del sandbox (en `.claude/settings.local.json`): pre-commit necesita escribir su caché, y `~/.cache` está cerrado para Claude.
-- `end-of-file-fixer` abre **cada** fichero en modo lectura-escritura aunque no tenga que cambiarlo, y el sandbox monta `.claude/` en solo lectura. En el sandbox fallaría siempre, así que `.claude/settings.local.json` define `SKIP=end-of-file-fixer`. Cubre `verify` y los `git commit` de Claude. Tu terminal y la CI lo ejecutan completo.
+- **Claude Code no puede commitear con cambios sin preparar dentro de `.claude/`.** Antes de los hooks, pre-commit guarda en un parche los cambios sin preparar y deja esos ficheros como en el índice (`git checkout -- .`); al terminar, aplica el parche otra vez. En el sandbox `.claude/` es de solo lectura, así que ese `checkout` falla: el commit no se hace y el árbol queda a medias (pasó el 24-oct-2026 con `.claude/skills/verify/SKILL.md`). Se recupera aplicando el parche que pre-commit deja en `PRE_COMMIT_HOME` (`git apply`, sin el fichero de `.claude/`). Regla: cualquier cambio en `.claude/` va, preparado, en el siguiente commit.
+- Hasta la #9, `end-of-file-fixer` abría cada fichero en modo lectura-escritura y el sandbox monta `.claude/` en solo lectura, así que había que saltarlo con `SKIP`. Los hooks nuevos solo leen: ya no hace falta.
 
 ## Preguntas de entrevista
 
 - ¿Por qué el hook oficial de gitleaks da un falso verde en la CI? Porque `--staged` solo mira lo preparado para commit, y en `pre-commit run --all-files` no hay nada preparado.
-- ¿Qué diferencia hay entre fijar un hook por SHA de git y por versión de PyPI? El SHA fija el contenido exacto. La versión de PyPI fija unos ficheros que no se pueden reemplazar, pero sí ampliar con ficheros nuevos.
+- ¿Qué diferencia hay entre fijar un hook por SHA de git y por versión de PyPI? El SHA fija el contenido exacto. La versión de PyPI fija unos ficheros que no se pueden reemplazar, pero sí ampliar con ficheros nuevos. Por eso acabamos sin ninguno de los dos: binarios fijados con mise.
+- ¿Por qué editorconfig-checker y tomljson se compilan desde el código y yq no? yq firma sus checksums con cosign y mise lo verifica. Los otros dos solo publican un fichero de checksums de la misma release, que no prueba nada si la release está comprometida; compilarlos con `go:` los verifica contra sum.golang.org.
+- ¿Cómo sabes que un hook no da un falso verde? Probándolo con un fichero que debería fallar. Así descubrimos que yq acepta claves duplicadas.
 - ¿Por qué `language: system` para gitleaks y no el hook oficial? Para que la versión salga de `mise.toml` y no de un segundo sitio que mantener.
