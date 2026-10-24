@@ -21,11 +21,11 @@ PatchConi es un panel autoalojado de cumplimiento de parches para flotas Linux p
 | --- | --- | --- |
 | Imprescindible | Alta de hosts y tokens | Token mostrado una vez, guardado con hash, rotación y revocación |
 | Imprescindible | Ingesta de informes | Endpoint `v1`, validación estricta, límites de tamaño y frecuencia |
-| Imprescindible | Agente | `--dry-run` con el JSON exacto, paquetes retenidos, datos de `/etc/os-release` |
-| Imprescindible | Panel de flota | Hosts al día, con pendientes, fuera de política o sin datos (estados de `docs/product/policy.md`) |
-| Imprescindible | Detalle e historial | Paquetes pendientes con «pendiente desde», avisos de seguridad, retenidos, kernel, último reinicio |
+| Imprescindible | Agente | `--dry-run` con el JSON exacto, paquetes retenidos, datos de `/etc/os-release`, antigüedad de los metadatos, repos de ESM, IDs y fechas de aviso, informe válido aunque falle el parser |
+| Imprescindible | Panel de flota | Hosts al día, con pendientes, fuera de política o sin datos (estados de `docs/product/policy.md`), incluido el SO sin soporte con la tabla de ciclo de vida |
+| Imprescindible | Detalle e historial | Paquetes pendientes con «pendiente desde» (y la marca «antes del alta»), avisos de seguridad, retenidos, kernel, último reinicio |
 | Imprescindible | Usuarios | Login, roles administrador y lector, primer admin al arrancar |
-| Importante | Política y avisos | Política como código (fichero o variables de entorno, web en solo lectura, ADR 0019), SO sin soporte con tabla de ciclo de vida, webhook firmado con HMAC y sin duplicados |
+| Importante | Política y avisos | Política como código (fichero o variables de entorno, web en solo lectura, ADR 0019), webhook firmado con HMAC y sin duplicados |
 | Importante | Métricas | `/metrics` y dashboard de Grafana en el repo |
 
 Si el calendario aprieta, las filas «Importante» pasan a la v0.2.0.
@@ -147,7 +147,7 @@ Una fase está terminada cuando cumple los ocho puntos; si falta uno, no empieza
 
 - Alta, rotación y revocación de tokens.
 - Ingesta v1 con validación, tamaño máximo, límite por token e idempotencia.
-- Política evaluada al recibir y al consultar.
+- Política evaluada al recibir y al consultar, con los umbrales por defecto y la tabla de ciclo de vida de los SO como instantánea en cada release (endoflife.date, MIT): el SO sin soporte es imprescindible y no puede esperar a la fase 7.
 - Agente falso para desarrollo y demos; pruebas de contrato con los ejemplos de la fase 1.
 - OpenAPI en el repo, comprobada en CI.
 
@@ -174,7 +174,6 @@ Una fase está terminada cuando cumple los ocho puntos; si falta uno, no empieza
 ### Fase 7 · Política, avisos y observabilidad
 
 - Motor de política con umbrales leídos de la configuración (formato del fichero y nombres de las variables) y planificador con bloqueo consultivo.
-- Tabla de ciclo de vida de los SO como instantánea en cada release (endoflife.date, MIT).
 - Webhook con enfriamiento, sin duplicados y firmado con HMAC sobre marca de tiempo y cuerpo.
 - `/metrics` de baja cardinalidad documentado, dashboard de Grafana e ID de petición en los logs.
 

@@ -55,7 +55,7 @@ Both are mature projects worth considering. PatchConi aims at a narrower problem
 3. **Read-only as a guarantee you can check**, not a promise. This is the design target; none of it exists until the agent and the first release are built:
    - the agent will run without root (the target in [ADR 0007](../adr/0007-agent-in-go.md), to be confirmed in phase 5);
    - `--dry-run` will print the exact report the agent would send;
-   - the server will store no credentials for the hosts and will have no way to run anything on them;
+   - the server will store no credentials for the hosts and will have no way to run anything on them (the only planned exception is an optional AWX/AAP integration, which needs its own ADR: see the [roadmap](roadmap.md#designed-now-built-later));
    - releases will be signed, with an SBOM and provenance ([ADR 0010](../adr/0010-signed-images-and-releases.md)).
 4. **Cloud-native operation.** Policy as code, Prometheus metrics, an OpenAPI contract, and deployment with Docker Compose or Kustomize.
 
@@ -99,12 +99,15 @@ Each criterion must be demonstrable with a test or a command. Sections marked *I
 - AC-3.1 Every host is in exactly one state from the [patch policy](policy.md): up to date, pending updates, out of policy or no data.
 - AC-3.2 The counts per state add up to the number of enrolled hosts.
 - AC-3.3 A host that breaks the policy shows the reason (which rule, since when).
+- AC-3.4 A host whose operating system is past its vendor's security support is *out of policy*, even with no pending updates. An operating system missing from the lifecycle table is flagged *unknown lifecycle* and is not *out of policy*. The web UI and the API show the date of the lifecycle data.
+- AC-3.5 The fleet overview shows how many hosts and how many updates are marked *pending before enrollment, real age unknown* ([policy](policy.md#how-pending-since-is-set)).
 
 ### Host detail and history (UC-4, UC-5, UC-8)
 
-- AC-4.1 The detail lists each pending update with installed version, candidate version, whether it is a security update, and *pending since* (when the server first saw it pending).
+- AC-4.1 The detail lists each pending update with installed version, candidate version, whether it is a security update, and *pending since* (see AC-4.4).
 - AC-4.2 The detail shows running kernel, newest installed kernel, whether a reboot is required, last boot time and last report time.
 - AC-4.3 History is kept for 90 days by default (configurable) and shows the state of the host on any day in that window.
+- AC-4.4 *Pending since* follows the [policy](policy.md#how-pending-since-is-set): the earlier of the advisory date and the first time seen when there is an advisory date; otherwise the first time seen, and updates already pending in the host's first report are marked *pending before enrollment, real age unknown* in the detail.
 
 ### Users (all personas)
 
@@ -116,9 +119,8 @@ Each criterion must be demonstrable with a test or a command. Sections marked *I
 
 - AC-6.1 The policy is read from a configuration file and environment variables (policy as code); after a change, the states of all hosts are recalculated.
 - AC-6.2 The web UI shows the active policy read-only, with the source of each value; no request can change it.
-- AC-6.3 A host whose operating system is past its vendor's security support is *out of policy*, even with no pending updates. An operating system missing from the lifecycle table is flagged *unknown lifecycle* and is not *out of policy*. The web UI and the API show the date of the lifecycle data.
-- AC-6.4 A generic webhook fires once when a host enters *out of policy*, not again while it stays there, and respects a cooldown.
-- AC-6.5 Every webhook is signed with HMAC-SHA256 over a timestamp and the body, with a secret shared with the receiver. The timestamp and the signature travel in their own headers. The documented receiver check rejects a bad signature and any message older than 5 minutes, so a captured message cannot be replayed later.
+- AC-6.3 A generic webhook fires once when a host enters *out of policy*, not again while it stays there, and respects a cooldown.
+- AC-6.4 Every webhook is signed with HMAC-SHA256 over a timestamp and the body, with a secret shared with the receiver. The timestamp and the signature travel in their own headers. The documented receiver check rejects a bad signature and any message older than 5 minutes, so a captured message cannot be replayed later.
 
 ### Metrics (*Important*, UC-10)
 
@@ -130,13 +132,18 @@ Each criterion must be demonstrable with a test or a command. Sections marked *I
 - AC-8.1 `--dry-run` prints to standard output the exact JSON report the agent would send, and sends nothing.
 - AC-8.2 The report includes held packages (`apt-mark hold`; `dnf versionlock` when that plugin is installed), and the host detail shows them.
 - AC-8.3 The report includes the operating system fields from `/etc/os-release`.
+- AC-8.4 The report includes the age of the package metadata the agent read (the policy's `metadata_max_age` depends on it).
+- AC-8.5 On Ubuntu, the report says whether the Expanded Security Maintenance (ESM) repositories are enabled (the lifecycle check depends on it).
+- AC-8.6 When the package manager provides them, the report includes each update's advisory ID and advisory date (*pending since* depends on the date).
+- AC-8.7 If the agent cannot parse the package manager's output, it still sends a valid report with the operating system fields and an error marker instead of the update list. The server stores it, so the lifecycle check still applies, and the host detail shows the error. The protocol v1 schema allows this report.
 
 ## Support matrix
 
-This is the target for v0.1.0: which distributions the PatchConi agent works on. It is not the same as the vendor's security support for each operating system, which the [policy](policy.md#unsupported-operating-systems) checks. Two levels:
+This is the target for v0.1.0: which distributions the PatchConi agent works on. It is not the same as the vendor's security support for each operating system, which the [policy](policy.md#unsupported-operating-systems) checks. Three levels:
 
 - **Supported**: the agent is expected to work, and bug reports are accepted. Before v0.1.0, the output format of every supported distribution is captured at least once.
 - **Tested in CI**: every pull request runs the agent's tests against that distribution.
+- **Best effort**: older releases of the distributions in the table, with the same package manager, that their vendor no longer supports (for example, an Ubuntu LTS or Debian release past its security support). The agent must at least report the operating system fields, so the host shows as *out of policy* (unsupported operating system) and not as *no data* (AC-8.7). No CI, and no guarantee that the update parser works. Non-LTS Ubuntu releases and distributions that use another tool (such as `yum` on RHEL 7 or CentOS 7) are not included.
 
 | Family | Package manager | Distribution | Supported | Tested in CI |
 | --- | --- | --- | --- | --- |
@@ -153,8 +160,8 @@ This is the target for v0.1.0: which distributions the PatchConi agent works on.
 - **Why these three in CI:** one per family to start with. Ubuntu 24.04 and Debian 13 together cover apt 2.x and apt 3, and Rocky Linux 10 covers dnf on the current RHEL major.
 - **Architectures:** amd64 and arm64 are supported; CI tests amd64.
 - **Later:** a distribution moves up to *tested in CI* when its job is added; no new code should be needed if the family already works.
-- **Not supported in v0.1.0:** zypper (openSUSE, SLES), apk (Alpine), pacman (Arch), non-LTS Ubuntu releases and distributions past their vendor's security support. See the [roadmap](roadmap.md).
-- A distribution stays in this matrix while its vendor supports it with security updates, as the [policy](policy.md#unsupported-operating-systems) defines it.
+- **Not supported in v0.1.0:** zypper (openSUSE, SLES), apk (Alpine), pacman (Arch) and non-LTS Ubuntu releases. See the [roadmap](roadmap.md).
+- A distribution stays *supported* while its vendor supports it with security updates, as the [policy](policy.md#unsupported-operating-systems) defines it; then it moves to *best effort*.
 
 ### Why the examples come from containers
 
@@ -172,7 +179,7 @@ PatchConi runs in environments its maintainer does not control. The agent and th
 - **Hosts have no internet access except to the PatchConi server.** The agent never downloads anything itself: it reads the package metadata that the system already has (refreshed by the distribution's own timers or from a local mirror) and reports how old that metadata is. Old metadata makes the result untrustworthy, and the [policy](policy.md) says so instead of reporting *up to date*.
 - **Hosts and server are in different time zones.** Every timestamp in the protocol and the API is UTC in RFC 3339 format. The UI shows local time.
 - **The system language is not English.** The agent runs package managers with `LC_ALL=C`, so the output it parses is always the same.
-- **Host clocks are wrong.** The server uses its own clock for *received at* and *pending since*; times reported by the agent (last boot, metadata age) are shown as reported, and a large clock skew is flagged.
+- **Host clocks are wrong.** The server uses its own clock for *received at* and for the first time it saw each update pending; advisory dates come from repository metadata, and one later than the server's receive time is ignored ([policy](policy.md#how-pending-since-is-set)); times reported by the agent (last boot, metadata age) are shown as reported, and a large clock skew is flagged.
 - **The agent cannot be root.** It is designed to run as a dedicated unprivileged user (confirmed in phase 5). Anything that needs root is out of scope or must be provided by the system (for example, refreshing package metadata).
 - **Hosts are switched off for days.** Nothing depends on the host being on at a given time; a host that comes back reports its real state on its next run.
 

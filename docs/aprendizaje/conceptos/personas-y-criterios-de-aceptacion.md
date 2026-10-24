@@ -16,7 +16,7 @@ Sin escribir para quién es el producto, se diseña para uno mismo. PatchConi na
 
 - Cada AC tiene un identificador (`AC-2.3`) para citarlo en pruebas, PRs e issues.
 - En la fase 4 los AC de ingesta se convierten en pruebas de la API; en la fase 6 la demo de Playwright recorre los UC principales.
-- La matriz de soporte tiene dos niveles: «supported» (debería funcionar) y «tested in CI» (probado en cada PR). Empezamos con una distribución por familia en la CI (Ubuntu 24.04, Debian 13, Rocky 10) y el resto sube de nivel sin código nuevo.
+- La matriz de soporte tiene tres niveles: «supported» (debería funcionar), «tested in CI» (probado en cada PR) y «best effort» (versiones sin soporte del fabricante: el agente al menos informa del SO, para que el host salga «out of policy» y no «no data»). Empezamos con una distribución por familia en la CI (Ubuntu 24.04, Debian 13, Rocky 10) y el resto sube de nivel sin código nuevo.
 - La política (`docs/product/policy.md`) define los estados. Cada umbral por defecto lleva su razonamiento o una referencia comprobable (CIS 7.3, PCI DSS 6.3.3, CISA BOD 26-04), no un número inventado.
 
 ## Posicionamiento: por qué «solo lectura» no basta
@@ -41,4 +41,4 @@ PatchConi no parchea: se integra con quien parchea (Ansible, AWX) y verifica que
 
 1. **¿Por qué tres personas y no una?** Porque cada una impone requisitos distintos (proxy y evidencias, máquinas apagadas, solo lectura) que un diseño para una sola no cubriría.
 2. **¿Qué diferencia hay entre un caso de uso y un criterio de aceptación?** El caso de uso dice qué quiere conseguir alguien; el criterio dice cómo comprobamos que el producto lo consigue. El primero guía el diseño y el segundo, las pruebas.
-3. **¿Por qué el reloj de la política empieza al ver la actualización y no en la fecha de publicación?** Porque apt no da fecha de publicación y el reloj del servidor no depende de los relojes de los hosts. A cambio, un host recién dado de alta empieza todos sus relojes ese día.
+3. **¿Desde cuándo cuenta el reloj de la política?** Si el gestor da la fecha del aviso (dnf updateinfo), desde la más antigua entre esa fecha y la primera vez que el servidor vio la actualización. Si no la da (apt), desde la primera vez que se vio, medida con el reloj del servidor, que no depende de los relojes de los hosts. Para que un host con meses sin parchear no pase 14 días «en plazo» solo por darse de alta, lo que ya estaba pendiente en su primer informe fiable (con metadatos recientes) se marca como «pending before enrollment, real age unknown», y el panel y el detalle lo muestran.

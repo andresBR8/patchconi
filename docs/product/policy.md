@@ -9,20 +9,25 @@ The patch policy turns what the agents report into one state per host. It is the
 For each host, from its last report and the server's own records:
 
 - **Pending updates**, each with a flag saying whether it is a security update (from the distribution's security repository or advisory data).
-- **Pending since**: when the server first received a report with that update pending. This is the clock for the thresholds, and the basis for measuring exposure time later (see the [roadmap](roadmap.md)).
+- **Pending since**: the clock for the thresholds, and the basis for measuring exposure time later (see the [roadmap](roadmap.md)). How it is set is explained [below](#how-pending-since-is-set).
 - **Reboot required**, and since when the server has seen it required.
 - **Operating system and version**, from `/etc/os-release`, checked against the lifecycle table (see [Unsupported operating systems](#unsupported-operating-systems)).
 - **Last report**: when the server received the host's last valid report (server clock).
 - **Package metadata age**: how old the host's package lists were when the agent ran.
 
-### Why *pending since* and not the release date
+### How *pending since* is set
 
-Compliance frameworks count from the day a patch was released. PatchConi counts from the day it first saw the update pending on that host, because:
+Compliance frameworks count from the day a patch was released. PatchConi cannot always know that day: `apt` does not report a release date for an update, and `dnf` reports an advisory date only when advisory data exists. So, for each package with an update pending on a host:
 
-- `apt` does not report a release date for an update; `dnf` reports an advisory date only when advisory data exists.
-- The pending-since date is the same for every distribution and is measured with the server's clock, which does not depend on host clocks.
+- **With an advisory date** (the advisory's *issued* date from `dnf updateinfo`): *pending since* is the earlier of the advisory date and the first time the server saw the update pending on that host.
+- **Without an advisory date** (`apt`, or `dnf` without advisory data): *pending since* is the first time the server saw the update pending, measured with the server's clock, which does not depend on host clocks.
+- **The clock is per package, not per version.** If a newer version of the package arrives before the old update is installed, the clock keeps running: the host has been behind on that package since the first pending version. It stops when no update for the package is pending.
+- **Advisory dates are checked.** They come from the repository metadata, not from the host clock, but the agent reports them. A date later than the server's receive time is ignored and the first-seen time is used. Taking the earlier of the two dates means a wrong advisory date can make an update look older, never younger.
 
-The consequence: a host enrolled today starts every clock today, even for old updates. The detail page shows the advisory date when the agent reports one, so a reviewer can see both.
+The first-seen time alone would let a host that has gone unpatched for months spend another `security_max_age` (14 days by default) without being *out of policy*, just because it was enrolled today. To avoid hiding that:
+
+- Updates without an advisory date that are already pending in a host's **first trusted report** are marked **pending before enrollment, real age unknown**. The first trusted report is the first one whose package metadata is within `metadata_max_age`; an earlier report with stale metadata may not list everything that was pending. Their clock starts at that report, the only date PatchConi can prove, and the mark stays until no update for the package is pending.
+- The fleet overview shows how many hosts and how many updates carry that mark, and the host detail shows it on each update. A reviewer can see that the age is a lower bound, not the real one.
 
 ## States
 
@@ -58,6 +63,7 @@ The state is one word, but the UI never hides the other facts:
 - The age of the data when it is stale, also for *out of policy* hosts: «out of policy · data 3 days old».
 - The reason for *no data*: never reported, last report too old, or package metadata too old.
 - *Unknown lifecycle* when the operating system is not in the lifecycle table (see below).
+- *Pending before enrollment, real age unknown* on the updates that carry that mark (see [How pending since is set](#how-pending-since-is-set)).
 
 States are evaluated when a report arrives **and** when the state is read, because time alone changes them: a host can move to *out of policy* or *no data* without sending anything.
 
