@@ -22,3 +22,4 @@ Each record describes one decision: its context, what was chosen, the alternativ
 | [0016](0016-claude-code-guardrails.md) | Guardrails for the AI coding assistant (Claude Code) | Accepted | 2026-10-17 |
 | [0017](0017-mise-paranoid-toolchain.md) | mise toolchain: exact pins, lockfile and paranoid mode | Accepted | 2026-10-17 |
 | [0018](0018-supply-chain-policy.md) | Supply-chain policy: 3-day delay, SHA pins and blocked install scripts | Accepted | 2026-10-17 |
+| [0019](0019-patch-policy-as-code.md) | Patch policy as code, read-only in the UI | Accepted | 2026-10-24 |
