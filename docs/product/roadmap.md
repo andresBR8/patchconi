@@ -6,7 +6,7 @@ What v0.1.0 includes is defined in the [product vision](vision.md#mvp-acceptance
 
 ## Designed now, built later
 
-These features are not in v0.1.0, but the data model and the agent protocol v1 are designed so that adding them does not need a breaking change. Each item says what v1 must already allow.
+These features are not in v0.1.0, but the [data model](domain-model.md) and the agent protocol v1 are designed so that adding them does not need a breaking change. Each item says what v1 must already allow.
 
 | Feature | What it does | What v1 must allow |
 | --- | --- | --- |
