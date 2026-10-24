@@ -107,7 +107,7 @@ Each criterion must be demonstrable with a test or a command. Sections marked *I
 - AC-4.1 The detail lists each pending update with installed version, candidate version, whether it is a security update, and *pending since* (see AC-4.4).
 - AC-4.2 The detail shows running kernel, newest installed kernel, whether a reboot is required, last boot time and last report time.
 - AC-4.3 History is kept for 90 days by default (configurable) and shows the state of the host on any day in that window.
-- AC-4.4 *Pending since* follows the [policy](policy.md#how-pending-since-is-set): the earlier of the advisory date and the first time seen when there is an advisory date; otherwise the first time seen, and updates already pending in the host's first report are marked *pending before enrollment, real age unknown* in the detail.
+- AC-4.4 *Pending since* follows the [policy](policy.md#how-pending-since-is-set): the earlier of the advisory date and the first time seen when there is an advisory date; otherwise the first time seen, and updates already pending in the host's first trusted report are marked *pending before enrollment, real age unknown* in the detail. Security updates also show *security since*, the clock that `security_max_age` counts from.
 
 ### Users (all personas)
 
