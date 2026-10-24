@@ -21,10 +21,11 @@ PatchConi es un panel autoalojado de cumplimiento de parches para flotas Linux p
 | --- | --- | --- |
 | Imprescindible | Alta de hosts y tokens | Token mostrado una vez, guardado con hash, rotación y revocación |
 | Imprescindible | Ingesta de informes | Endpoint `v1`, validación estricta, límites de tamaño y frecuencia |
-| Imprescindible | Panel de flota | Hosts al día, con pendientes, fuera de política o sin informar |
-| Imprescindible | Detalle e historial | Paquetes pendientes, avisos de seguridad, kernel, último reinicio |
+| Imprescindible | Agente | `--dry-run` con el JSON exacto, paquetes retenidos, datos de `/etc/os-release` |
+| Imprescindible | Panel de flota | Hosts al día, con pendientes, fuera de política o sin datos (estados de `docs/product/policy.md`) |
+| Imprescindible | Detalle e historial | Paquetes pendientes con «pendiente desde», avisos de seguridad, retenidos, kernel, último reinicio |
 | Imprescindible | Usuarios | Login, roles administrador y lector, primer admin al arrancar |
-| Importante | Política y avisos | Umbrales configurables y webhook genérico sin duplicados |
+| Importante | Política y avisos | Política como código (fichero o variables de entorno, web en solo lectura, ADR 0019), SO sin soporte con tabla de ciclo de vida, webhook firmado con HMAC y sin duplicados |
 | Importante | Métricas | `/metrics` y dashboard de Grafana en el repo |
 
 Si el calendario aprieta, las filas «Importante» pasan a la v0.2.0.
@@ -35,7 +36,7 @@ Si el calendario aprieta, las filas «Importante» pasan a la v0.2.0.
 
 ## Decisiones aceptadas
 
-Cada una tiene su ADR en `docs/adr/` (0001–0015). Las decisiones tomadas durante la fase 0 están en los ADRs 0016–0018.
+Cada una tiene su ADR en `docs/adr/` (0001–0015). Las decisiones tomadas durante la fase 0 están en los ADRs 0016–0018, y las de la fase 1 a partir del 0019.
 
 | # | Decisión | Elección |
 | --- | --- | --- |
@@ -111,9 +112,11 @@ Una fase está terminada cuando cumple los ocho puntos; si falta uno, no empieza
 - Visión, casos de uso y criterios de aceptación del MVP.
 - Modelo de dominio (diagrama entidad-relación).
 - Protocolo agente→servidor v1: borrador de OpenAPI y ejemplos capturados de VMs Ubuntu y Rocky.
-- Definición de la política: «al día», «fuera de política» y «sin datos».
+- Definición de la política: «al día», «con pendientes», «fuera de política» y «sin datos».
 - Modelo de amenazas v1 (STRIDE ligero) y arquitectura C4 (contexto y contenedores).
-- Bocetos de las cuatro pantallas principales y notas sobre PatchMon.
+- Bocetos de las cuatro pantallas principales.
+- `docs/product/prior-art.md`: Patchman, PatchMon, Canonical Landscape, Foreman/Katello, Vuls y las métricas de apt para Prometheus. Qué hace bien cada uno y qué tomamos y qué no, con enlaces y sin copiar código ni capturas.
+- Visión, política y roadmap en `docs/product/` (`vision.md`, `policy.md`, `roadmap.md`).
 
 **Criterios de salida:** documentos aprobados; los ejemplos validan contra el esquema; ninguna pregunta abierta sin issue.
 
@@ -164,14 +167,15 @@ Una fase está terminada cuando cumple los ocho puntos; si falta uno, no empieza
 
 - Login, panel de flota, lista de hosts con filtros y detalle con historial.
 - Alta de host con el comando de instalación y el token visible una sola vez.
-- Ajustes de política y gestión de usuarios; cliente tipado desde la OpenAPI.
+- Política activa en solo lectura (ADR 0019) y gestión de usuarios; cliente tipado desde la OpenAPI.
 
 **Criterios de salida:** la demo completa (alta, informe, panel e incumplimiento) corre con Playwright en la CI; el README tiene capturas.
 
 ### Fase 7 · Política, avisos y observabilidad
 
-- Motor de política con umbrales y planificador con bloqueo consultivo.
-- Webhook con enfriamiento y sin duplicados.
+- Motor de política con umbrales leídos de la configuración (formato del fichero y nombres de las variables) y planificador con bloqueo consultivo.
+- Tabla de ciclo de vida de los SO como instantánea en cada release (endoflife.date, MIT).
+- Webhook con enfriamiento, sin duplicados y firmado con HMAC sobre marca de tiempo y cuerpo.
 - `/metrics` de baja cardinalidad documentado, dashboard de Grafana e ID de petición en los logs.
 
 **Criterios de salida:** prueba de extremo a extremo con un receptor de webhooks falso; el dashboard se importa sin errores.
