@@ -26,3 +26,4 @@ If the contract changes, the web UI and the agent fail in CI and not in producti
 - Positive: tests exercise the real shape of agent data.
 - Negative and trade-offs: a generation step to keep in sync; captured fixtures must be refreshed when distributions change their output.
 - Follow-ups: protocol draft and captured examples in phase 1; contract tests in phase 4.
+- Refined by [ADR 0022](0022-report-schema-first.md): the agent report is defined by a hand-written JSON Schema, which the generated document uses for that endpoint.

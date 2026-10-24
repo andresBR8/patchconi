@@ -1,6 +1,6 @@
 # Report examples, protocol v1
 
-Reports that must pass [`report.schema.json`](../report.schema.json), built from the [captures](../../captures/README.md), and reports in `invalid/` that must fail. The `check-protocol-examples` pre-commit hook checks both. Each invalid report changes one field of a valid one, and [`invalid/expected.tsv`](invalid/expected.tsv) lists the error it must fail with.
+Reports that must pass [`report.schema.json`](../report.schema.json), built from the [captures](../../captures/README.md), and reports in `invalid/` that must fail. The `check-protocol` pre-commit hook checks both. Each invalid report changes one field of a valid one, and [`invalid/expected.tsv`](invalid/expected.tsv) lists the error it must fail with.
 
 ## Where each value comes from
 

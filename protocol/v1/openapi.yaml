@@ -1,0 +1,161 @@
+# Draft of the agent endpoint, protocol v1. In phase 4 the API generates its
+# OpenAPI document from the code (ADR 0008); for this endpoint it must keep
+# the request body schema in report.schema.json (ADR 0022). Behaviour and
+# field sources: docs/product/protocol.md. No remote $ref.
+openapi: 3.1.2
+info:
+  title: PatchConi agent API
+  version: 1.0.0
+  description: >-
+    The endpoint agents report to. Every string in a report is untrusted
+    data from the host: the server stores it and the web escapes it.
+  license:
+    name: Apache-2.0
+    identifier: Apache-2.0
+paths:
+  /api/v1/agent/reports:
+    post:
+      operationId: submitReport
+      summary: Submit one agent report
+      description: >-
+        HTTPS only (plain HTTP is accepted from localhost, for development).
+        Retries must send the same report_id. The response carries nothing
+        the agent acts on besides retrying: the agent never runs commands
+        from the server.
+      security:
+        - agentToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: ./report.schema.json
+      responses:
+        "201":
+          description: Report stored for the first time.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Receipt"
+        "200":
+          description: >-
+            A report with this report_id was already stored for this host.
+            Nothing changes; the receipt is the original one.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Receipt"
+        "400":
+          description: >-
+            The body is not a valid report. Not retried. The type
+            /problems/unsupported-schema-version means that the agent is
+            newer than the server.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ValidationProblem"
+        "401":
+          description: >-
+            Missing, unknown or revoked token, or a retired host. The agent
+            stops and logs it.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "413":
+          description: The body is larger than 1 MiB. Not retried.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "415":
+          description: >-
+            The body is not application/json, or has a Content-Encoding.
+            Not retried.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "429":
+          description: Too many requests. Retried after Retry-After.
+          headers:
+            Retry-After:
+              description: Seconds to wait before retrying.
+              schema:
+                type: integer
+                minimum: 0
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        5XX:
+          description: Server error. Retried with backoff.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+components:
+  securitySchemes:
+    agentToken:
+      type: http
+      scheme: bearer
+      description: >-
+        The host's agent token (ADR 0006). Opaque to the agent; its format
+        is defined in phase 4.
+  schemas:
+    Receipt:
+      type: object
+      additionalProperties: false
+      required: [report_id, received_at, applied]
+      properties:
+        report_id:
+          type: string
+          format: uuid
+        received_at:
+          description: Server clock, UTC.
+          type: string
+          format: date-time
+        applied:
+          description: >-
+            False when the report was stored but did not change the host's
+            facts: out of order, or a fingerprint mismatch.
+          type: boolean
+    Problem:
+      description: RFC 9457 problem details.
+      type: object
+      required: [type, title, status]
+      properties:
+        type:
+          description: >-
+            A URI reference; relative ones resolve against the server's
+            own address. about:blank when nothing more specific applies.
+          type: string
+          format: uri-reference
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+    ValidationProblem:
+      allOf:
+        - $ref: "#/components/schemas/Problem"
+        - type: object
+          properties:
+            errors:
+              description: One entry per schema error.
+              type: array
+              items:
+                type: object
+                required: [pointer, detail]
+                properties:
+                  pointer:
+                    description: JSON Pointer to the field in the report.
+                    type: string
+                  detail:
+                    type: string
+            supported_schema_versions:
+              description: Sent with /problems/unsupported-schema-version.
+              type: array
+              items:
+                type: string

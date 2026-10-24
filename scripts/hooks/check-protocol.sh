@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
-# Checks the protocol v1 examples against the report schema. Used by
-# pre-commit; reads files only.
-#   - The schema compiles (jv checks it against the 2020-12 metaschema).
+# Checks the protocol v1 files. Used by pre-commit; reads files only.
+#   - No remote $ref: in the report schema every $ref points into the file
+#     itself, and the OpenAPI document only points at local files.
+#   - The OpenAPI document is valid against the vendored OpenAPI 3.1 schema.
+#   - The report schema compiles (jv checks it against the 2020-12
+#     metaschema built into it).
 #   - Every report in examples/ is valid.
 #   - Every report in examples/invalid/ is rejected with the error listed for
 #     it in examples/invalid/expected.tsv, so that it fails for the reason it
@@ -11,8 +14,27 @@ set -euo pipefail
 
 dir=protocol/v1
 schema="$dir/report.schema.json"
+openapi="$dir/openapi.yaml"
+oas_schema=protocol/vendor/openapi-3.1-schema-2026-08-03.json
 expected="$dir/examples/invalid/expected.tsv"
 status=0
+
+if grep -n -E '"[$]ref": *"[^#]' "$schema" >&2; then
+  echo "$schema: every \$ref must start with #" >&2
+  status=1
+fi
+if grep -n -E '[$]ref: *"?([A-Za-z][A-Za-z0-9+.-]*:|//)' "$openapi" >&2; then
+  echo "$openapi: no remote \$ref" >&2
+  status=1
+fi
+# jv downloads remote references, so it must not run on such a file.
+[ "$status" -eq 0 ] || exit "$status"
+
+if ! out=$(jv -f "$oas_schema" "$openapi" 2>&1); then
+  printf '%s\n' "$out" >&2
+  echo "$openapi: must be a valid OpenAPI 3.1 document" >&2
+  status=1
+fi
 
 for file in "$dir"/examples/*.json; do
   if ! out=$(jv -f "$schema" "$file" 2>&1); then

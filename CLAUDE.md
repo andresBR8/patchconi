@@ -16,6 +16,7 @@ PatchConi is a self-hosted, read-only patch compliance dashboard for small Linux
 - `apps/web`: React + Vite static SPA served by unprivileged nginx. Calls `/api` on the same origin.
 - `agent/`: Go, read-only, started by a systemd timer. Reports to `/api/v1/agent/reports` with a per-host token.
 - `deploy/`: Docker Compose example, Kustomize base and a generic Ansible role for the agent.
+- `protocol/`: the agent report contract, shared by the API and the agent. `v1/report.schema.json` is the source of truth (ADR 0022), with examples built from the captured `apt`/`dnf` output in `captures/`. No remote `$ref`. Rules: `docs/product/protocol.md`.
 - Monorepo with pnpm workspaces; toolchain pinned with `mise`.
 
 ## How we work

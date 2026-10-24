@@ -1,6 +1,86 @@
 # Agent protocol v1
 
-How the agent reports to the server. The report schema, the OpenAPI draft and the transport rules are added to this document with the schema; this first part records what the [captures](../../protocol/captures/README.md) showed about `apt` and `dnf`, because several protocol fields depend on it.
+How the agent reports to the server. The contract is in [`protocol/v1/`](../../protocol/v1/): [`report.schema.json`](../../protocol/v1/report.schema.json) (JSON Schema 2020-12) is the source of truth for the report, and [`openapi.yaml`](../../protocol/v1/openapi.yaml) is the draft of the endpoint ([ADR 0022](../adr/0022-report-schema-first.md)). This document explains the rules the schema cannot express. The [findings](#findings-from-the-captures) at the end record what the captures of `apt` and `dnf` showed, because several fields depend on them.
+
+## Transport
+
+- `POST /api/v1/agent/reports` with `Authorization: Bearer <token>`, the host's agent token ([ADR 0006](../adr/0006-per-host-agent-tokens.md)).
+- **HTTPS only.** The agent refuses a server URL with `http://` unless its host is `localhost`, `127.0.0.1` or `::1`, for development. It verifies the certificate against the system's CA store, or against a CA file set in its configuration.
+- The body is one report, `Content-Type: application/json`, at most **1 MiB**. No `Content-Encoding`: a compressed body could expand far beyond the limit after it is accepted (a decompression bomb), and reports are small.
+- One run of the agent sends one report. There is no queue on disk: a report that cannot be delivered is dropped, and the next run sends a new one with the current state.
+
+## Responses and what the agent does
+
+| Status | When | Agent |
+| --- | --- | --- |
+| `201` | The report is stored for the first time. | Done. |
+| `200` | A report with the same `report_id` was already stored for this host (AC-2.4). Nothing changes. | Done. |
+| `400` | The body is not a valid report. [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457) problem details, with a JSON Pointer per error. | Logs it, no retry. |
+| `400`, type `/problems/unsupported-schema-version` | `schema_version` is newer than the server knows. The body lists the versions it supports. | Logs that the server must be upgraded first, no retry. |
+| `401` | Missing, unknown or revoked token, or a retired host. | Stops and logs it, no retry. |
+| `413` | Body over 1 MiB. | Logs it, no retry. |
+| `415` | Not `application/json`, or a `Content-Encoding`. | Logs it, no retry. |
+| `429` | Too many requests, with `Retry-After`. | Retries. |
+| `5xx`, or no response | Server or network error. | Retries. |
+
+**Retries** send the same body, so the same `report_id`: a report that was stored but whose response was lost is answered with `200`. Within one run the agent makes at most 5 attempts, waiting a random time between 0 and min(60 s, 2 s × 2^attempt) before each retry (exponential backoff with full jitter, so that hosts that lost the server at the same moment do not come back at the same moment). It waits for `Retry-After` when there is one, up to 5 minutes. Then it gives up until the next run.
+
+The response carries nothing the agent acts on besides those rules. The agent never runs commands from the server ([ADR 0007](../adr/0007-agent-in-go.md)).
+
+## Report fields
+
+The schema is strict: every object rejects unknown properties, strings have maximum lengths and lists maximum sizes. Times are UTC with a `Z` suffix.
+
+| Field | Source on the host |
+| --- | --- |
+| `schema_version` | `"1.0"` |
+| `report_id` | A random UUID per report, reused by its retries. |
+| `agent_instance_id`, `sequence` | The agent's state directory; see [ordering](#ordering-and-identity). |
+| `machine_fingerprint` | `systemd-id128 machine-id --app-specific=1a05fda4-d773-446d-80c6-ca4266e023d4`, which is the HMAC-SHA-256 of that fixed application ID keyed by the machine ID in `/etc/machine-id`, cut to 128 bits and marked as a version 4 UUID. Checked against `systemd-id128` on Ubuntu 24.04, so the agent can compute it without the tool. The raw machine ID never leaves the host. Null when there is no readable machine ID. |
+| `agent.version` | Built into the agent. |
+| `collected_at` | Host clock when collection started. Shown, never used to order reports or for policy clocks. |
+| `os` | `ID`, `VERSION_ID`, `PRETTY_NAME` and `ID_LIKE` from `/etc/os-release` (AC-8.3). |
+| `arch` | `uname -m`. |
+| `kernel.running` | `uname -r`. |
+| `kernel.newest_installed` | `dpkg-query` on `linux-image-*`, `rpm -q kernel-core`. Null when no kernel package is installed (containers). |
+| `reboot_required` | `/var/run/reboot-required` (apt), `dnf needs-restarting -r` (dnf). Null when the agent cannot tell ([finding 5](#5-a-missing-dnf-plugin-is-not-an-error)). |
+| `last_boot_at` | Host clock minus `/proc/uptime`. |
+| `metadata_age_seconds` | apt: age of `/var/lib/apt/periodic/update-success-stamp`; dnf: age of `repodata/repomd.xml` in the system cache ([finding 1](#1-the-age-of-the-package-metadata)). Null when there is no reliable signal, or when the source is in the future of the host clock. |
+| `esm_enabled` | Ubuntu only (AC-8.5): `/var/lib/ubuntu-advantage/status.json` and the ESM apt sources. The agent never runs `pro status`: without root it writes a log file and contacts Canonical's servers. |
+| `package_manager` | `apt --version`, `dnf --version`. |
+| `packages.updates` | apt: `apt list --upgradable`; dnf: `dnf -C repoquery --upgrades` and `dnf -C updateinfo` for advisories (AC-8.6). `security` is true for an apt suite ending in `-security`, or a dnf security advisory. Versions are opaque text. |
+| `packages.held` | `apt-mark showhold`; `dnf versionlock list` when the plugin is installed (AC-8.2). |
+| `packages.error` | Instead of the lists when the agent cannot parse the output (AC-8.7): the message, the command and its exit code. |
+| `inventory` | Optional: `dpkg-query -W`, `rpm -qa`. |
+
+The agent runs every command with `LC_ALL=C`, so that the output it parses does not depend on the host's language.
+
+## Ordering and identity
+
+Reports can arrive out of order (a slow retry, a host that was off) or at the same time (the timer and a run after a package transaction). The host clock cannot order them: it may be wrong. So the agent numbers its reports:
+
+- On first run the agent creates `agent_instance_id`, a random UUID, in its state directory. A reinstall or a lost state directory creates a new one.
+- Each run takes a lock (`flock`) on the state directory, so two runs never overlap, adds one to `sequence`, writes it to disk and only then sends the report. A report that is not delivered leaves a gap, which is harmless.
+
+The server applies a report, under a per-host lock, when:
+
+1. the host has no applied report yet; or
+2. it comes from the instance of the last applied report, with a higher `sequence`; or
+3. it comes from an instance never seen on this host: a reinstall.
+
+Otherwise the report is stored with `applied = false` and changes nothing: a lower or equal `sequence`, or an instance that was seen before but is no longer the current one (a late report from before a reinstall). Duplicates by `report_id` are answered first and stored once.
+
+**Fingerprint.** A report from a known instance with a different `machine_fingerprint` than that instance had is not applied, and the host shows an alert. That is the state directory, and with it the token, copied to another machine. A new instance may come with a new fingerprint: a rebuilt host looks like that. The limit: a clone that keeps `/etc/machine-id` is not detected. How the server stores instances is in the [domain model](domain-model.md#invariants-and-backend-rules).
+
+## Untrusted text
+
+Everything in a report is data written by the host, and a compromised host can write anything there. The server stores it as data and never interprets it. The web escapes every value, and never renders one as HTML or Markdown. Before sending, the agent removes credentials from URLs in `packages.error.message` (`https://user:password@mirror/` becomes `https://mirror/`), because package manager errors can quote a repository URL.
+
+## Versioning
+
+- `schema_version` is `major.minor`. A minor version only adds optional properties; anything else is a new major version, with a new schema file and endpoint.
+- **Servers are upgraded before agents**, as in Kubernetes' version skew policy. A server accepts every version it knows, and answers a newer one with `/problems/unsupported-schema-version`. The API reads `schema_version` before validating, so that the agent gets that answer instead of a list of unknown properties.
+- Strict validation is deliberate: a misspelled or unknown property fails loudly (AC-2.2) instead of being silently ignored.
 
 ## Findings from the captures
 

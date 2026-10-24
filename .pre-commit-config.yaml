@@ -43,15 +43,16 @@ repos:
         entry: python3 -I scripts/hooks/check-json.py
         language: system
         types: [json]
-      # The report schema and its examples are checked together whenever one
-      # of them changes: valid examples must pass, invalid ones must fail
-      # with the error listed for them.
-      - id: check-protocol-examples
-        name: check protocol examples
-        entry: scripts/hooks/check-protocol-examples.sh
+      # The protocol files are checked together whenever one of them
+      # changes: the OpenAPI draft against the vendored OpenAPI 3.1 schema,
+      # valid examples must pass, invalid ones must fail with the error
+      # listed for them, and no file has a remote $ref.
+      - id: check-protocol
+        name: check protocol schema and examples
+        entry: scripts/hooks/check-protocol.sh
         language: system
         pass_filenames: false
-        files: ^(protocol/v1/|scripts/hooks/check-protocol-examples\.sh$)
+        files: ^(protocol/(v1|vendor)/|scripts/hooks/check-protocol\.sh$)
       - id: check-toml
         name: check toml
         entry: scripts/hooks/check-toml.sh
