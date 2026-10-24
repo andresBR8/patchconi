@@ -9,7 +9,7 @@ The patch policy turns what the agents report into one state per host. It is the
 For each host, from its last report and the server's own records:
 
 - **Pending updates**, each with a flag saying whether it is a security update (from the distribution's security repository or advisory data).
-- **Pending since**: the clock for the thresholds, and the basis for measuring exposure time later (see the [roadmap](roadmap.md)). How it is set is explained [below](#how-pending-since-is-set).
+- **Pending since** and **security since**: the two clocks for the update thresholds, and the basis for measuring exposure time later (see the [roadmap](roadmap.md)). How they are set is explained [below](#how-pending-since-is-set).
 - **Reboot required**, and since when the server has seen it required.
 - **Operating system and version**, from `/etc/os-release`, checked against the lifecycle table (see [Unsupported operating systems](#unsupported-operating-systems)).
 - **Last report**: when the server received the host's last valid report (server clock).
@@ -21,12 +21,15 @@ Compliance frameworks count from the day a patch was released. PatchConi cannot 
 
 - **With an advisory date** (the advisory's *issued* date from `dnf updateinfo`): *pending since* is the earlier of the advisory date and the first time the server saw the update pending on that host.
 - **Without an advisory date** (`apt`, or `dnf` without advisory data): *pending since* is the first time the server saw the update pending, measured with the server's clock, which does not depend on host clocks.
-- **The clock is per package, not per version.** If a newer version of the package arrives before the old update is installed, the clock keeps running: the host has been behind on that package since the first pending version. It stops when no update for the package is pending.
+- **The clock is per package, not per version.** A package is identified by its name and architecture: `libc6:amd64` and `libc6:i386` (or `glibc.x86_64` and `glibc.i686`) have separate clocks. If a newer version of the package arrives before the old update is installed, the clock keeps running: the host has been behind on that package since the first pending version.
+- **Security updates have their own clock, *security since*.** It is the earlier of the first time the server saw a security update pending for the package and the advisory date of that update (when there is one). `security_max_age` counts from *security since*; `other_max_age` counts from *pending since*. Without a separate clock, a security update that appears today on a package that has had a bug-fix update pending for 20 days would be *out of policy* on its first day.
+- **Clocks only move earlier, and *pending since* is never later than *security since*.** If a security update arrives with an advisory date earlier than the package's *pending since*, *security since* moves back to that date and *pending since* moves with it: the host has been behind on the package at least since then.
+- **Any report whose parser succeeded can start a clock; only a trusted report can stop one.** An update listed as pending is real even when the package metadata is old: at worst the list is incomplete. An update missing from the list only means it was installed when the metadata is recent. So a clock stops when a trusted report (see below) no longer lists any update for the package; a report whose parser failed, or whose package metadata is older than `metadata_max_age`, never stops a clock. Otherwise deleted package lists (`/var/lib/apt/lists`) would make every update look installed.
 - **Advisory dates are checked.** They come from the repository metadata, not from the host clock, but the agent reports them. A date later than the server's receive time is ignored and the first-seen time is used. Taking the earlier of the two dates means a wrong advisory date can make an update look older, never younger.
 
 The first-seen time alone would let a host that has gone unpatched for months spend another `security_max_age` (14 days by default) without being *out of policy*, just because it was enrolled today. To avoid hiding that:
 
-- Updates without an advisory date that are already pending in a host's **first trusted report** are marked **pending before enrollment, real age unknown**. The first trusted report is the first one whose package metadata is within `metadata_max_age`; an earlier report with stale metadata may not list everything that was pending. Their clock starts at that report, the only date PatchConi can prove, and the mark stays until no update for the package is pending.
+- Updates without an advisory date that are still pending when a host's **first trusted report** arrives are marked **pending before enrollment, real age unknown**. A trusted report is one whose parser succeeded and whose package metadata is within `metadata_max_age`; the first trusted report is the first such report from the host. This includes updates first seen in earlier reports with stale metadata: until the first trusted report, PatchConi cannot tell what else was pending. A marked update keeps its clocks, which start at the first time the server saw it pending, the only date PatchConi can prove; the mark stays until no update for the package is pending.
 - The fleet overview shows how many hosts and how many updates carry that mark, and the host detail shows it on each update. A reviewer can see that the age is a lower bound, not the real one.
 
 ## States
@@ -43,8 +46,8 @@ Every host is in exactly one state. The rules are evaluated in this order; the f
 
 Rules for *out of policy*:
 
-- A **security update** has been pending longer than `security_max_age`.
-- **Any other update** has been pending longer than `other_max_age`.
+- A **security update** has been pending longer than `security_max_age`, counted from *security since*.
+- **Any update**, security or not, has been pending longer than `other_max_age`, counted from *pending since*.
 - A **reboot** has been required for longer than `reboot_max_age`.
 - The **operating system is no longer supported** by its vendor, even with zero pending updates: it no longer receives patches, so *up to date* would be misleading.
 

@@ -24,4 +24,4 @@ One token per host, shown once when the host is enrolled. The token has an ident
 - Positive: per-host revocation and rotation; leaked hashes are useless to an attacker.
 - Positive: the prefix lets secret scanners detect leaked tokens with a simple custom rule (for example, a gitleaks rule).
 - Negative and trade-offs: a lost token cannot be recovered, only replaced; comparison has to be constant-time.
-- Follow-ups: token issuance, rotation and revocation in phase 4.
+- Follow-ups: token issuance, rotation and revocation in phase 4. The [domain model](../product/domain-model.md#invariants-and-backend-rules) stores tokens with HMAC-SHA-256 and a server key; that key is a new server secret (losing it invalidates every token), and how it is supplied and rotated is decided in phase 4.
