@@ -38,6 +38,7 @@ Design principles: the agent only observes; least privilege; the host always sta
 | `protocol/` | Agent report contract: JSON Schema, OpenAPI draft, examples and the `apt`/`dnf` captures they come from |
 | `docs/product/` | Product vision, patch policy, domain model, agent protocol and roadmap (drafts) |
 | `docs/architecture.md` | System context and containers (C4) |
+| `docs/threat-model.md` | Threat model: trust boundaries, threats, mitigations and accepted risks |
 | `docs/platform-contract.md` | Deployment contract for container platforms |
 | `docs/aprendizaje/` | The maintainer's learning notes and project plan, in Spanish |
 | `CLAUDE.md`, `.claude/` | Instructions and guardrails for the AI coding assistant used during development |
