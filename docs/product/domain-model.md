@@ -1,6 +1,6 @@
 # Domain model
 
-> Status: draft (phase 1). The database schema is built from this model in phase 3; column types and names may still change there, the rules may not without updating this document.
+> Status: v1 (phase 1), approved when phase 1 closed. Later changes go through a pull request. The database schema is built from this model in phase 3; column types and names may still change there, the rules may not without updating this document.
 
 This document describes what PatchConi stores and why: the entities, how they relate, the rules that keep them consistent, and the words used for them everywhere else (UI, API, code). It is written so that every feature in the [roadmap](roadmap.md#designed-now-built-later) can be added later without a breaking change to the data.
 

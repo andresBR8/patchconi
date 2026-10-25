@@ -1,6 +1,6 @@
 # Product vision
 
-> Status: draft (phase 1). Thresholds, the support matrix and the acceptance criteria may change until the phase is approved.
+> Status: v1 (phase 1), approved when phase 1 closed. Later changes to the thresholds, the support matrix or the acceptance criteria go through a pull request.
 
 ## The problem
 
@@ -186,6 +186,6 @@ PatchConi runs in environments its maintainer does not control. The agent and th
 
 ## Open questions
 
-Tracked as issues in the phase 1 milestone before the phase closes:
+Tracked as an issue, in the milestone of the phase that decides it:
 
-1. Token rotation: should the old token keep working for a short grace period, so an automated rotation does not lose a report? [Issue #14](https://github.com/andresBR8/patchconi/issues/14).
+1. Token rotation: should the old token keep working for a short grace period, so an automated rotation does not lose a report? [Issue #14](https://github.com/andresBR8/patchconi/issues/14) (phase 4).
