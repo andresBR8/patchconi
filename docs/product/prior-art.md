@@ -2,9 +2,9 @@
 
 > Status: draft (phase 1). Sources consulted on 2026-10-25. Projects change: every statement below is what the linked page said on that date, and anything the sources did not say is marked *not stated*.
 
-PatchConi is not the first tool to answer «which hosts are behind on updates». This page looks at six existing tools to learn what they do well, what PatchConi takes from them, and what it leaves out on purpose. It extends the short comparison of Patchman and PatchMon in the [vision](vision.md#other-tools-already-do-part-of-this) and does not repeat it.
+PatchConi is not the first tool to answer «which hosts are behind on updates». This page looks at six existing tools to learn what they do well, what PatchConi takes from them, and what it leaves out on purpose. It goes deeper than the short comparison of Patchman and PatchMon in the [vision](vision.md#other-tools-already-do-part-of-this): the vision says what they are; this page says what PatchConi learns from them.
 
-Rules for this page: only ideas are taken, never code, text or screenshots; every claim links to an official source (the project's repository, documentation or website); community forums and third-party reviews are not used as sources.
+Rules for this page: only ideas are taken, never code, text or screenshots; each section links the official sources it is based on (the project's repository, documentation or website); community forums and third-party reviews are not used as sources.
 
 ## Patchman
 
@@ -14,10 +14,8 @@ Rules for this page: only ideas are taken, never code, text or screenshots; ever
 
 **Model.**
 
-- A client on each host pushes a report to the server with the installed packages, the running kernel, the operating system and the enabled repositories ([README](https://github.com/furlongm/patchman/blob/main/README.md)).
-- The **server** downloads the repositories' update information and works out which hosts need updates.
+- Read-only, with the server working out the updates, as the [vision](vision.md#other-tools-already-do-part-of-this) says. Besides packages and repositories, the client report carries the running kernel and the operating system, and the server downloads the repositories' update information itself ([README](https://github.com/furlongm/patchman/blob/main/README.md)).
 - `yum`, `apt` and `zypper` plugins can send a report when packages are installed or removed. A periodic schedule for the client is *not stated* in the README.
-- It does not install updates.
 
 **What it does well.** Security updates are identified from errata, and CVE and CVSS data are added on top. Repositories can be marked as security or not, which matters on Debian and Ubuntu. Reports in JSON (protocol 2) fall back to plain text when `jq` is missing.
 
@@ -33,9 +31,8 @@ Rules for this page: only ideas are taken, never code, text or screenshots; ever
 
 **Model.**
 
-- An agent on each host connects outwards only: reports over HTTPS and live events over a WebSocket. Hosts need no inbound port.
-- It **applies updates**: a patch run can be previewed (dry run), approved and executed, for selected packages, security updates only or a full upgrade, with live output and an audit history.
-- It also offers a browser SSH terminal, an AI assistant panel, OpenSCAP CIS benchmarks, Docker Bench and Docker inventory.
+- Outbound-only agents and patching after a preview and an approval, as the [vision](vision.md#other-tools-already-do-part-of-this) says. The agent sends reports over HTTPS and live events over a WebSocket. A patch run can cover selected packages, security updates only or a full upgrade, with live output and an audit history.
+- Beyond the terminal and benchmarks the vision lists: an AI assistant panel and Docker inventory.
 - Server: Go with an embedded React frontend, PostgreSQL and Redis. Docker is the supported way to self-host; a managed cloud offering is also listed.
 
 **What it does well.** Outbound-only agents with no inbound ports. Broad package manager coverage (apt, dnf, yum, apk, pacman, FreeBSD pkg). An audit history of every patch run.
@@ -124,7 +121,7 @@ Rules for this page: only ideas are taken, never code, text or screenshots; ever
 
 **What it does well.** Small, read-only and built on what the host already has. It never refreshes the cache itself, it reports the cache's age, and its labels are few (origin and architecture, never package names), so cardinality stays low.
 
-**What we take.** Three things the [protocol](protocol.md) already does: read the system's cache without refreshing it, report how old the cache is, and read the reboot flag from the `reboot-required` file. Low-cardinality fleet metrics, as in AC-7.1. Its choice to leave phased updates out of *pending* is one input for [#27](https://github.com/andresBR8/patchconi/issues/27).
+**What we take.** Three things the [protocol](protocol.md) already does: read the system's cache without refreshing it, report when the cache was last refreshed (it exports a timestamp; PatchConi sends an age), and read the reboot flag from the `reboot-required` file. Low-cardinality fleet metrics, as in AC-7.1. Its choice to leave phased updates out of *pending* is one input for [#27](https://github.com/andresBR8/patchconi/issues/27).
 
 **What we do not take.** Metrics as the whole answer. A gauge says how many updates are pending now, not since when, so it cannot tell a host that has been behind for a day from one behind for three months, and Prometheus history is usually shorter than an audit needs. PatchConi keeps per-package clocks and transitions, and exports only fleet-level numbers to Prometheus.
 

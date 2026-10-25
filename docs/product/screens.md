@@ -4,14 +4,14 @@
 
 Each sketch lists where every value comes from (an entity or column of the [domain model](domain-model.md), or a document that defines it), the actions and who can take them, and the use cases and acceptance criteria from the [vision](vision.md#mvp-acceptance-criteria-v010) it covers. A value the model does not have is not drawn: it is an [open question](#open-questions).
 
-The sketches use invented, generic data (`web-01`, `db-02`, `example` packages). Versions and dates are illustrative.
+The sketches use invented, generic data (`web-01`, `db-02`, `example` packages) and one scenario: *now* is 2026-10-23 around 12:00 CEST, and the [policy screen](#4-policy) shows the thresholds in force. Versions are illustrative.
 
 ## Rules for every screen
 
-- **Report text is untrusted.** Package names, versions, repositories, advisory IDs, kernel strings, operating system names and parser error messages come from the host, and a compromised host can write anything there. The web shows them as escaped text, never as HTML, Markdown or a link ([protocol, untrusted text](protocol.md#untrusted-text); [threat model](../threat-model.md), T-05). Host names and labels are written by administrators and are escaped the same way.
-- **A viewer sees everything and changes nothing.** Write actions (marked **[admin]** below) are not rendered for a viewer: no disabled buttons, no hidden forms. The API still answers every write from a viewer with `403` (AC-5.2); hiding the button is a courtesy, not the control.
+- **Report text is untrusted.** Package names, versions, repositories, advisory IDs, kernel strings, operating system names and parser error messages come from the host, and a compromised host can write anything there. The web shows them as escaped text, never as HTML, Markdown or a link ([protocol, untrusted text](protocol.md#untrusted-text); [threat model](../threat-model.md), T-05). Unicode direction-control characters are shown neutralized, so a value cannot reorder the text around it, and long values are cut visually with the full value one tap away. Host names and labels are written by administrators and are escaped the same way.
+- **A viewer sees everything and changes nothing.** Write actions, marked **[admin]** in the sketches, are not rendered for a viewer: no disabled buttons, no hidden forms, no empty menus. The API still answers every write from a viewer with `403` (AC-5.2); hiding the button is a courtesy, not the control.
 - **Every page needs a session.** There are no anonymous views ([threat model](../threat-model.md), T-08).
-- **Times.** Shown in the browser's local time with its time zone visible (`2026-10-25 14:03 CEST`). The host detail also shows each time in UTC (`2026-10-25T12:03Z`). Nothing depends on hovering: every value is reachable by touch and keyboard. Times measured on the host (`agent_*` columns) are labelled *as reported by the host*.
+- **Times.** Shown in the browser's local time with its time zone visible (`2026-10-20 14:03 CEST`). The host detail also shows each time in UTC (`2026-10-20T12:03Z`). The zone is printed with each time, not once per page, because a list can cross a daylight saving change. Nothing depends on hovering: every value is reachable by touch and keyboard. Times measured on the host (`agent_*` columns) are labelled *as reported by the host*.
 - **No state is told apart by color alone.** Every state is written as a word, with an icon that has a text label. In the sketches: `[OUT]` out of policy, `[PEND]` pending updates, `[OK]` up to date, `[NO DATA]` no data, `[!]` agent alert, `[SEC]` security update.
 - **The lifecycle data date is always visible** where an operating system support status is shown: «lifecycle data as of YYYY-MM-DD» (AC-3.4).
 - **Lists show text, not counts alone.** A count always links to the list of what it counts.
@@ -24,35 +24,36 @@ The landing page. Answers «which hosts need attention, and why», in that order
 +--------------------------------------------------------------------------+
 | PatchConi                         Fleet  Hosts  Policy      sam (admin)  |
 +--------------------------------------------------------------------------+
-| Fleet overview                 As of: [ now v ]  Times: CEST (UTC+2)     |
+| Fleet overview                                         As of: [ now v ]  |
 |                                                                          |
 |  [OUT] Out of policy   3   [PEND] Pending  5   [OK] Up to date  12       |
 |  [NO DATA] No data     2                       Total enrolled   22       |
 |                                                                          |
-|  ! 1 host with an agent alert                       -> show              |
-|  ! 2 hosts on an unsupported OS  (lifecycle data as of 2026-10-01)       |
-|  ? 1 host with unknown lifecycle                                         |
-|  ~ 4 hosts, 37 updates pending before enrollment, real age unknown       |
+|  [!] 1 host with an agent alert                                          |
+|  [OUT] 1 host on an unsupported OS (lifecycle data as of 2026-10-01)     |
+|  [?] 1 host with unknown lifecycle                                       |
+|  [~] 3 hosts, 9 updates pending before enrollment, real age unknown      |
 |                                                                          |
 |  Filter: state [all v]  label [env=prod v]  name [________]              |
 |                                                                          |
 |  STATE      HOST     WHY                                  LAST REPORT    |
-|  [OUT]      db-02    security update pending > 14d        3 days ago     |
-|                      (openssl:amd64, since 2026-10-03)                   |
-|                      · data 3 days old                                   |
 |  [OUT]      web-03   OS no longer supported               40 min ago     |
 |                      (Ubuntu 20.04, ended 2025-05-31)                    |
-|  [OUT][!]   app-07   reboot required > 14d (since 10-08)  1h ago         |
+|  [OUT][!]   db-02    security update pending > 14d        3 days ago     |
+|                      (openssl:amd64, since 2026-10-03)                   |
+|                      · data 3 days old                                   |
 |                      agent alert: fingerprint_mismatch                   |
+|  [OUT]      app-07   reboot required > 14d                1h ago         |
+|                      (since 2026-10-08)                                  |
+|  [NO DATA]  sbc-02   never reported                       -              |
 |  [NO DATA]  nas-01   package metadata too old (12 days)   3h ago         |
 |                      last boot 3h ago (as reported)                      |
-|  [NO DATA]  sbc-02   never reported                       -              |
 |  [PEND]     web-01   4 pending (1 [SEC])                  25 min ago     |
 |  ...                                                                     |
 +--------------------------------------------------------------------------+
 ```
 
-**Order of the list.** *Out of policy* first, then *no data*, *pending updates* and *up to date*; inside each state, the oldest breach or the oldest data first. A breach is never pushed below the fold by a long list of healthy hosts.
+**Order of the list.** *Out of policy* first, oldest breach first (web-03 since 2025-05-31, db-02 since 2026-10-17, app-07 since 2026-10-22). Then *no data*: hosts that never reported first, because nothing at all is known about them, then the oldest data first. Then *pending updates* and *up to date*. A breach is never pushed below the fold by a long list of healthy hosts.
 
 **Data.**
 
@@ -62,10 +63,10 @@ The landing page. Answers «which hosts need attention, and why», in that order
 | *Why* for out of policy | Every broken rule, from the evaluation's reasons (`host_state_transition.reasons` for the past), with the package, the clock it counts from (`pending_since`, `security_since`, `reboot_required_since`) and `effective_at`. |
 | «· data N days old» | The host is also stale ([policy, states](policy.md#states)): age of the last report or of the package metadata. |
 | *Why* for no data | One of the three causes in the [policy](policy.md#what-the-ui-shows-next-to-the-state): never reported, last report older than `stale_after`, or package metadata older than `metadata_max_age` (`report.agent_metadata_age`). For the metadata cause, the last boot (`report.agent_last_boot_at`) is shown next to it, because a host booted a few hours ago is often waiting for `apt-daily` ([protocol, finding 2](protocol.md#2-the-apt-daily-delay-after-boot); [#26](https://github.com/andresBR8/patchconi/issues/26)). |
-| Unsupported OS, unknown lifecycle | The lifecycle rule of the evaluation, against the lifecycle table and its `snapshot_date` (AC-3.4). |
+| Unsupported OS, unknown lifecycle | The lifecycle rule of the evaluation, against the lifecycle table and its `snapshot_date` (AC-3.4). An unsupported OS is always *out of policy*, so its count is part of the *out of policy* count. |
 | Pending before enrollment | Hosts with at least one open episode with `pending_update.before_enrollment`, and the number of such episodes (AC-3.5). |
 | Agent alert | `host.agent_alert_at`, `host.agent_alert_reason` ([invariant 1](domain-model.md#invariants-and-backend-rules)). |
-| Last report | `report.received_at` of the host's last report (server clock). See [question 3](#open-questions). |
+| Last report | `report.received_at` of the host's last applied report (server clock). Which report counts is [question 3](#open-questions). |
 | As of a past date | The last `host_state_transition` of each host before that date, for the hosts enrolled and not retired on that date (`host.created_at`, `host.retired_at`), inside the retention window (AC-4.3). |
 | Labels for the filter | `host_label`. |
 
@@ -81,30 +82,34 @@ The landing page. Answers «which hosts need attention, and why», in that order
 |                                                                          |
 |  No hosts enrolled yet.                                                  |
 |                                                                          |
-|  [ Enroll a host ]          <- admin only                                |
+|  [ Enroll a host ]                                               [admin] |
 |                                                                          |
-|  (viewer sees instead:) An administrator has not enrolled any host yet.  |
+|  A viewer sees instead: «An administrator has not enrolled any host      |
+|  yet.»                                                                   |
 +--------------------------------------------------------------------------+
 ```
 
-The counts are not drawn: four zeros and a total of zero say nothing useful.
+The counts are not drawn: four zeros and a total of zero say nothing useful. A filter that matches no host says «No host matches this filter» and offers to clear it.
 
 ## 2. Host detail and history
 
-Everything PatchConi knows about one host, and its state on a past date.
+Everything PatchConi knows about one host, and its state on a past date. In the scenario, db-02 was enrolled on 2026-10-01; its first report was trusted and already listed `libexa`, so that update carries the *pending before enrollment* mark. On 2026-10-22 a report arrived from a machine with a different fingerprint: it was stored, not applied, and opened an agent alert.
 
 ```text
 +--------------------------------------------------------------------------+
-| < Fleet    db-02   env=prod team=db                   [OUT] Out of policy |
+| < Fleet    db-02   env=prod team=db                  [OUT] Out of policy |
 +--------------------------------------------------------------------------+
-| ! Agent alert since 2026-10-24 09:12 CEST: fingerprint_mismatch          |
+| [!] Agent alert since 2026-10-22 09:12 CEST: fingerprint_mismatch        |
 |   A report came from a machine whose fingerprint differs from the known  |
 |   one. It was stored and not applied.                                    |
-|   [ Rotate token ] (recovers the host)  [ Clear alert ]   <- admin only  |
+|   [ Rotate token ]  recovers the host: the next report with the new      |
+|                     token is applied as the host's first.        [admin] |
+|   [ Clear alert ]   hides the alert only; reports from the other         |
+|                     machine are still not applied.               [admin] |
 +--------------------------------------------------------------------------+
 | Why     security update pending > 14 days (openssl:amd64)                |
 |         since 2026-10-03 · breach from 2026-10-17 14:00 CEST             |
-|         data 3 days old: last report 2026-10-22 10:04 CEST               |
+|         data 3 days old                                                  |
 |                                                                          |
 | OS      Ubuntu 24.04.3 LTS (ubuntu 24.04) · x86_64 · apt · ESM: off      |
 |         supported until 2029-05-31 (lifecycle data as of 2026-10-01)     |
@@ -112,7 +117,9 @@ Everything PatchConi knows about one host, and its state on a past date.
 |         newest install 6.8.0-147-generic   -> differs                    |
 | Reboot  required since 2026-10-20 08:00 CEST (server clock)              |
 | Boot    2026-10-12 07:41 CEST (as reported by the host)                  |
-| Report  received 2026-10-22 10:04 CEST · 2026-10-22T08:04Z               |
+| Report  last applied 2026-10-20 10:04 CEST · 2026-10-20T08:04Z           |
+|         last received 2026-10-22 09:12 CEST, not applied:                |
+|         fingerprint_mismatch                                             |
 |         package metadata 2 h old (as reported) · agent 0.1.0             |
 +--------------------------------------------------------------------------+
 | Pending updates (4)                     ~ = pending before enrollment    |
@@ -120,9 +127,9 @@ Everything PatchConi knows about one host, and its state on a past date.
 |  PACKAGE         INSTALLED    CANDIDATE    PENDING SINCE  SECURITY SINCE |
 |  [SEC] openssl   3.0.13-0u1   3.0.13-0u2   2026-10-03     2026-10-03     |
 |        :amd64    repo: noble-security · advisory: -                      |
-|  [SEC] libexa    1.2-1        1.2-2        ~2026-10-01    ~2026-10-01    |
-|        :amd64    repo: noble-security · real age unknown                 |
-|  curl:amd64      8.5.0-2u1    8.5.0-2u4    2026-10-10     -              |
+|  libexa:amd64    1.2-1        1.2-2        ~2026-10-01    -              |
+|                  repo: noble-updates · real age unknown                  |
+|  curl:amd64      8.5.0-2u1    8.5.0-2u4    2026-10-12     -              |
 |  libfoo:amd64    2.0-1        2.1-1        2026-10-15     -   (held)     |
 |                                                                          |
 | Held packages (2): libfoo:amd64, linux-image-generic:amd64               |
@@ -130,28 +137,28 @@ Everything PatchConi knows about one host, and its state on a past date.
 | History                                    State on: [ 2026-10-10 v ]    |
 |                                                                          |
 |  On 2026-10-10: [PEND] Pending updates · 2 pending (1 [SEC])             |
-|                 open that day: openssl:amd64, libexa:amd64               |
+|                 open that day: openssl:amd64 [SEC], libexa:amd64 [~]     |
 |                                                                          |
 |  EFFECTIVE AT           STATE        WHY                                 |
 |  2026-10-17 14:00 CEST  [OUT]        security update > 14d (openssl)     |
-|  2026-10-03 09:05 CEST  [PEND]       1 pending                           |
-|  2026-09-28 11:30 CEST  [OK]         -                                   |
-|  ...                    history kept 90 days                             |
+|  2026-10-01 10:20 CEST  [PEND]       1 pending (libexa, [~])             |
+|  2026-10-01 10:00 CEST  [NO DATA]    enrolled, never reported            |
+|                         history kept 90 days                             |
 +--------------------------------------------------------------------------+
 ```
 
+Notes on the scenario: the openssl update appeared on 2026-10-03 without changing the state (still *pending updates*) until its 14 days ran out. «Data 3 days old» counts from the last applied report; whether the not-applied report of 2026-10-22 should count instead is [question 3](#open-questions).
+
 ### Parser error (AC-8.7)
 
-When the host's last applied report has `parse_status = error`, the update list is replaced by the error, and the rest of the page still shows what the report did carry:
+On another host, web-05 (Rocky Linux 10), the last applied report has `parse_status = error`. The update list is replaced by the error, and the rest of the page still shows what the report did carry:
 
 ```text
 +--------------------------------------------------------------------------+
 | Package list unavailable: the agent could not parse the package          |
-| manager's output in the last report (2026-10-25 11:02 CEST).             |
+| manager's output in the last report (2026-10-23 11:02 CEST).             |
 |                                                                          |
-|   command    dnf -C check-update                                         |
-|   exit code  1                                                           |
-|   message    Error: Failed to download metadata for repo 'example'       |
+|   Error: Failed to download metadata for repo 'example'                  |
 |                                                                          |
 | The OS, kernel and reboot fields above come from this report, so the     |
 | lifecycle rule still applies. Updates already pending stay open: a       |
@@ -159,19 +166,26 @@ When the host's last applied report has `parse_status = error`, the update list 
 +--------------------------------------------------------------------------+
 ```
 
+The report also carries the command and its exit code (`packages.error` in the [schema](../../protocol/v1/report.schema.json)), but the model stores only `parse_error`: [question 5](#open-questions).
+
 ### Host without reports yet
 
 ```text
 +--------------------------------------------------------------------------+
 | < Fleet    sbc-02                                    [NO DATA] No data   |
 |                                                                          |
-|  Never reported. Enrolled 2026-10-25 10:00 CEST by sam.                  |
-|  Install the agent with the token shown at enrollment.  <- admin only    |
-|  Lost the token? [ Rotate token ]                       <- admin only    |
+|  Never reported. Enrolled 2026-10-23 10:00 CEST by sam.                  |
+|  Install the agent with the token shown at enrollment.                   |
+|  Lost the token? [ Rotate token ]                                [admin] |
 +--------------------------------------------------------------------------+
 ```
 
 The token is never shown again (AC-1.1); the way forward for a lost token is rotation.
+
+### Other empty cases
+
+- **No pending updates:** «No pending updates in the last trusted report», with the report's time; the held packages line still shows, with `(0)` when there are none.
+- **History date outside the window:** a date before the retention window or before enrollment says «No history for this date: kept for 90 days» or «Not enrolled yet on this date», never an empty state that looks like *up to date*.
 
 **Data.**
 
@@ -185,7 +199,7 @@ The token is never shown again (AC-1.1); the way forward for a lost token is rot
 | Kernels | `report.kernel_running`, `kernel_newest_installed`, compared for equality only ([invariant 5](domain-model.md#invariants-and-backend-rules)). |
 | Reboot | `report.reboot_required` (unknown when null) and `host.reboot_required_since`. |
 | Boot, metadata age, agent version | `report.agent_last_boot_at`, `agent_metadata_age`, `agent_version`, labelled as reported by the host. |
-| Last report | `report.received_at`. |
+| Last applied, last received | `report.received_at` of `host.last_applied_report_id`, and of the host's latest report with its `applied` and `not_applied_reason`. |
 | Pending updates | Open `pending_update` episodes; for each, its most recent `update_candidate` (`installed_version`, `candidate_version`, `repository`, `is_security`), `pending_since`, `security_since`, `before_enrollment`, and its `advisory_ref` (`advisory_id`, `agent_issued_on`; an ignored date is marked as such). Security first, then the oldest clock first (AC-4.1, AC-4.4). |
 | Held packages | `report.held_packages` (AC-8.2). An update whose package is in that list is marked *(held)*. Whether a held update starts a policy clock is [#27](https://github.com/andresBR8/patchconi/issues/27): the sketch shows the clock it has today. |
 | Parser error | `report.parse_status`, `parse_error` (AC-8.7). |
@@ -209,27 +223,27 @@ Enrollment and the life of each host's credentials.
 ```text
 +--------------------------------------------------------------------------+
 | Hosts                                  Show: (o) active  ( ) retired     |
-|                                                    [ Enroll a host ] (a) |
+|                                              [ Enroll a host ]   [admin] |
 |                                                                          |
 |  HOST     LABELS          ENROLLED           TOKEN LAST USED             |
-|  db-02    env=prod        2026-09-01 by sam  2026-10-22 10:04 CEST  [...]|
-|  sbc-02   -               2026-10-25 by sam  never                  [...]|
+|  db-02    env=prod        2026-10-01 by sam  2026-10-22 09:12 CEST [...] |
+|  sbc-02   -               2026-10-23 by sam  never                 [...] |
 |  ...                                                                     |
 |                                                                          |
-|  [...] menu (admin only): Edit name and labels · Rotate token ·          |
-|        Revoke token · Retire host                                        |
+|  [...] row menu, not rendered for a viewer:                      [admin] |
+|        Edit name and labels · Rotate token · Revoke token · Retire host  |
 +--------------------------------------------------------------------------+
 
-Enroll a host (admin)
+Enroll a host                                                      [admin]
 +--------------------------------------------------------------------------+
 |  Name   [ sbc-02          ]   unique among active hosts                  |
 |  Labels [ env=lab         ]   key=value                                  |
 |                                              [ Cancel ] [ Create ]       |
 +--------------------------------------------------------------------------+
 
-After Create (shown once)
+After Create (shown once)                                          [admin]
 +--------------------------------------------------------------------------+
-|  Token for sbc-02 — copy it now. It will not be shown again.             |
+|  Token for sbc-02. Copy it now: it will not be shown again.              |
 |                                                                          |
 |  [ <token>                                             ] [ Copy ]        |
 |                                                                          |
@@ -240,17 +254,20 @@ After Create (shown once)
 
 Token history of db-02
 +--------------------------------------------------------------------------+
-|  ID (public part)  CREATED            REVOKED            LAST USED       |
-|  <lookup id>       2026-10-24 by sam  -                  2026-10-25      |
-|  <lookup id>       2026-09-01 by sam  2026-10-24 by sam  2026-10-24      |
+|  ID (public part)  CREATED            REVOKED   LAST USED                |
+|  <lookup id>       2026-10-01 by sam  -         2026-10-22 09:12 CEST    |
 +--------------------------------------------------------------------------+
 ```
+
+The token of db-02 was last used by the not-applied report of 2026-10-22: a stolen token authenticates, and the report is then stopped by the identity rules. After a rotation, the history shows two rows: the old one with *revoked*, the new one with its own *last used*.
 
 **Confirmations.** Rotate, revoke and retire each ask for confirmation and say what happens:
 
 - **Rotate:** «The current token stops working now. The agent on db-02 will be rejected until it gets the new token.» Whether the old token keeps a short grace period is [#14](https://github.com/andresBR8/patchconi/issues/14); the text changes if it does.
 - **Revoke:** «Reports from db-02 will be rejected with 401. Its history stays.» (AC-1.4)
 - **Retire:** «db-02 leaves the fleet: its tokens are revoked, it is no longer evaluated or counted, and its pending updates are frozen as they are. This cannot be undone. The name can be reused by a new host.» ([retiring a host](domain-model.md#retiring-a-host))
+
+**Empty cases.** No retired hosts: «No retired hosts.» No hosts at all: the same message as the [empty fleet](#empty-fleet).
 
 **Data.**
 
@@ -298,7 +315,7 @@ The active policy, read-only. Nothing on this screen can change it: the policy i
 |                                                                          |
 |  HOST    SKIPS               REASON         OWNER   GRANTED   EXPIRES    |
 |  db-02   curl:amd64          vendor patch   <owner> 10-20     11-19      |
-|  web-03  unsupported OS      migration      <owner> 10-01     12-30      |
+|  app-09  reboot rule         maintenance    <owner> 10-15     11-14      |
 |                                                                          |
 |  Expired exceptions are not listed here; the host history keeps the      |
 |  exceptions that applied to each state.                                  |
@@ -314,7 +331,7 @@ The active policy, read-only. Nothing on this screen can change it: the policy i
 | Fingerprint | The `policy_fingerprint` that new transitions record. |
 | Lifecycle date | The lifecycle table's `snapshot_date` (AC-3.4). |
 | Webhook | Whether a webhook is configured. The URL and the secret are never sent to the browser (AC-6.5; [threat model](../threat-model.md), T-14). |
-| Exceptions | The exceptions in the configuration: `id`, host `id` (shown by its name), what is skipped, reason, owner, `granted_at`, `expires_at` ([domain model, exceptions](domain-model.md#exceptions)). Built later ([roadmap](roadmap.md#designed-now-built-later)); in v0.1.0 the section is not drawn. |
+| Exceptions | The exceptions in the configuration: `id`, host `id` (shown by its name), what is skipped, reason, owner, `granted_at`, `expires_at` ([domain model, exceptions](domain-model.md#exceptions)). Built later ([roadmap](roadmap.md#designed-now-built-later)); in v0.1.0 the section is not drawn. The rows are illustrative. |
 
 **Actions.** None, for anyone (AC-6.2). An admin sees the same page as a viewer.
 
@@ -330,5 +347,6 @@ Found while drawing; each one is tracked as an issue before the phase closes.
 
 1. **Install command after enrollment.** The enrollment screen could show a ready-to-copy install command, but the server does not know the URL the hosts use to reach `/api/v1/agent/`: behind the split recommended in the [architecture](architecture.md#exposure) it is not the URL of the web UI. Either a configured *agent base URL* is added, or the screen only links to the agent documentation. Related: [#38](https://github.com/andresBR8/patchconi/issues/38).
 2. **Clock skew.** The [vision](vision.md#requirements-from-other-peoples-environments) says a large clock skew is flagged. The data exists (`report.agent_collected_at` against `received_at`), but no threshold is defined in the policy or the model, so the sketches do not draw a flag.
-3. **Which report refreshes *last report* and *stale*.** The policy counts from «the host's last valid report». A report that is valid but not applied (`fingerprint_mismatch`, `superseded_instance`, `sequence_regression`) is still a valid report: if it refreshes the stale clock, someone with a stolen token keeps a dead host from showing *no data*. The fleet overview has to say which report it means.
+3. **Which report refreshes *last report* and *stale*.** The policy counts from «the host's last valid report». A report that is valid but not applied (`fingerprint_mismatch`, `superseded_instance`, `sequence_regression`) is still a valid report: if it refreshes the stale clock, someone with a stolen token keeps a dead host from showing *no data*. The sketches count from the last applied report and show the last received one next to it.
 4. **Who cleared an agent alert.** Clearing an alert is an administrator action, but the model has no record of who cleared it or when (rotation and revocation record `revoked_by`). The same holds for renaming a host and editing its labels.
+5. **Parser error details.** The report's `packages.error` carries the message, the command and its exit code (which can be null), but the model stores only `report.parse_error`. The host detail needs the command to tell a broken repository from a missing tool: either the model stores the three fields, or the screen shows the message only.
