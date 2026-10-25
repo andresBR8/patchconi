@@ -4,7 +4,7 @@ How the agent reports to the server. The contract is in [`protocol/v1/`](../../p
 
 ## Transport
 
-- `POST /api/v1/agent/reports` with `Authorization: Bearer <token>`, the host's agent token ([ADR 0006](../adr/0006-per-host-agent-tokens.md)).
+- `POST /api/v1/agent/reports` with `Authorization: Bearer <token>`, the host's agent token ([ADR 0006](../adr/0006-per-host-agent-tokens.md)). The token is valid only for this endpoint: on any other route it is answered with `401`, and the user API accepts only a session ([threat model](../threat-model.md), T-03).
 - **HTTPS only.** The agent refuses a server URL with `http://` unless its host is `localhost`, `127.0.0.1` or `::1`, for development. It verifies the certificate against the system's CA store, or against a CA file set in its configuration.
 - The body is one report, `Content-Type: application/json`, at most **1 MiB**. No `Content-Encoding`: a compressed body could expand far beyond the limit after it is accepted (a decompression bomb), and reports are small.
 - **A report over 1 MiB** is never sent as it is, since a `413` is not retried and the host would never report. The agent drops `inventory` first. If the report is still too large, it sends `packages` as an error ("report larger than 1 MiB, N updates"), so the operating system, kernel and reboot fields still arrive.

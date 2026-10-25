@@ -121,6 +121,7 @@ Each criterion must be demonstrable with a test or a command. Sections marked *I
 - AC-6.2 The web UI shows the active policy read-only, with the source of each value; no request can change it.
 - AC-6.3 A generic webhook fires once when a host enters *out of policy*, not again while it stays there, and respects a cooldown.
 - AC-6.4 Every webhook is signed with HMAC-SHA256 over a timestamp and the body, with a secret shared with the receiver. The timestamp and the signature travel in their own headers. The documented receiver check rejects a bad signature and any message older than 5 minutes, so a captured message cannot be replayed later.
+- AC-6.5 The webhook URL and its secret come only from the configuration, like the policy; no request can change them ([threat model](../threat-model.md), T-14).
 
 ### Metrics (*Important*, UC-10)
 

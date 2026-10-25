@@ -93,8 +93,8 @@ flowchart TB
 
 | Container | Responsibility | Defined in |
 | --- | --- | --- |
-| Agent | Go binary started by a systemd timer, as a dedicated unprivileged user. Read-only: never installs packages and never runs commands from the server. One run sends one report; there is no queue on disk. | [ADR 0007](adr/0007-agent-in-go.md), [protocol](product/protocol.md) |
-| Reverse proxy | Terminates TLS and routes on one host name: `/api` to the API, `/` to the web. Caddy in the [Compose example](adr/0011-compose-example-and-kustomize-base.md); in Kubernetes, the platform's Ingress controller. Not part of PatchConi's images. | [Platform contract §6](platform-contract.md#6-kubernetes-manifests) |
+| Agent | Go binary started by a systemd timer, as a dedicated unprivileged user (validated in phase 5). Read-only: never installs packages and never runs commands from the server. One run sends one report; there is no queue on disk. | [ADR 0007](adr/0007-agent-in-go.md), [protocol](product/protocol.md) |
+| Reverse proxy | Terminates TLS and routes on one host name: `/api` to the API, `/` to the web. Caddy in the Compose example (planned, phase 2); in Kubernetes, the platform's Ingress controller. Not part of PatchConi's images. | [Platform contract §6](platform-contract.md#6-kubernetes-manifests) |
 | Web | Static files built with Vite and served by nginx as a non-root user with a read-only root filesystem. Calls `/api` on the same origin, so no CORS. | [ADR 0003](adr/0003-web-react-vite-static-nginx.md) |
 | API | The only component that talks to the database. Validates and applies agent reports, evaluates the policy, serves the UI, manages users and sessions (Better Auth) and runs the periodic jobs (policy evaluation, *no data*, webhooks, retention) under an advisory lock, so several replicas are safe. | [ADR 0005](adr/0005-better-auth-for-users.md), [ADR 0009](adr/0009-scheduler-inside-the-api.md), [domain model](product/domain-model.md) |
 | Database | PostgreSQL, accessed through Drizzle. Migrations run as a separate one-off command, never at startup. | [ADR 0004](adr/0004-drizzle-orm.md), [platform contract §5](platform-contract.md#5-database-migrations) |
@@ -108,7 +108,7 @@ The proxy separates two audiences by path, and an installation should keep them 
 - **Agents** only need `/api/v1/agent/`. That is the only path that has to be reachable from the hosts' networks.
 - **People** use `/` and the rest of `/api`. The UI and the user API stay on an internal network or behind a VPN, never open to the internet: the dashboard is a list of hosts with their missing security updates.
 
-How a platform enforces this (two Ingresses, an allowlist on the proxy, a VPN) is the platform's choice; the deployment sheet in phase 2 documents the paths. The [threat model](threat-model.md) explains why (T-08).
+How a platform enforces this (two Ingresses, an allowlist on the proxy, a VPN) is the platform's choice; the deployment sheet in phase 2 documents the paths. The platform contract currently asks for one Ingress for all of `/api`; letting the Kustomize base expose `/api/v1/agent/` on its own is [issue #38](https://github.com/andresBR8/patchconi/issues/38). The [threat model](threat-model.md) explains why (T-08).
 
 ## What runs where, and who opens each connection
 
