@@ -37,7 +37,7 @@ Rules for this page: only ideas are taken, never code, text or screenshots; each
 
 **What it does well.** Outbound-only agents with no inbound ports. Broad package manager coverage (apt, dnf, yum, apk, pacman, FreeBSD pkg). An audit history of every patch run.
 
-**What we take.** The connection direction: the host always starts it ([architecture](architecture.md#what-runs-where-and-who-opens-each-connection)).
+**What we take.** The connection direction: the host always starts it ([architecture](../architecture.md#what-runs-where-and-who-opens-each-connection)).
 
 **What we do not take.** Patching, remote terminals and command execution. A server that can change every host is the most valuable target in the fleet; PatchConi stays read-only ([ADR 0007](../adr/0007-agent-in-go.md), [vision](vision.md#patchconi-does-not-patch)). Benchmarks and container scanning are out of scope.
 
