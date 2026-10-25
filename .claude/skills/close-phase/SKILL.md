@@ -27,7 +27,7 @@ The points:
 2. CI green on `main`.
 3. `pre-commit run --all-files` clean and no secrets in the whole history (`gitleaks git`).
 4. New tests for new behavior; nothing disabled without an open issue.
-5. Docs up to date: README if usage changed, one ADR per decision, new concepts explained in `docs/aprendizaje/conceptos/`.
+5. Docs up to date: README if usage changed, one ADR per decision, new concepts explained in `docs/aprendizaje/conceptos/`, and `docs/threat-model.md` reviewed for this phase: a new line in its revision log (what changed, or "no change" and why), and every threat whose status is not *by design* or *accepted risk* links to an open issue or names the phase that builds it.
 6. Review done by the `reviewer` subagent, the review chat and the maintainer; findings fixed or turned into issues.
 7. The maintainer can explain every piece: list the 3–5 key concepts of the phase and ask the maintainer to explain two of them in their own words before marking this point.
 8. `PROGRESO.md` updated and the phase milestone closed on GitHub.
