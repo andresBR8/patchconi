@@ -48,7 +48,7 @@ El modelo no copia las reglas: enlaza al ADR, al protocolo o al modelo de domini
 
 T-01: un host comprometido puede mentir sobre sus paquetes. Ningún agente que se autodeclara puede evitarlo, porque la prueba y el mentiroso son la misma máquina. Ponerlo como «mitigado» sería mentir en el propio modelo. Lo honesto es aceptarlo, explicar el límite (el panel muestra lo que los hosts *dicen*) y acotar el daño: un host que miente solo cambia sus propios datos (T-04, T-23), nunca los de otros hosts ni el servidor.
 
-Lo mismo con T-02: un clon que conserva `/etc/machine-id` y el directorio de estado es indistinguible del original. Distinguirlo exigiría un secreto que no se pueda copiar: una clave que no se pueda exportar, como una guardada en un TPM. mTLS por sí solo no basta, porque un clon del disco copia también la clave privada del certificado; mTLS con la clave en un TPM, sí. Eso queda para la v2.
+Lo mismo con T-02: un clon que conserva `/etc/machine-id` y el directorio de estado es indistinguible del original. Distinguirlo exigiría un secreto que no se pueda copiar: una clave que no se pueda exportar, como una guardada en un TPM. mTLS por sí solo no basta, porque un clon del disco copia también la clave privada del certificado; mTLS con una clave que no se pueda exportar, sí, y es candidato para la v2.
 
 ## Cómo defenderlo en una entrevista
 
