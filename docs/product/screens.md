@@ -66,7 +66,7 @@ The landing page. Answers «which hosts need attention, and why», in that order
 | Unsupported OS, unknown lifecycle | The lifecycle rule of the evaluation, against the lifecycle table and its `snapshot_date` (AC-3.4). An unsupported OS is always *out of policy*, so its count is part of the *out of policy* count. |
 | Pending before enrollment | Hosts with at least one open episode with `pending_update.before_enrollment`, and the number of such episodes (AC-3.5). |
 | Agent alert | `host.agent_alert_at`, `host.agent_alert_reason` ([invariant 1](domain-model.md#invariants-and-backend-rules)). |
-| Last report | `report.received_at` of the host's last applied report (server clock). Which report counts is [question 3](#open-questions). |
+| Last report | `report.received_at` of the host's last applied report (server clock). Which report counts is [question 3](#open-questions), [#43](https://github.com/andresBR8/patchconi/issues/43). |
 | As of a past date | The last `host_state_transition` of each host before that date, for the hosts enrolled and not retired on that date (`host.created_at`, `host.retired_at`), inside the retention window (AC-4.3). |
 | Labels for the filter | `host_label`. |
 
@@ -147,7 +147,7 @@ Everything PatchConi knows about one host, and its state on a past date. In the 
 +--------------------------------------------------------------------------+
 ```
 
-Notes on the scenario: the openssl update appeared on 2026-10-03 without changing the state (still *pending updates*) until its 14 days ran out. «Data 3 days old» counts from the last applied report; whether the not-applied report of 2026-10-22 should count instead is [question 3](#open-questions).
+Notes on the scenario: the openssl update appeared on 2026-10-03 without changing the state (still *pending updates*) until its 14 days ran out. «Data 3 days old» counts from the last applied report; whether the not-applied report of 2026-10-22 should count instead is [question 3](#open-questions), [#43](https://github.com/andresBR8/patchconi/issues/43).
 
 ### Parser error (AC-8.7)
 
@@ -166,7 +166,7 @@ On another host, web-05 (Rocky Linux 10), the last applied report has `parse_sta
 +--------------------------------------------------------------------------+
 ```
 
-The report also carries the command and its exit code (`packages.error` in the [schema](../../protocol/v1/report.schema.json)), but the model stores only `parse_error`: [question 5](#open-questions).
+The report also carries the command and its exit code (`packages.error` in the [schema](../../protocol/v1/report.schema.json)), but the model stores only `parse_error`: [question 5](#open-questions), [#44](https://github.com/andresBR8/patchconi/issues/44).
 
 ### Host without reports yet
 
@@ -212,7 +212,7 @@ The token is never shown again (AC-1.1); the way forward for a lost token is rot
 | --- | --- | --- |
 | Change the history date | Everyone | Read only. |
 | Rotate token | Admin | New token shown once; the alert is cleared and the host identity reset ([invariant 1](domain-model.md#invariants-and-backend-rules)). Same flow as on the [hosts screen](#3-hosts-and-tokens). |
-| Clear alert | Admin | Clears `agent_alert_at` and `agent_alert_reason`. It does not change which reports are applied: the screen says so next to the button. See [question 4](#open-questions). |
+| Clear alert | Admin | Clears `agent_alert_at` and `agent_alert_reason`. It does not change which reports are applied: the screen says so next to the button. See [question 4](#open-questions), [#33](https://github.com/andresBR8/patchconi/issues/33). |
 
 **Covers.** UC-4, UC-5, UC-8 (a host switched off keeps its clocks; its state on any day is in the history); AC-4.1, AC-4.2, AC-4.3, AC-4.4, AC-8.2, AC-8.7.
 
@@ -288,7 +288,7 @@ The token of db-02 was last used by the not-applied report of 2026-10-22: a stol
 | Retire host | Admin | UC-7 (host retired) |
 | See hosts and token history | Everyone | AC-5.2 |
 
-**Covers.** UC-1, UC-7; AC-1.1, AC-1.2, AC-1.3, AC-1.4, AC-5.2. Install instructions: see [question 1](#open-questions).
+**Covers.** UC-1, UC-7; AC-1.1, AC-1.2, AC-1.3, AC-1.4, AC-5.2. Install instructions: see [question 1](#open-questions), [#41](https://github.com/andresBR8/patchconi/issues/41).
 
 ## 4. Policy
 
@@ -343,10 +343,10 @@ Login, user management and the agent installation guide are separate screens or 
 
 ## Open questions
 
-Found while drawing; each one is tracked as an issue before the phase closes.
+Found while drawing, each one with its issue.
 
-1. **Install command after enrollment.** The enrollment screen could show a ready-to-copy install command, but the server does not know the URL the hosts use to reach `/api/v1/agent/`: behind the split recommended in the [architecture](architecture.md#exposure) it is not the URL of the web UI. Either a configured *agent base URL* is added, or the screen only links to the agent documentation. Related: [#38](https://github.com/andresBR8/patchconi/issues/38).
-2. **Clock skew.** The [vision](vision.md#requirements-from-other-peoples-environments) says a large clock skew is flagged. The data exists (`report.agent_collected_at` against `received_at`), but no threshold is defined in the policy or the model, so the sketches do not draw a flag.
-3. **Which report refreshes *last report* and *stale*.** The policy counts from «the host's last valid report». A report that is valid but not applied (`fingerprint_mismatch`, `superseded_instance`, `sequence_regression`) is still a valid report: if it refreshes the stale clock, someone with a stolen token keeps a dead host from showing *no data*. The sketches count from the last applied report and show the last received one next to it.
-4. **Who cleared an agent alert.** Clearing an alert is an administrator action, but the model has no record of who cleared it or when (rotation and revocation record `revoked_by`). The same holds for renaming a host and editing its labels.
-5. **Parser error details.** The report's `packages.error` carries the message, the command and its exit code (which can be null), but the model stores only `report.parse_error`. The host detail needs the command to tell a broken repository from a missing tool: either the model stores the three fields, or the screen shows the message only.
+1. **Install command after enrollment.** The enrollment screen could show a ready-to-copy install command, but the server does not know the URL the hosts use to reach `/api/v1/agent/`: behind the split recommended in the [architecture](architecture.md#exposure) it is not the URL of the web UI. Either a configured *agent base URL* is added, or the screen only links to the agent documentation. Related: [#38](https://github.com/andresBR8/patchconi/issues/38). Tracked in [#41](https://github.com/andresBR8/patchconi/issues/41).
+2. **Clock skew.** The [vision](vision.md#requirements-from-other-peoples-environments) says a large clock skew is flagged. The data exists (`report.agent_collected_at` against `received_at`), but no threshold is defined in the policy or the model, so the sketches do not draw a flag. Tracked in [#42](https://github.com/andresBR8/patchconi/issues/42).
+3. **Which report refreshes *last report* and *stale*.** The policy counts from «the host's last valid report». A report that is valid but not applied (`fingerprint_mismatch`, `superseded_instance`, `sequence_regression`) is still a valid report: if it refreshes the stale clock, someone with a stolen token keeps a dead host from showing *no data*. The sketches count from the last applied report and show the last received one next to it. Tracked in [#43](https://github.com/andresBR8/patchconi/issues/43).
+4. **Who cleared an agent alert.** Clearing an alert is an administrator action, but the model has no record of who cleared it or when (rotation and revocation record `revoked_by`). The same holds for renaming a host and editing its labels. Tracked in [#33](https://github.com/andresBR8/patchconi/issues/33).
+5. **Parser error details.** The report's `packages.error` carries the message, the command and its exit code (which can be null), but the model stores only `report.parse_error`. The host detail needs the command to tell a broken repository from a missing tool: either the model stores the three fields, or the screen shows the message only. Tracked in [#44](https://github.com/andresBR8/patchconi/issues/44).
