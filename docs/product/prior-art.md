@@ -1,6 +1,6 @@
 # Prior art
 
-> Status: draft (phase 1). Sources consulted on 2026-10-25. Projects change: every statement below is what the linked page said on that date, and anything the sources did not say is marked *not stated*.
+> Status: v1 (phase 1), approved when phase 1 closed. Later changes go through a pull request. Sources consulted on 2026-10-25. Projects change: every statement below is what the linked page said on that date, and anything the sources did not say is marked *not stated*.
 
 PatchConi is not the first tool to answer «which hosts are behind on updates». This page looks at six existing tools to learn what they do well, what PatchConi takes from them, and what it leaves out on purpose. It goes deeper than the short comparison of Patchman and PatchMon in the [vision](vision.md#other-tools-already-do-part-of-this): the vision says what they are; this page says what PatchConi learns from them.
 

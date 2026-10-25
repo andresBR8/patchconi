@@ -1,6 +1,6 @@
 # Roadmap
 
-> Status: draft (phase 1). Nothing here is a commitment; it is where ideas go instead of growing the v0.1.0 scope.
+> Status: v1 (phase 1), approved when phase 1 closed. Later changes go through a pull request. Nothing here is a commitment; it is where ideas go instead of growing the v0.1.0 scope.
 
 What v0.1.0 includes is defined in the [product vision](vision.md#mvp-acceptance-criteria-v010). What PatchConi will never do is listed under [out of scope](vision.md#out-of-scope).
 

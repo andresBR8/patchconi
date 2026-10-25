@@ -1,6 +1,6 @@
 # Screens
 
-> Status: draft (phase 1). Low-fidelity sketches of the four main screens of the web UI. They fix **what each screen shows and allows**, not how it looks: layout, colors and components are decided in phase 6.
+> Status: v1 (phase 1), approved when phase 1 closed. Later changes go through a pull request. Low-fidelity sketches of the four main screens of the web UI. They fix **what each screen shows and allows**, not how it looks: layout, colors and components are decided in phase 6.
 
 Each sketch lists where every value comes from (an entity or column of the [domain model](domain-model.md), or a document that defines it), the actions and who can take them, and the use cases and acceptance criteria from the [vision](vision.md#mvp-acceptance-criteria-v010) it covers. A value the model does not have is not drawn: it is an [open question](#open-questions).
 

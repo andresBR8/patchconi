@@ -56,5 +56,5 @@ Two operational rules follow from the sandbox:
 - Evidence (2026-10-25): a script that called `docker` passed the permission rules, which match the text of the command typed, not what it runs inside; the sandbox stopped it by blocking the Docker socket. That is why the boundary is the sandbox, not the permission rules.
 - Follow-ups:
   - Resolved when phase 0 closed: `mise install`, `pnpm install` and `pnpm install --frozen-lockfile` were removed from `allow`.
-  - Try denying every read outside the repository: [issue #10](https://github.com/andresBR8/patchconi/issues/10) (phase 1).
+  - Try denying every read outside the repository: [issue #10](https://github.com/andresBR8/patchconi/issues/10). Deferred to phase 2, before the application code (API, web and agent) enters the repository: phase 1 added documents and a few hook and capture scripts, but no Node.js or Go dependencies, which are what the stricter rule may break.
   - Review the Docker part in phase 2, when Docker enters development; a new ADR if it changes.

@@ -1,6 +1,6 @@
 # Patch policy
 
-> Status: draft (phase 1).
+> Status: v1 (phase 1), approved when phase 1 closed. Later changes go through a pull request.
 
 The patch policy turns what the agents report into one state per host. It is the definition behind every number on the fleet overview, every alert and every metric.
 
@@ -87,19 +87,19 @@ Each PatchConi release ships a **lifecycle table**: for every distribution and v
 | `other_max_age` | 30 days | CIS Controls v8, Safeguard 7.3 asks for operating system updates through automated patch management "on a monthly, or more frequent, basis" ([CIS Controls Assessment Specification, 7.3](https://controls-assessment-specification.readthedocs.io/en/latest/control-7/control-7.3.html)). Non-security updates carry bug fixes; a monthly cycle is the common baseline. |
 | `reboot_max_age` | 14 days | A required reboot usually means a new kernel or core library is installed but not running: the fix is not active until the host reboots. It is treated like a pending security update. |
 | `stale_after` | 24 hours | See below. |
-| `metadata_max_age` | 7 days | The distributions refresh package metadata on their own timers: `dnf-makecache.timer` runs about every hour ([upstream unit file](https://github.com/rpm-software-management/dnf/blob/829fa0a6187bd449b8fc9b51d2e3d11a470bd9bb/etc/systemd/dnf-makecache.timer): `OnUnitInactiveSec=1h`), and `apt-daily.timer` runs daily or more often (the exact schedule is checked in the phase 1 captures). Metadata a week old means the refresh is broken or the host cannot reach its repositories, so "no pending updates" cannot be trusted. |
+| `metadata_max_age` | 7 days | The distributions refresh package metadata on their own timers: `dnf-makecache.timer` runs about every hour ([upstream unit file](https://github.com/rpm-software-management/dnf/blob/829fa0a6187bd449b8fc9b51d2e3d11a470bd9bb/etc/systemd/dnf-makecache.timer): `OnUnitInactiveSec=1h`), and `apt-daily.timer` runs twice a day, with a random delay of up to 12 hours ([protocol, finding 2](protocol.md#2-the-apt-daily-delay-after-boot)). Metadata a week old means the refresh is broken or the host cannot reach its repositories, so "no pending updates" cannot be trusted. |
 
 ### `security_max_age`: why 14 days
 
 v0.1.0 knows whether an update is a security update, but not how severe it is, whether it is being exploited, or whether the host is exposed to the internet (that needs vulnerability data, planned in the [roadmap](roadmap.md)). So one threshold covers every security update, and it has to work for the worst and the most harmless ones alike.
 
-- **Upper bound, 30 days.** PCI DSS v4.0.1, Requirement 6.3.3, requires patches for **critical** vulnerabilities to be installed within one month of release. A default of 30 days for *every* security update would be exactly the deadline for critical ones, with no margin.
+- **Upper bound, 30 days.** PCI DSS v4.0.1, Requirement 6.3.3 ([PCI SSC FAQ 1597](https://www.pcisecuritystandards.org/faqs/1597/)), requires patches for **critical** vulnerabilities to be installed within one month of release. A default of 30 days for *every* security update would be exactly the deadline for critical ones, with no margin.
 - **Lower bound, 3 days.** CISA's BOD 26-04 (June 2026) requires the **highest-risk** vulnerabilities (exposed, exploited, automatable, full control) to be patched within three days, and allows longer timelines for lower-risk ones ([CISA, "Patch Smarter, Not Harder"](https://www.cisa.gov/news-events/news/patch-smarter-not-harder)). Applied to every security update without knowing the risk, 3 days would keep most of a small fleet out of policy all the time, and an alert that is always on gets ignored.
 - **14 days** sits between the two: two weekly maintenance windows, and the same deadline the previous CISA directive, BOD 22-01, set for known exploited vulnerabilities ([BOD 22-01, revoked](https://www.cisa.gov/news-events/directives/bod-22-01-reducing-significant-risk-known-exploited-vulnerabilities-revoked)).
 
 Alternatives: **7 days** (stricter, fits teams that patch weekly) or **30 days** (only the PCI DSS deadline). Risk-aware thresholds come with vulnerability data.
 
-> Note: the PCI DSS text is behind the PCI SSC document library's license agreement; the wording above is to be checked against the official v4.0.1 document before the phase closes ([issue #15](https://github.com/andresBR8/patchconi/issues/15)).
+> Sources, consulted on 2026-10-25: the PCI SSC [announcement of v4.0.1](https://blog.pcisecuritystandards.org/just-published-pci-dss-v4-0-1) (June 2024) lists "Reverted to PCI DSS v3.2.1 language that installing patches/updates within 30 days applies only for “critical vulnerabilities.”", and the PCI SSC [FAQ 1597](https://www.pcisecuritystandards.org/faqs/1597/) says that Requirement 6.3.3 patches for critical vulnerabilities "must be resolved within one month of release". The standard itself is behind the PCI SSC document library's license agreement, so this page paraphrases it.
 
 ### `stale_after`: why 24 hours
 
