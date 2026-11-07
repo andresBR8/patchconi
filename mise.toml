@@ -4,7 +4,7 @@
 
 [tools]
 node = "24.22.0"
-go = "1.27.2"
+go = "1.27.3"
 "aqua:pnpm/pnpm" = "12.13.0"
 "aqua:rhysd/actionlint" = "1.7.12"
 # Used by actionlint to lint `run:` scripts. Pinned so local and CI results match
