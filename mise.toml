@@ -10,7 +10,7 @@ go = "1.27.2"
 # Used by actionlint to lint `run:` scripts. Pinned so local and CI results match
 # (GitHub-hosted runners ship their own unpinned shellcheck).
 "aqua:koalaman/shellcheck" = "0.11.0"
-"aqua:zizmorcore/zizmor" = "1.30.1"
+"aqua:zizmorcore/zizmor" = "1.32.0"
 "aqua:pre-commit/pre-commit" = "4.7.0"
 # Built from source instead of the release binaries: the v8.30.1 tag was moved
 # after release to a commit that only changes .goreleaser.yml, and the binaries
