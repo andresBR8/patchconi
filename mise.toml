@@ -27,7 +27,7 @@ go = "1.27.2"
 # which the aqua backend verifies. editorconfig-checker and tomljson publish no
 # signature or build provenance, so they are built from source like gitleaks,
 # with the same proxy and checksum database settings (ADR 0020).
-"aqua:mikefarah/yq" = "4.54.1"
+"aqua:mikefarah/yq" = "4.54.3"
 "go:github.com/editorconfig-checker/editorconfig-checker/v4/cmd/editorconfig-checker" = { version = "4.0.2", install_env = { CGO_ENABLED = "0", GOTOOLCHAIN = "local", GOPROXY = "https://proxy.golang.org", GOSUMDB = "sum.golang.org", GONOPROXY = "", GONOSUMDB = "", GOPRIVATE = "", GOINSECURE = "" } }
 "go:github.com/pelletier/go-toml/v2/cmd/tomljson" = { version = "2.4.3", install_env = { CGO_ENABLED = "0", GOTOOLCHAIN = "local", GOPROXY = "https://proxy.golang.org", GOSUMDB = "sum.golang.org", GONOPROXY = "", GONOSUMDB = "", GOPRIVATE = "", GOINSECURE = "" } }
 # JSON Schema validator for the protocol examples and YAML duplicate keys
